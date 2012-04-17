@@ -51,16 +51,21 @@
 		window.onhashchange = function(e) {
 			if(!this._paused)
 				this._route( purl(window.location.href) );
+			return true;
 		}.bind(this);
 	};
 
 	/**
 	 * Internally launched when an error in route or in nexts happens
+	 * @param {String|Number} httpCode The httpCode of the error to thrown
+	 * @param {Object} err, Error to thrown
+	 * @param {String} url, Url which generated the error
 	 */
 	Router.prototype._throwsRouteError = function( httpCode, err, url ) {
 		this._errors['_'+httpCode](err, url);
 		return false;
 	};
+	
 	
 	/**
 	 * Build a request object based on passed information
@@ -93,6 +98,9 @@
 
 	/**
 	 * Internally launched when routes for current hash are found
+	 * @param {Object} urlObj Object of the url which fired this route
+	 * @param {String} url Url which fired this route
+	 * @param {Array} matchedIndexes Array of matched indexes
 	 */
 	Router.prototype._followRoute = function( urlObj, url, matchedIndexes ) {
 		var index = matchedIndexes.splice(0, 1), 
@@ -125,7 +133,12 @@
 	};
 	
 	/**
-	 * 
+	 * Internally call every registered before
+	 * @param {Array} befores Array of befores callback
+	 * @param {Function} before Actual before
+	 * @param {Object} urlObj Object of the url which fired this route
+	 * @param {String} url Url which fired this route
+	 * @param {Array} matchedIndexes Array of matched indexes
 	 */
 	Router.prototype._routeBefores = function(befores, before, urlObj, url, matchedIndexes) {
 		var next;
@@ -145,6 +158,36 @@
 			}.bind(this);
 		}
 		before( this._buildRequestObject( urlObj ), next );
+	};
+	
+	/**
+	 * On hashChange route request through registered handler
+	 */
+	Router.prototype._route = function( urlObj ) {
+		var route = '', befores = this._befores.slice(), matchedIndexes = [];
+		var url = urlObj.attr('fragment');
+		if(!url)
+			return true;
+		url = '#'+(url.split('?'))[0];
+		for(var p in this._routes) {
+			if(this._routes.hasOwnProperty(p)) {
+				route = this._routes[p];
+				if(route.path.test(url)) {
+					matchedIndexes.push(p);
+				}
+			}
+		}
+		if(matchedIndexes.length > 0) {
+			if(befores.length > 0) {//If befores were added call them in order
+				var before = befores.splice(0, 1);
+				before = before[0];
+				this._routeBefores(befores, before, urlObj, url, matchedIndexes);
+			} else {
+				this._followRoute(urlObj, url,  matchedIndexes);
+			}
+		} else {
+			return this._throwsRouteError(404, null, urlObj.attr('fragment'));
+		}
 	};
 	
 	/**
@@ -172,7 +215,7 @@
 	 */
 	Router.prototype.setLocation = function(url){
 		window.history.pushState(null,'',url);
-	}
+	};
 	
 	/**
 	 * Set location and fires route handler
@@ -182,34 +225,6 @@
 		this.setLocation(url);
 		if(!this._paused)
 			this._route( purl(window.location.href) );
-	};
-
-	/**
-	 * On hashChange route request through registered handler
-	 */
-	Router.prototype._route = function( urlObj ) {
-		var route = '', befores = this._befores.slice(), matchedIndexes = [];
-		var url = urlObj.attr('fragment');
-		url = '#'+(url.split('?'))[0];
-		for(var p in this._routes) {
-			if(this._routes.hasOwnProperty(p)) {
-				route = this._routes[p];
-				if(route.path.test(url)) {
-					matchedIndexes.push(p);
-				}
-			}
-		}
-		if(matchedIndexes.length > 0) {
-			if(befores.length > 0) {//If befores were added call them in order
-				var before = befores.splice(0, 1);
-				before = before[0];
-				this._routeBefores(befores, before, urlObj, url, matchedIndexes);
-			} else {
-				this._followRoute(urlObj, url,  matchedIndexes);
-			}
-		} else {
-			return this._throwsRouteError(404, null, urlObj.attr('fragment'));
-		}
 	};
 
 	/**
