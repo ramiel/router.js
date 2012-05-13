@@ -1,0 +1,92 @@
+<html>
+<head>
+<script type="text/javascript" src="../router.js"></script>
+<script type="text/javascript">
+var router = new Router()
+
+			 .addRoute('#/:username', function(req, next){
+				 console.group();
+				 console.log('Routed to user',req.params.username);
+				 console.log(arguments);
+				 console.groupEnd();
+			 })
+			 
+			 .addRoute(/#\/foo\/bar\/?(.*)/i,function(req, next){
+				 console.group();
+				 console.log('Matched regexp path');
+				 if(req.splats && req.splats[0]){
+					 console.log(req.splats[0]);
+				 }
+				 console.log(arguments);
+				 console.groupEnd();
+			 })
+			 
+			 .addRoute('#/custom/*', function(req, next){
+				 console.group();
+				 console.log('Matched everything after /custom/' );
+				 console.log(arguments);
+				 console.groupEnd();
+			 })
+			 
+			 .errors(404,function(){
+				 console.group();
+				 console.warn('404',arguments);
+				 console.groupEnd();
+			 })
+			 
+			 .errors(500,function(){
+				 console.group();
+				 console.error('500',arguments);
+				 console.groupEnd();
+			 })
+			 
+			 .before(function(req,next){
+				 console.group();
+				 console.log('Before',arguments);
+				 if(req.href == '#/custom/error')
+					 next(new Error('Before Errored'));
+				 else
+					 next();
+				 console.groupEnd();
+			 });
+</script>
+</head>
+<body>
+<pre>
+var router = new Router()
+
+			 .addRoute('#/:username', function(req, next){
+				 console.log('Routed to user',req.params.username);
+				 console.log(arguments);
+			 })
+			 
+			 .addRoute(/#\/foo\/bar\/(.*)/i,function(req, next){
+				 console.log('Matched regexp path');
+				 if(req.splat && req.splat[0]){
+					 console.log(req.splat[0]);
+				 }
+				 console.log(arguments)
+			 })
+			 
+			 .addRoute('#/custom/*', function(req, next){
+				 console.log('Matched everything after /custom/' );
+			 })
+			 
+			 .errors(404,function(){
+				 console.warn('404',arguments);
+			 });
+</pre>
+<ul>
+	<li><a href="#/alex">Route to user 'Alex'</a></li>
+	<li><a href="#/foo/bar/">RegExp with static route [#/foo/bar/]</a></li>
+	<li><a href="#/foo/bar/splatpart">Splats is visible in req.splats 'Alex [#/foo/bar/splatpart]'</a></li>
+	<li><a href="#/custom/everything">Is matched by /custom/* [#/custom/everything]'</a></li>
+	<li><a href="#/nothing/to/match">404 test [#/nothing/to/match]'</a></li>
+	
+</ul>
+
+
+
+
+</body>
+</html>
