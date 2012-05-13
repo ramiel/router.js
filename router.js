@@ -1,6 +1,6 @@
 /***
  * Router
- * v 0.1
+ * v 0.0.2
  * author: Fabrizio Ruggeri
  * Based on jQuery-URL-Parser (no-jQuery version) (https://github.com/allmarkedup/jQuery-URL-Parser/tree/no-jquery)
  */
@@ -26,11 +26,15 @@
 	/**
 	 * Thanks to Sammy.js
 	 */
-	var PATH_REPLACER = "([^\/]+)", 
-		PATH_NAME_MATCHER = /:([\w\d]+)/g;
+	var PATH_REPLACER = "([^\/]+)",
+		PATH_NAME_MATCHER = /:([\w\d]+)/g,
+		PATH_EVERY_MATCHER = /\*/g,
+		PATH_EVERY_REPLACER = "[^\/]+",
+		LEADING_BACKSLASHES_MATCH = /\/*$/;
 
 	/**
-	 * Router
+	 Router
+	 @class Router
 	 */
 	var Router = function() {
 		this._routes = [];
@@ -91,7 +95,7 @@
 			}
 		}
 		if(splat && splat.length > 0){
-			request.splat = splat;
+			request.splats = splat;
 		}
 		return request;
 	};
@@ -109,6 +113,9 @@
 			request = {}, 
 			params = {},
 			splat = [];
+		if(!route){
+			return this._throwsRouteError(500, new Error('Internal error'), urlObj.attr('fragment'));
+		}
 		/*Combine path parameter name with params passed if any*/
 		for(var i = 0, len = route.paramNames.length; i < len; i++) {
 			params[route.paramNames[i]] = match[i + 1];
@@ -123,8 +130,9 @@
 		/*Build next callback*/
 		var next = (matchedIndexes.length == 0) ? null : (function(uO, u,mI,context){
 			return function(err){
-				if(err)	return this._throwsRouteError( 500, err, uO.attr('fragment') );
-					this._followRoute(uO, u, mI);
+				if(err)	
+					return this._throwsRouteError( 500, err, uO.attr('fragment') );
+				this._followRoute(uO, u, mI);
 				}.bind(this);
 			}.bind(this)(urlObj, url, matchedIndexes));
 		
@@ -164,11 +172,15 @@
 	 * On hashChange route request through registered handler
 	 */
 	Router.prototype._route = function( urlObj ) {
-		var route = '', befores = this._befores.slice(), matchedIndexes = [];
+		var route = '', 
+			befores = this._befores.slice(),/*Take a copy of befores cause is nedeed to splice them*/ 
+			matchedIndexes = [];
 		var url = urlObj.attr('fragment');
 		if(!url)
 			return true;
-		url = '#'+(url.split('?'))[0];
+		url = '#'+(url.split('?'))[0]
+			  .replace( LEADING_BACKSLASHES_MATCH, '');/*Removes leading backslashes from the end of the url*/
+		/*Check for all matching indexes*/
 		for(var p in this._routes) {
 			if(this._routes.hasOwnProperty(p)) {
 				route = this._routes[p];
@@ -178,13 +190,17 @@
 			}
 		}
 		if(matchedIndexes.length > 0) {
-			if(befores.length > 0) {//If befores were added call them in order
+			/*If befores were added call them in order*/
+			if(befores.length > 0) {
 				var before = befores.splice(0, 1);
 				before = before[0];
+				/*Execute all before consecutively*/
 				this._routeBefores(befores, before, urlObj, url, matchedIndexes);
 			} else {
+				/*Follow all routes*/
 				this._followRoute(urlObj, url,  matchedIndexes);
 			}
+		/*If no route matched, then call 404 error*/
 		} else {
 			return this._throwsRouteError(404, null, urlObj.attr('fragment'));
 		}
@@ -231,14 +247,23 @@
 	 * Add a routes to possible route match
 	 * @param {String|RexExp} path A string or a regular expression to match
 	 * @param {Function} callback Function to be fired on path match
+	 * 					  Callback will be fired with (req, next)
+	 * 				      req is the current Request and contains {
+	 * 																 'href': local href,
+	 * 																 'params': Object containing parameter for the request plus splat
+	 * 																}
 	 */
 	Router.prototype.addRoute = function(path, callback) {
 		var match, paramNames = [];
 		if('string' == typeof path) {
+			/*Remove leading backslash from the end of the string*/
+			path = path.replace(LEADING_BACKSLASHES_MATCH,'');
+			/*Param Names are all the one defined as :param in the path*/
 			while(( match = PATH_NAME_MATCHER.exec(path)) != null) {
 				paramNames.push(match[1]);
 			}
-			path = new RegExp(path.replace(PATH_NAME_MATCHER, PATH_REPLACER) + "$");
+			path = new RegExp(path.replace(PATH_NAME_MATCHER, PATH_REPLACER)
+							  .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER) + "$");
 		}
 		this._routes.push({
 			'path' : path,
