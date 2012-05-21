@@ -1,6 +1,6 @@
 <html>
 <head>
-<script type="text/javascript" src="../router.js"></script>
+<script type="text/javascript" src="../router.min.js"></script>
 <script type="text/javascript">
 var router = new Router()
 
@@ -25,9 +25,11 @@ var router = new Router()
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
+				 if(next instanceof Function){
+					 next(new Error(),500);
+				 }
 				 console.groupEnd();
-			 })
-			 
+			 })			 
 			 .errors(404,function(){
 				 console.group();
 				 console.warn('404',arguments);
@@ -44,36 +46,92 @@ var router = new Router()
 				 console.group();
 				 console.log('Before',arguments);
 				 if(req.href == '#/custom/error')
-					 next(new Error('Before Errored'));
+					 next(new Error('Before Errored'),403);
 				 else
 					 next();
 				 console.groupEnd();
 			 });
 </script>
+
+<style>
+pre,ul{float:left;}
+pre{
+width: 58%;
+padding:1%;
+background: #edf3ff; /* Old browsers */
+background: -moz-linear-gradient(top,  #edf3ff 0%, #3691ed 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#edf3ff), color-stop(100%,#3691ed)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #edf3ff 0%,#3691ed 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #edf3ff 0%,#3691ed 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #edf3ff 0%,#3691ed 100%); /* IE10+ */
+background: linear-gradient(top,  #edf3ff 0%,#3691ed 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#edf3ff', endColorstr='#3691ed',GradientType=0 ); /* IE6-9 */
+}
+ul{
+width: 38%;
+padding:1%;
+list-style-position:inside;
+background: #fefcea; /* Old browsers */
+background: -moz-linear-gradient(top,  #fefcea 0%, #f1da36 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#f1da36)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* IE10+ */
+background: linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#f1da36',GradientType=0 ); /* IE6-9 */
+}
+</style>
 </head>
 <body>
 <pre>
 var router = new Router()
 
 			 .addRoute('#/:username', function(req, next){
+				 console.group();
 				 console.log('Routed to user',req.params.username);
 				 console.log(arguments);
+				 console.groupEnd();
 			 })
 			 
-			 .addRoute(/#\/foo\/bar\/(.*)/i,function(req, next){
+			 .addRoute(/#\/foo\/bar\/?(.*)/i,function(req, next){
+				 console.group();
 				 console.log('Matched regexp path');
-				 if(req.splat && req.splat[0]){
-					 console.log(req.splat[0]);
+				 if(req.splats && req.splats[0]){
+					 console.log(req.splats[0]);
 				 }
-				 console.log(arguments)
+				 console.log(arguments);
+				 console.groupEnd();
 			 })
 			 
 			 .addRoute('#/custom/*', function(req, next){
+				 console.group();
 				 console.log('Matched everything after /custom/' );
+				 console.log(arguments);
+				 if(next instanceof Function){
+					 next(new Error(),500);
+				 }
+				 console.groupEnd();
+			 })			 
+			 .errors(404,function(){
+				 console.group();
+				 console.warn('404',arguments);
+				 console.groupEnd();
 			 })
 			 
-			 .errors(404,function(){
-				 console.warn('404',arguments);
+			 .errors(500,function(){
+				 console.group();
+				 console.error('500',arguments);
+				 console.groupEnd();
+			 })
+			 
+			 .before(function(req,next){
+				 console.group();
+				 console.log('Before',arguments);
+				 if(req.href == '#/custom/error')
+					 next(new Error('Before Errored'),403);
+				 else
+					 next();
+				 console.groupEnd();
 			 });
 </pre>
 <ul>
