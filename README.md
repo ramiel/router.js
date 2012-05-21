@@ -19,10 +19,12 @@ Now just define a simple route. A route is made of two components
 
 Let's see
 
+```javascript
 	var router = new Router()
 		   	.add('#/users', function(req, next){
 				/* Do something */
 			});
+```
 
 There are three noticeble aspects. Your router object and all its functions are chainable. So after and addRoute you can chain onther one and so on.
 The matching string is '#/users', so if your fragment match this pattern your callback will be fired.
