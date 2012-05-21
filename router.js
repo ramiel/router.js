@@ -40,10 +40,13 @@
 		this._routes = [];
 		this._befores = [];
 		this._errors = {
-			'_404' : function(err, url) {
+			'_'		: function(err, url, httpCode) {
+				if(console && console.warn) console.warn('Router.js : '+httpCode);
+			},
+			'_404' 	: function(err, url) {
 				if(console && console.warn) console.warn('404! Unmatched route for url ' + url);
 			},
-			'_500' : function(err, url) {
+			'_500' 	: function(err, url) {
 				if(console && console.error) console.error('500! Internal error route for url ' + url);
 				else{
 					throw new Error('500');
@@ -66,7 +69,11 @@
 	 * @param {String} url, Url which generated the error
 	 */
 	Router.prototype._throwsRouteError = function( httpCode, err, url ) {
-		this._errors['_'+httpCode](err, url);
+		if(this._errors['_'+httpCode] instanceof Function)
+			this._errors['_'+httpCode](err, url, httpCode);
+		else{
+			this._errors['_'](err, url, httpCode);
+		}
 		return false;
 	};
 	
@@ -129,9 +136,9 @@
 		}
 		/*Build next callback*/
 		var next = (matchedIndexes.length == 0) ? null : (function(uO, u,mI,context){
-			return function(err){
+			return function(err, error_code){
 				if(err)	
-					return this._throwsRouteError( 500, err, uO.attr('fragment') );
+					return this._throwsRouteError( error_code || 500, err, uO.attr('fragment') );
 				this._followRoute(uO, u, mI);
 				}.bind(this);
 			}.bind(this)(urlObj, url, matchedIndexes));
@@ -153,15 +160,15 @@
 		if(befores.length > 0) {
 			var nextBefore = befores.splice(0, 1);
 			nextBefore = nextBefore[0];
-			next = function(err) {
+			next = function(err, error_code) {
 				if(err)
-					return this._throwsRouteError(500, err, urlObj.attr('fragment'));
+					return this._throwsRouteError( error_code || 500, err, urlObj.attr('fragment'));
 				this._routeBefores(befores, nextBefore, urlObj, url, matchedIndexes);
 			}.bind(this);
 		} else {
-			next = function(err) {
+			next = function(err, error_code) {
 				if(err)
-					return this._throwsRouteError(500, err, urlObj.attr('fragment'));
+					return this._throwsRouteError( error_code || 500, err, urlObj.attr('fragment'));
 				this._followRoute(urlObj, url, matchedIndexes);
 			}.bind(this);
 		}
@@ -291,11 +298,9 @@
 	Router.prototype.errors = function(httpCode, callback) {
 		if(isNaN(httpCode)) {
 			throw new Error('Invalid code for routes error handling');
-			return this;
 		}
 		if(!(callback instanceof Function)){
 			throw new Error('Invalid callback for routes error handling');
-			return this;
 		}
 		httpCode = '_' + httpCode;
 		this._errors[httpCode] = callback;
