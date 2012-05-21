@@ -46,9 +46,11 @@ What if more than a route match your url? Well, the next parameter will be popul
 
 Let's see this:
 
+```javascript
 	router.addRoute('#/users/:username', function(req,next){
 					var username = req.params.username;
 				});
+```
 
 well, if the called url is 'http://www.webapp.com/#/users/jhon', then `username` in the callback will be 'jhon'!
 
@@ -59,9 +61,11 @@ You can use as many params you want, they will appear in the `params` property o
 The other symbol you can use in your route is `*`. It matches every word before next backslash.
 Consider:
 
+```javascript
 	router.addRoute('#/users/*', function(req,next){
 					/*Everithing after /users/ will match this route*/
 				});
+```
 
 Now all of this url will match the rule:
 
@@ -75,7 +79,7 @@ The url http://www.webapp.com/#/users/jhon/foo will not match! Remember that I'v
 
 Considering this routes:
 
-
+```javascript
 	router.addRoute('#/users/:username', function(req,next){
 	
 					var username = req.params.username;
@@ -86,6 +90,7 @@ Considering this routes:
 					.addRoute('#/users/*', function(req,next){					
 						alert('You are not admin!');
 					});
+```
 
 As you can see both the routes match the url `http://www.webapp.com/users/jhon`. In Router.js only the first declared match will be called unless you explicitly
 call next, then also the second match will be fired and so on. Remember, `next` will be a function only if another route matches.
@@ -97,12 +102,14 @@ Next will be useful also to fire erros, we will see this in a while, after talki
 We can handle errors just like http protocol handle it, by http codes.
 An example is better than million words
 
+```javascript
 	router.addRoute('#/users/:username', function(req,next){
 							/*do something*/
 		})
 		.errors(404, function( err, href){
 			alert('Page not foud!' + href );
 		});
+```
 
 In this example if we point browser to `http://www.webapp.com/route/inexistent` no route will match our url. Router.js will fire a '404' error.
 You can subscribe to 404 situation just with `errors(404, function(err,href){...})`
@@ -113,6 +120,7 @@ Router js will match for you 404 and 500 situation but will fire a general error
 
 Sometimes you just want to execute some actions before the route matches and then continue on regular matches. Then `befores` is what you need.
 
+```javascript
 	router
 		.before(function(req,next){
 			if( userIsLogged() === true)
@@ -128,15 +136,18 @@ Sometimes you just want to execute some actions before the route matches and the
 		.error(403, function(err, href){
 			console.error('While attempting to access to '+ href +' the following error happened: '+err.message);
 		});
+```
 
 `Befores` will be executed before normal route. If `next` is called in before then the route is followed, else if `next` is called with an error then the error is fired and the route is not followed.
 You can specify even error type (403 in this case), elsewhere it will be a 500
 
 You can add as many `befores` you want, they will be fired sequentially
 
+```javascript
 	router.before(function(){...})
 		  .before(function(){...});
-		  
+```
+
 Remember that in before req has just `href` property cause is the only you know at before time. 
 		  
 ##This meaning
@@ -144,6 +155,7 @@ Remember that in before req has just `href` property cause is the only you know 
 Context inside callback, befores or errors have no special meaning to avoid complexity. If you need to force your context inside a callback you can use `bind`.
 Bind is the browser implementation or our if missing. Let's see at an example
 
+```javascript
 	function(){
 	
 		this.property = 'foo';
@@ -156,6 +168,7 @@ Bind is the browser implementation or our if missing. Let's see at an example
 								}.bind(this));
 	
 	}
+```
 
 If you need your router inside a callback just refer to it as router.
 Have you noticed redirect method? Well it's time to talk about utility methods
@@ -164,11 +177,15 @@ Have you noticed redirect method? Well it's time to talk about utility methods
 
 In Router.js are present two utility method. Just two because probably you'll need just them. Actually there could be just one, but I\'m generous!
 
+```javascript
 	redirect(url)
+```
 
 this will redirect your application to desired url firing routes normally
 
+```javascript
 	setLocation(url)
+```
 
 this will redirect your application to desired url WITHOUT firing any routes!
 
@@ -176,10 +193,12 @@ this will redirect your application to desired url WITHOUT firing any routes!
 
 We already said that you can use regular expression to better match your route
 
+```javascript
 	router.addRoute(/#\/foo\/bar\/?(.*)/i, function(req, next){
 		
 		/* req gained splats property which contains an array with all your custom matches*/
 	});
+```
 
 So calling 'http://www.webapp.com/#/foo/bar/custom' will follow the route and in req you will find a property called splats.
 Splats is an array containing all regexp matches (everyting between two '()' ). In this cas req.splats[0] is 'custom'
