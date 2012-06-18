@@ -129,7 +129,7 @@
 		}
 		i = i+1;
 		/*If any other match put them in request splat*/
-		if( i < match.length){
+		if( match && i < match.length){
 			for(var j = i;j< match.length;j++){
 				splat.push(match[j]);
 			}
@@ -181,17 +181,20 @@
 	Router.prototype._route = function( urlObj ) {
 		var route = '', 
 			befores = this._befores.slice(),/*Take a copy of befores cause is nedeed to splice them*/ 
-			matchedIndexes = [];
+			matchedIndexes = [],
+			urlToTest;
 		var url = urlObj.attr('fragment');
 		if(!url)
 			return true;
-		url = '#'+(url.split('?'))[0]
+		url = '#' + url.replace( LEADING_BACKSLASHES_MATCH, '');
+		urlToTest = (url.split('?'))[0]
 			  .replace( LEADING_BACKSLASHES_MATCH, '');/*Removes leading backslashes from the end of the url*/
+		
 		/*Check for all matching indexes*/
 		for(var p in this._routes) {
 			if(this._routes.hasOwnProperty(p)) {
 				route = this._routes[p];
-				if(route.path.test(url)) {
+				if(route.path.test(urlToTest)) {
 					matchedIndexes.push(p);
 				}
 			}
@@ -247,7 +250,7 @@
 	Router.prototype.redirect = function(url){
 		this.setLocation(url);
 		if(!this._paused)
-			this._route( purl(window.location.href) );
+			this._route( purl(url) );
 	};
 
 	/**
