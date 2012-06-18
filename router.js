@@ -1,6 +1,6 @@
 /***
  * Router
- * v 0.0.3
+ * v 0.0.4
  * author: Fabrizio Ruggeri
  * Based on jQuery-URL-Parser (no-jQuery version) (https://github.com/allmarkedup/jQuery-URL-Parser/tree/no-jquery)
  */
