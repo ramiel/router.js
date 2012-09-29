@@ -215,7 +215,7 @@ If you do not call run Router will do nothing until next fragment change.
 
 #Why
 
-* I've used different router like library but some does too few, other too much. I need a little, clear script which do the essential.
+* I've used different router like library but some do too few, other too much. I need a little, clear script which do the essential.
 
 * Code written using Router.js is higly readable (not my fault Sammy.js!)
  
