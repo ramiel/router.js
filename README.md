@@ -63,7 +63,7 @@ Consider:
 
 ```javascript
 	router.addRoute('#/users/*', function(req,next){
-					/*Everithing after /users/ will match this route*/
+					/* First word after /users/ will match this route */
 				});
 ```
 
@@ -74,6 +74,19 @@ Now all of this url will match the rule:
 * http://www.webapp.com/#/users/lua
 
 The url http://www.webapp.com/#/users/jhon/foo will not match! Remember that I've said 'before next backslash'!
+To match even it you must use the `**` matcher. It means **everything**
+
+```javascript
+	router.addRoute('#/users/**', function(req,next){
+					/* Everithing after /users/ will match this route */
+				});
+```
+
+All of this urls match the rule:
+
+* http://www.webapp.com/#/users/jhon
+* http://www.webapp.com/#/users/jhon/snow
+* http://www.webapp.com/#/users/jhon/snow/wolf
 
 ##Next argument
 

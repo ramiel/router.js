@@ -23,13 +23,24 @@ var router = new Router()
 			 
 			 .addRoute('#/custom/*', function(req, next){
 				 console.group();
+				 console.log('Matched first word after /custom/' );
+				 console.log(arguments);
+				 if(next instanceof Function){
+					 next(new Error(),500);
+				 }
+				 console.groupEnd();
+			 })
+			 
+			 .addRoute('#/custom/**', function(req, next){
+				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
 				 if(next instanceof Function){
 					 next(new Error(),500);
 				 }
 				 console.groupEnd();
-			 })			 
+			 })
+			 
 			 .errors(404,function(){
 				 console.group();
 				 console.warn('404',arguments);
@@ -111,7 +122,18 @@ var router = new Router()
 					 next(new Error(),500);
 				 }
 				 console.groupEnd();
-			 })			 
+			 })
+			 
+			 .addRoute('#/custom/**', function(req, next){
+				 console.group();
+				 console.log('Matched everything after /custom/' );
+				 console.log(arguments);
+				 if(next instanceof Function){
+					 next(new Error(),500);
+				 }
+				 console.groupEnd();
+			 })
+			 
 			 .errors(404,function(){
 				 console.group();
 				 console.warn('404',arguments);
@@ -139,6 +161,7 @@ var router = new Router()
 	<li><a href="#/foo/bar/">RegExp with static route [#/foo/bar/]</a></li>
 	<li><a href="#/foo/bar/splatpart">Splats is visible in req.splats 'Alex [#/foo/bar/splatpart]'</a></li>
 	<li><a href="#/custom/everything">Is matched by /custom/* [#/custom/everything]'</a></li>
+	<li><a href="#/custom/everything/else">Is matched by /custom/** [#/custom/everything/else]'</a></li>
 	<li><a href="#/nothing/to/match">404 test [#/nothing/to/match]'</a></li>
 	
 </ul>

@@ -1,6 +1,6 @@
 /***
  * Router
- * v 0.0.4
+ * v 0.0.5
  * author: Fabrizio Ruggeri
  * Based on jQuery-URL-Parser (no-jQuery version) (https://github.com/allmarkedup/jQuery-URL-Parser/tree/no-jquery)
  */
@@ -28,10 +28,12 @@
 	 */
 	var PATH_REPLACER = "([^\/]+)",
 		PATH_NAME_MATCHER = /:([\w\d]+)/g,
-		PATH_EVERY_MATCHER = /\*/g,
-		PATH_EVERY_REPLACER = "[^\/]+",
+		PATH_EVERY_MATCHER = /\/\*(?!\*)/,
+		PATH_EVERY_REPLACER = "\/[^\/]+",
+		PATH_EVERY_GLOBAL_MATCHER = /\*{2}/,
+		PATH_EVERY_GLOBAL_REPLACER = ".*",
 		LEADING_BACKSLASHES_MATCH = /\/*$/;
-
+	
 	/**
 	 Router
 	 @class Router
@@ -272,8 +274,10 @@
 			while(( match = PATH_NAME_MATCHER.exec(path)) != null) {
 				paramNames.push(match[1]);
 			}
-			path = new RegExp(path.replace(PATH_NAME_MATCHER, PATH_REPLACER)
-							  .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER) + "$");
+			path = new RegExp(path
+					      .replace(PATH_NAME_MATCHER, PATH_REPLACER)
+					      .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER)
+					      .replace(PATH_EVERY_GLOBAL_MATCHER, PATH_EVERY_GLOBAL_REPLACER) + "$");
 		}
 		this._routes.push({
 			'path' : path,
