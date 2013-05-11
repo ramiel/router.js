@@ -31,8 +31,8 @@ The matching string is '#/users', so if your fragment match this pattern your ca
 
 Callback is populated with two arguments:
 
-* req
-* next
+* `req`
+* `next`
 
 
 req is an object containing
