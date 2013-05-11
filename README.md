@@ -26,7 +26,7 @@ Let's see
 			});
 ```
 
-There are three noticeble aspects. Your router object and all its functions are chainable. So after and addRoute you can chain onther one and so on.
+There are three noticeble aspects. Your router object and all its functions are chainable. So after an `add` Route you can chain onther one and so on.
 The matching string is '#/users', so if your fragment match this pattern your callback will be fired.
 
 Callback is populated with two arguments:
@@ -37,8 +37,8 @@ Callback is populated with two arguments:
 
 req is an object containing
 
-1. href, which is the url that matched
-2. params, all the params recognized in the url. We will talk about this in a while
+1. `href`, which is the url that matched
+2. `params`, all the params recognized in the url. We will talk about this in a while
 
 What if more than a route match your url? Well, the next parameter will be populated with a function you can call to execute the next route which match. Elsewhere next is null
 
@@ -92,7 +92,7 @@ Considering this routes:
 					});
 ```
 
-As you can see both the routes match the url `http://www.webapp.com/users/jhon`. In Router.js only the first declared match will be called unless you explicitly
+As you can see both the routes match the url `http://www.webapp.com/#/users/jhon`. In Router.js only the first declared match will be called unless you explicitly
 call next, then also the second match will be fired and so on. Remember, `next` will be a function only if another route matches.
 
 Next will be useful also to fire erros, we will see this in a while, after talking about error handling
@@ -111,14 +111,14 @@ An example is better than million words
 		});
 ```
 
-In this example if we point browser to `http://www.webapp.com/route/inexistent` no route will match our url. Router.js will fire a '404' error.
-You can subscribe to 404 situation just with `errors(404, function(err,href){...})`
+In this example if we point browser to `http://www.webapp.com/#/route/inexistent` no route will match our url. Router.js will fire a '404' error.
+You can subscribe to 404 situation just with `.errors(404, function(err,href){...})`
 
 Router js will match for you 404 and 500 situation but will fire a general error for all http code you forgot to register
 
 ##Befores
 
-Sometimes you just want to execute some actions before the route matches and then continue on regular matches. Then `befores` is what you need.
+Sometimes you just want to execute some actions before the route matches and then continue on regular matches. Then `before` is what you need.
 
 ```javascript
 	router
@@ -187,7 +187,7 @@ this will redirect your application to desired url firing routes normally
 	setLocation(url)
 ```
 
-this will redirect your application to desired url WITHOUT firing any routes!
+this will redirect your application to desired url **WITHOUT** firing any routes!
 
 ##RegExp
 
@@ -201,7 +201,7 @@ We already said that you can use regular expression to better match your route
 ```
 
 So calling 'http://www.webapp.com/#/foo/bar/custom' will follow the route and in req you will find a property called splats.
-Splats is an array containing all regexp matches (everyting between two '()' ). In this cas req.splats[0] is 'custom'
+Splats is an array containing all regexp matches (everyting between two '( )' ). In this cas `req.splats[0]` is `custom`
 
 You can use regular expression to obtain more grain fined routes
 
@@ -212,6 +212,13 @@ Router has a special method (yes, another one, I lied). You can call run after y
 Run has a parameter, 'startUrl'. If is setted it will redirect immediately to that url, alse it will read current browser url.
 If you do not call run Router will do nothing until next fragment change.
 
+```javascript
+	router
+	.addRoute('#/users/:username', function(req, next){
+	  /* code */
+	})
+	.run('#/');
+```
 
 #Why
 
