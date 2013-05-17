@@ -5,12 +5,6 @@
  * Based on jQuery-URL-Parser (no-jQuery version) (https://github.com/allmarkedup/jQuery-URL-Parser/tree/no-jquery)
  */
 ;(function(window, undefined) {
-	// pUrl https://github.com/allmarkedup/jQuery-URL-Parser/tree/no-jquery
-	var purl=function(c){function g(d,c){for(var a=decodeURI(d),a=h[c?"strict":"loose"].exec(a),b={attr:{},param:{},seg:{}},e=14;e--;)b.attr[i[e]]=a[e]||"";b.param.query={};b.param.fragment={};b.attr.query.replace(j,function(a,c,d){c&&(b.param.query[c]=d)});b.attr.fragment.replace(k,function(a,c,d){c&&(b.param.fragment[c]=d)});b.seg.path=b.attr.path.replace(/^\/+|\/+$/g,"").split("/");b.seg.fragment=b.attr.fragment.replace(/^\/+|\/+$/g,"").split("/");b.attr.base=b.attr.host?b.attr.protocol+"://"+b.attr.host+
-	(b.attr.port?":"+b.attr.port:""):"";return b}var i="source,protocol,authority,userInfo,user,password,host,port,relative,path,directory,file,query,fragment".split(","),l={anchor:"fragment"},h={strict:/^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,loose:/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/},
-	j=/(?:^|&|;)([^&=;]*)=?([^&;]*)/g,k=/(?:^|&|;)([^&=;]*)=?([^&;]*)/g;return function(d,f){1===arguments.length&&!0===d&&(f=!0,d=c);d=d||window.location.toString();return{data:g(d,f||!1),attr:function(a){a=l[a]||a;return a!==c?this.data.attr[a]:this.data.attr},param:function(a){return a!==c?this.data.param.query[a]:this.data.param.query},fparam:function(a){return a!==c?this.data.param.fragment[a]:this.data.param.fragment},segment:function(a){if(a===c)return this.data.seg.path;a=a<0?this.data.seg.path.length+
-	a:a-1;return this.data.seg.path[a]},fsegment:function(a){if(a===c)return this.data.seg.fragment;a=a<0?this.data.seg.fragment.length+a:a-1;return this.data.seg.fragment[a]}}}}();
-
 	/**
 	 * Provide Function Bind specification if browser desn't support it
 	 */
@@ -58,11 +52,16 @@
 		this._paused = false;
 		
 		window.onhashchange = function(e) {
-			if(!this._paused)
-				this._route( purl(window.location.href) );
+			if(!this._paused){
+				this._route( this.extractFragment(window.location.href) );
+			}
 			return true;
 		}.bind(this);
 	};
+	
+	Router.prototype.extractFragment = function(url){
+		return url.substring(url.indexOf('#'));
+	}
 
 	/**
 	 * Internally launched when an error in route or in nexts happens
@@ -86,14 +85,14 @@
 	 * @param {Object} params Params of request if any. Not mandatory
 	 * @throw error Error if urlObj is not passed
 	 */
-	Router.prototype._buildRequestObject = function(urlObj, params, splat){
-		if(!urlObj)
+	Router.prototype._buildRequestObject = function(fragmentUrl, params, splat){
+		if(!fragmentUrl)
 			throw new Error('Unable to compile request object');
 		var request = {};
-		request.href = '#' + urlObj.attr('fragment');
+		request.href = '#' + fragmentUrl;
 		if(params)
 			request.params = params;
-		var completeFragment = urlObj.attr('fragment').split('?');
+		var completeFragment = fragmentUrl.split('?');
 		if(completeFragment.length == 2){
 			var queryKeyValue = null;
 			var queryString = completeFragment[1].split('&');
@@ -115,7 +114,7 @@
 	 * @param {String} url Url which fired this route
 	 * @param {Array} matchedIndexes Array of matched indexes
 	 */
-	Router.prototype._followRoute = function( urlObj, url, matchedIndexes ) {
+	Router.prototype._followRoute = function( fragmentUrl, url, matchedIndexes ) {
 		var index = matchedIndexes.splice(0, 1), 
 			route = this._routes[index], 
 			match = url.match(route.path), 
@@ -123,7 +122,7 @@
 			params = {},
 			splat = [];
 		if(!route){
-			return this._throwsRouteError(500, new Error('Internal error'), urlObj.attr('fragment'));
+			return this._throwsRouteError(500, new Error('Internal error'), fragmentUrl);
 		}
 		/*Combine path parameter name with params passed if any*/
 		for(var i = 0, len = route.paramNames.length; i < len; i++) {
@@ -140,12 +139,12 @@
 		var next = (matchedIndexes.length == 0) ? null : (function(uO, u,mI,context){
 			return function(err, error_code){
 				if(err)	
-					return this._throwsRouteError( error_code || 500, err, uO.attr('fragment') );
+					return this._throwsRouteError( error_code || 500, err, fragmentUrl );
 				this._followRoute(uO, u, mI);
 				}.bind(this);
-			}.bind(this)(urlObj, url, matchedIndexes));
+			}.bind(this)(fragmentUrl, url, matchedIndexes));
 		
-		request = this._buildRequestObject( urlObj, params, splat );
+		request = this._buildRequestObject( fragmentUrl, params, splat );
 		route.routeAction(request, next);
 	};
 	
@@ -157,36 +156,36 @@
 	 * @param {String} url Url which fired this route
 	 * @param {Array} matchedIndexes Array of matched indexes
 	 */
-	Router.prototype._routeBefores = function(befores, before, urlObj, url, matchedIndexes) {
+	Router.prototype._routeBefores = function(befores, before, fragmentUrl, url, matchedIndexes) {
 		var next;
 		if(befores.length > 0) {
 			var nextBefore = befores.splice(0, 1);
 			nextBefore = nextBefore[0];
 			next = function(err, error_code) {
 				if(err)
-					return this._throwsRouteError( error_code || 500, err, urlObj.attr('fragment'));
-				this._routeBefores(befores, nextBefore, urlObj, url, matchedIndexes);
+					return this._throwsRouteError( error_code || 500, err, fragmentUrl);
+				this._routeBefores(befores, nextBefore, fragmentUrl, url, matchedIndexes);
 			}.bind(this);
 		} else {
 			next = function(err, error_code) {
 				if(err)
-					return this._throwsRouteError( error_code || 500, err, urlObj.attr('fragment'));
-				this._followRoute(urlObj, url, matchedIndexes);
+					return this._throwsRouteError( error_code || 500, err, fragmentUrl);
+				this._followRoute(fragmentUrl, url, matchedIndexes);
 			}.bind(this);
 		}
-		before( this._buildRequestObject( urlObj ), next );
+		before( this._buildRequestObject( fragmentUrl ), next );
 	};
 	
 	/**
 	 * On hashChange route request through registered handler
 	 */
-	Router.prototype._route = function( urlObj ) {
+	Router.prototype._route = function( fragmentUrl ) {
 		var route = '', 
 			befores = this._befores.slice(),/*Take a copy of befores cause is nedeed to splice them*/ 
 			matchedIndexes = [],
 			urlToTest;
-		var url = urlObj.attr('fragment');
-		if(!url)
+		var url = fragmentUrl;
+		if(url.length == 0)
 			return true;
 		url = '#' + url.replace( LEADING_BACKSLASHES_MATCH, '');
 		urlToTest = (url.split('?'))[0]
@@ -207,14 +206,14 @@
 				var before = befores.splice(0, 1);
 				before = before[0];
 				/*Execute all before consecutively*/
-				this._routeBefores(befores, before, urlObj, url, matchedIndexes);
+				this._routeBefores(befores, before, fragmentUrl, url, matchedIndexes);
 			} else {
 				/*Follow all routes*/
-				this._followRoute(urlObj, url,  matchedIndexes);
+				this._followRoute(fragmentUrl, url,  matchedIndexes);
 			}
 		/*If no route matched, then call 404 error*/
 		} else {
-			return this._throwsRouteError(404, null, urlObj.attr('fragment'));
+			return this._throwsRouteError(404, null, fragmentUrl);
 		}
 	};
 	
@@ -233,7 +232,7 @@
 		triggerNow = 'undefined' == typeof triggerNow ? false : triggerNow;
 		this._paused = false;
 		if(triggerNow){
-			this._route( purl(window.location.href) );
+			this._route( this.extractFragment(window.location.href) );
 		}
 	};
 	
@@ -252,7 +251,7 @@
 	Router.prototype.redirect = function(url){
 		this.setLocation(url);
 		if(!this._paused)
-			this._route( purl(url) );
+			this._route( this.extractFragment(url) );
 	};
 
 	/**
@@ -320,7 +319,7 @@
 	 */
 	Router.prototype.run = function( startUrl ){
 		if(!startUrl){
-			startUrl = purl(window.location.href).attr('fragment');
+			startUrl = this.extractFragment(window.location.href);
 		}
 		startUrl = startUrl.indexOf('#') == 0 ? startUrl : '#'+startUrl;
 		this.redirect( startUrl );
