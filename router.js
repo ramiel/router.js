@@ -88,7 +88,7 @@
 		if(!fragmentUrl)
 			throw new Error('Unable to compile request object');
 		var request = {};
-		request.href = '#' + fragmentUrl;
+		request.href = fragmentUrl;
 		if(params)
 			request.params = params;
 		var completeFragment = fragmentUrl.split('?');
@@ -186,7 +186,7 @@
 		var url = fragmentUrl;
 		if(url.length == 0)
 			return true;
-		url = '#' + url.replace( LEADING_BACKSLASHES_MATCH, '');
+		url = url.replace( LEADING_BACKSLASHES_MATCH, '');
 		urlToTest = (url.split('?'))[0]
 			  .replace( LEADING_BACKSLASHES_MATCH, '');/*Removes leading backslashes from the end of the url*/
 		
