@@ -23,9 +23,9 @@
 	var PATH_REPLACER = "([^\/]+)",
 		PATH_NAME_MATCHER = /:([\w\d]+)/g,
 		PATH_EVERY_MATCHER = /\/\*(?!\*)/,
-		PATH_EVERY_REPLACER = "\/[^\/]+",
+		PATH_EVERY_REPLACER = "\/([^\/]+)",
 		PATH_EVERY_GLOBAL_MATCHER = /\*{2}/,
-		PATH_EVERY_GLOBAL_REPLACER = ".*",
+		PATH_EVERY_GLOBAL_REPLACER = "(.*)",
 		LEADING_BACKSLASHES_MATCH = /\/*$/;
 	
 	/**
@@ -60,7 +60,8 @@
 	};
 	
 	Router.prototype.extractFragment = function(url){
-		return url.substring(url.indexOf('#'));
+		var hash_index = url.indexOf('#');
+		return hash_index > 0 ? url.substring(hash_index) : '#/';
 	}
 
 	/**
@@ -89,7 +90,7 @@
 		if(!fragmentUrl)
 			throw new Error('Unable to compile request object');
 		var request = {};
-		request.href = '#' + fragmentUrl;
+		request.href = fragmentUrl;
 		if(params)
 			request.params = params;
 		var completeFragment = fragmentUrl.split('?');
@@ -187,10 +188,9 @@
 		var url = fragmentUrl;
 		if(url.length == 0)
 			return true;
-		url = '#' + url.replace( LEADING_BACKSLASHES_MATCH, '');
+		url = url.replace( LEADING_BACKSLASHES_MATCH, '');
 		urlToTest = (url.split('?'))[0]
 			  .replace( LEADING_BACKSLASHES_MATCH, '');/*Removes leading backslashes from the end of the url*/
-		
 		/*Check for all matching indexes*/
 		for(var p in this._routes) {
 			if(this._routes.hasOwnProperty(p)) {
@@ -200,6 +200,7 @@
 				}
 			}
 		}
+		
 		if(matchedIndexes.length > 0) {
 			/*If befores were added call them in order*/
 			if(befores.length > 0) {
