@@ -2,7 +2,7 @@
  * Router
  * v 0.6.0
  * author: Fabrizio Ruggeri
- * website: http://ramielcreations.wordpress.com/projects/router-js/
+ * website: http://ramielcreations.com/projects/router-js/
  */
 ;(function(window, undefined) {
 	/**
