@@ -1,6 +1,8 @@
 Router.js
 =========
 
+Discover on [Ramiel's creations](http://ramielcreations.wordpress.com/projects/router-js/ "Ramiel's creations page")
+
 Router.js is a simple yet powerful javascript plugin to handle hash fragment in order to route request.
 Router.js helps you to intercept request done trough fragment and match them using string or regular expressions.
 
