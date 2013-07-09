@@ -61,7 +61,7 @@
 	
 	Router.prototype.extractFragment = function(url){
 		var hash_index = url.indexOf('#');
-		return hash_index > 0 ? url.substring(hash_index) : '#/';
+		return hash_index >= 0 ? url.substring(hash_index) : '#/';
 	}
 
 	/**
