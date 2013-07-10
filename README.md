@@ -41,6 +41,7 @@ req is an object containing
 
 1. `href`, which is the url that matched
 2. `params`, all the params recognized in the url. We will talk about this in a while
+3. `queryString`, all the params passed as regular html query string
 
 What if more than a route match your url? Well, the next parameter will be populated with a function you can call to execute the next route which match. Elsewhere next is null
 
@@ -57,6 +58,18 @@ Let's see this:
 well, if the called url is 'http://www.webapp.com/#/users/jhon', then `username` in the callback will be 'jhon'!
 
 You can use as many params you want, they will appear in the `params` property of `req` object.
+
+
+###Query string
+
+Using previous example if we call 'http://www.webapp.com/#/users/jhon?key=value&foo=bar' then in req `queryString` will be populated and will be the following object
+
+```javascript
+	queryString: {
+		key: 'value',
+		foo: 'bar'	
+	}
+```
 
 ###Special symbols
 
