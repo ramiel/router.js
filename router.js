@@ -100,9 +100,9 @@
 			request.query = {};
 			for(var i = 0, qLen = queryString.length; i < qLen; i++){
 				queryKeyValue = queryString[i].split('=');
-				request.query[decodeURI(queryKeyValue[0])] = decodeURI(queryKeyValue[1]);
+				request.query[decodeURI(queryKeyValue[0])] = decodeURI(queryKeyValue[1].replace(/\+/g, '%20'));
 			}
-			request.queryString = request.query; //Leaved for compatibility. NOTE will be dropped on version >0.7.0
+			request.query;
 		}
 		if(splat && splat.length > 0){
 			request.splats = splat;
