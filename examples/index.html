@@ -112,6 +112,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', end
 <pre>
 var router = new Router()
 
+			.addRoute('#/search/', function(req,next){
+			 	console.group();
+			 	console.log('Matched /query/. Checking for query parameter' );
+			 	console.log(req.query);
+			 	console.groupEnd();
+			 })
+
 			 .addRoute('#/:username', function(req, next){
 				 console.group();
 				 console.log('Routed to user',req.params.username);
@@ -147,13 +154,6 @@ var router = new Router()
 					 next(new Error(),500);
 				 }
 				 console.groupEnd();
-			 })
-			 
-			 .addRoute('#/search/', function(req,next){
-			 	console.group();
-			 	console.log('Matched /query/. Checking for query parameter' );
-			 	console.log(arguments);
-			 	console.groupEnd();
 			 })
 			 
 			 .errors(404,function(){
