@@ -1,9 +1,18 @@
 <html>
 <head>
-<script type="text/javascript" src="../router.min.js"></script>
+	<title>Router.js Test</title>
+<script type="text/javascript" src="../router.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script type="text/javascript">
 var router = new Router()
-
+				
+			 .addRoute('#/search/', function(req,next){
+			 	console.group();
+			 	console.log('Matched /query/. Checking for query parameter' );
+			 	console.log(req.query);
+			 	console.groupEnd();
+			 })
+			 
 			 .addRoute('#/:username', function(req, next){
 				 console.group();
 				 console.log('Routed to user',req.params.username);
@@ -41,6 +50,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
+			 
 			 .errors(404,function(){
 				 console.group();
 				 console.warn('404',arguments);
@@ -62,6 +72,11 @@ var router = new Router()
 					 next();
 				 console.groupEnd();
 			 });
+			 
+			 window.clickForm = function clickForm(){
+			 	router.redirect('#/search?' + $('form').serialize());
+			 	return false;
+			 };
 </script>
 
 <style>
@@ -134,6 +149,13 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
+			 .addRoute('#/search/', function(req,next){
+			 	console.group();
+			 	console.log('Matched /query/. Checking for query parameter' );
+			 	console.log(arguments);
+			 	console.groupEnd();
+			 })
+			 
 			 .errors(404,function(){
 				 console.group();
 				 console.warn('404',arguments);
@@ -163,8 +185,12 @@ var router = new Router()
 	<li><a href="#/custom/everything">Is matched by /custom/* [#/custom/everything]'</a></li>
 	<li><a href="#/custom/everything/else">Is matched by /custom/** [#/custom/everything/else]'</a></li>
 	<li><a href="#/nothing/to/match">404 test [#/nothing/to/match]'</a></li>
-	
+	<li><a href="javascript:void()" onclick="return window.clickForm()">query test [#/query?q=search for nothing]'</a></li>
 </ul>
+
+<form>
+	<input type="hidden" name="q" value="search for nothing" />
+</form>
 
 
 
