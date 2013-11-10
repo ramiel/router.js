@@ -45,8 +45,9 @@ req is an object containing
 
 What if more than a route match your url? Well, the next parameter will be populated with a function you can call to execute the next route which match. Elsewhere next is null
 
+**Note**:
 ```
-**Note**: `addRoute` has many aliases. You can use also: `add`, `route`, `get`!
+ `addRoute` has many aliases. You can use also: `add`, `route`, `get`!
 ```
 
 ###Parametric route
