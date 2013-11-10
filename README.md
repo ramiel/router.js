@@ -47,7 +47,7 @@ What if more than a route match your url? Well, the next parameter will be popul
 
 **Note**:
 ```
- `addRoute` has many aliases. You can use also: `add`, `route`, `get`!
+Method `addRoute` has many aliases. You can use also: `add`, `route`, `get`!
 ```
 
 ###Parametric route
