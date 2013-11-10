@@ -4,14 +4,14 @@
 <script type="text/javascript">
 var router = new Router()
 
-			 .addRoute('#/:username', function(req, next){
+			 .route('#/:username', function(req, next){
 				 console.group();
 				 console.log('Routed to user',req.params.username);
 				 console.log(arguments);
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute(/#\/foo\/bar\/?(.*)/i,function(req, next){
+			 .route(/#\/foo\/bar\/?(.*)/i,function(req, next){
 				 console.group();
 				 console.log('Matched regexp path');
 				 if(req.splats && req.splats[0]){
@@ -21,7 +21,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute('#/custom/*', function(req, next){
+			 .route('#/custom/*', function(req, next){
 				 console.group();
 				 console.log('Matched first word after /custom/' );
 				 console.log(arguments);
@@ -31,7 +31,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute('#/custom/**', function(req, next){
+			 .route('#/custom/**', function(req, next){
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
@@ -97,14 +97,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', end
 <pre>
 var router = new Router()
 
-			 .addRoute('#/:username', function(req, next){
+			 .route('#/:username', function(req, next){
 				 console.group();
 				 console.log('Routed to user',req.params.username);
 				 console.log(arguments);
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute(/#\/foo\/bar\/?(.*)/i,function(req, next){
+			 .route(/#\/foo\/bar\/?(.*)/i,function(req, next){
 				 console.group();
 				 console.log('Matched regexp path');
 				 if(req.splats && req.splats[0]){
@@ -114,7 +114,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute('#/custom/*', function(req, next){
+			 .route('#/custom/*', function(req, next){
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
@@ -124,7 +124,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute('#/custom/**', function(req, next){
+			 .route('#/custom/**', function(req, next){
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
