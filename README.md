@@ -23,12 +23,12 @@ Let's see
 
 ```javascript
 	var router = new Router()
-		   	.add('#/users', function(req, next){
+		   	.addRoute('#/users', function(req, next){
 				/* Do something */
 			});
 ```
 
-There are three noticeble aspects. Your router object and all its functions are chainable. So after an `add` Route you can chain onther one and so on.
+There are three noticeble aspects. Your router object and all its functions are chainable. So after an `addRoute` Route you can chain onther one and so on.
 The matching string is '#/users', so if your fragment match this pattern your callback will be fired.
 
 Callback is populated with two arguments:
@@ -44,6 +44,10 @@ req is an object containing
 3. `query`, all the params passed as regular html query string
 
 What if more than a route match your url? Well, the next parameter will be populated with a function you can call to execute the next route which match. Elsewhere next is null
+
+```
+**Note**: `addRoute` has many aliases. You can use also: `add`, `route`, `get`!
+```
 
 ###Parametric route
 

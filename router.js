@@ -263,7 +263,7 @@
 	};
 
 	/**
-	 * Add a routes to possible route match
+	 * Add a routes to possible route match. Alias : route, add, get
 	 * @param {String|RexExp} path A string or a regular expression to match
 	 * @param {Function} callback Function to be fired on path match
 	 *                            Callback will be fired with (req, next)
@@ -272,7 +272,10 @@
 	 * 																    'params': Object containing parameter for the request plus splat
 	 * 																}
 	 */
-	Router.prototype.addRoute = function(path, callback) {
+	Router.prototype.addRoute = 
+	Router.prototype.add = 
+	Router.prototype.route = 
+	Router.prototype.get = function(path, callback) {
 		var match, paramNames = [];
 		if('string' == typeof path) {
 			/*Remove leading backslash from the end of the string*/
