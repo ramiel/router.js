@@ -1,6 +1,6 @@
 /***
- * Router
- * v 0.6.0
+ * Router.js
+ * v 0.6.1
  * author: Fabrizio Ruggeri
  * website: http://ramielcreations.com/projects/router-js/
  */
