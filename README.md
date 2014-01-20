@@ -55,7 +55,7 @@ Let's see this:
 				});
 ```
 
-well, if the called url is 'http://www.webapp.com/#/users/jhon', then `username` in the callback will be 'jhon'!
+well, if the called url is 'http://www.webapp.com/#/users/john', then `username` in the callback will be 'john'!
 
 You can use as many params you want, they will appear in the `params` property of `req` object.
 
@@ -85,11 +85,11 @@ Consider:
 
 Now all of this url will match the rule:
 
-* http://www.webapp.com/#/users/jhon
+* http://www.webapp.com/#/users/john
 * http://www.webapp.com/#/users/asdasd
 * http://www.webapp.com/#/users/lua
 
-The url http://www.webapp.com/#/users/jhon/foo will not match! Remember that I've said 'before next backslash'!
+The url http://www.webapp.com/#/users/john/foo will not match! Remember that I've said 'before next backslash'!
 To match even it you must use the `**` matcher. It means **everything**
 
 ```javascript
@@ -100,9 +100,9 @@ To match even it you must use the `**` matcher. It means **everything**
 
 All of this urls match the rule:
 
-* http://www.webapp.com/#/users/jhon
-* http://www.webapp.com/#/users/jhon/snow
-* http://www.webapp.com/#/users/jhon/snow/wolf
+* http://www.webapp.com/#/users/john
+* http://www.webapp.com/#/users/john/snow
+* http://www.webapp.com/#/users/john/snow/wolf
 
 ##Next argument
 
@@ -121,7 +121,7 @@ Considering this routes:
 					});
 ```
 
-As you can see both the routes match the url `http://www.webapp.com/#/users/jhon`. In Router.js only the first declared match will be called unless you explicitly
+As you can see both the routes match the url `http://www.webapp.com/#/users/john`. In Router.js only the first declared match will be called unless you explicitly
 call next, then also the second match will be fired and so on. Remember, `next` will be a function only if another route matches.
 
 Next will be useful also to fire erros, we will see this in a while, after talking about error handling

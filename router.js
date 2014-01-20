@@ -29,8 +29,7 @@
 		LEADING_BACKSLASHES_MATCH = /\/*$/;
 	
 	/**
-	 Router
-	 @class Router
+	 * Router Class
 	 */
 	var Router = function() {
 		this._routes = [];
@@ -59,6 +58,11 @@
 		}.bind(this);
 	};
 	
+	/**
+	 * Extract fragments from url (everything after '#')
+	 * @param  String url
+	 * @return String Route fragment
+	 */
 	Router.prototype.extractFragment = function(url){
 		var hash_index = url.indexOf('#');
 		return hash_index >= 0 ? url.substring(hash_index) : '#/';
@@ -84,7 +88,8 @@
 	 * Build a request object based on passed information
 	 * @param {Object} urlObj
 	 * @param {Object} params Params of request if any. Not mandatory
-	 * @throw error Error if urlObj is not passed
+	 * @throw error Error if urlObj is not 
+	 * @return {Object} Request object
 	 */
 	Router.prototype._buildRequestObject = function(fragmentUrl, params, splat){
 		if(!fragmentUrl)
@@ -179,7 +184,8 @@
 	};
 	
 	/**
-	 * On hashChange route request through registered handler
+	 * [On hashChange route request through registered handler
+	 * @param  {string} fragmentUrl
 	 */
 	Router.prototype._route = function( fragmentUrl ) {
 		var route = '', 
@@ -260,10 +266,10 @@
 	 * Add a routes to possible route match
 	 * @param {String|RexExp} path A string or a regular expression to match
 	 * @param {Function} callback Function to be fired on path match
-	 * 					  Callback will be fired with (req, next)
-	 * 				      req is the current Request and contains {
-	 * 																 'href': local href,
-	 * 																 'params': Object containing parameter for the request plus splat
+	 *                            Callback will be fired with (req, next)
+	 *                            req is the current Request and contains {
+	 * 							                    					'href': local href,
+	 * 																    'params': Object containing parameter for the request plus splat
 	 * 																}
 	 */
 	Router.prototype.addRoute = function(path, callback) {
