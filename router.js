@@ -20,7 +20,7 @@
 	/**
 	 * Thanks to Sammy.js
 	 */
-	var PATH_REPLACER = "([^\/]+)",
+	var PATH_REPLACER = "([^\/\\?]+)",
 		PATH_NAME_MATCHER = /:([\w\d]+)/g,
 		PATH_EVERY_MATCHER = /\/\*(?!\*)/,
 		PATH_EVERY_REPLACER = "\/([^\/]+)",
@@ -287,7 +287,7 @@
 			path = new RegExp(path
 					      .replace(PATH_NAME_MATCHER, PATH_REPLACER)
 					      .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER)
-					      .replace(PATH_EVERY_GLOBAL_MATCHER, PATH_EVERY_GLOBAL_REPLACER) + "$");
+					      .replace(PATH_EVERY_GLOBAL_MATCHER, PATH_EVERY_GLOBAL_REPLACER) + "(?:\\?.+)?$");
 		}
 		this._routes.push({
 			'path' : path,
