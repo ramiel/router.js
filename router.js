@@ -34,11 +34,11 @@
 	 * @constructor
 	 */
 	var Router = function() {
-		/* @private */
+		/**@private */
 		this._routes = [];
-		/*@private */
+		/**@private */
 		this._befores = [];
-		/*@private */
+		/**@private */
 		this._errors = {
 			'_'		: function(err, url, httpCode) {
 				if(console && console.warn) console.warn('Router.js : '+httpCode);
@@ -53,7 +53,7 @@
 				}
 			}
 		};
-		/*@private */
+		/**@private */
 		this._paused = false;
 		
 		window.onhashchange = function(e) {
