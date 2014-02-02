@@ -1,8 +1,9 @@
 /***
- * Router.js
+ * @preserve Router.js
  * v 0.6.1
  * author: Fabrizio Ruggeri
  * website: http://ramielcreations.com/projects/router-js/
+ * @license GPL-v2
  */
 ;(function(window, undefined) {
 	/**
@@ -30,10 +31,14 @@
 	
 	/**
 	 * Router Class
+	 * @constructor
 	 */
 	var Router = function() {
+		/**@private */
 		this._routes = [];
+		/**@private */
 		this._befores = [];
+		/**@private */
 		this._errors = {
 			'_'		: function(err, url, httpCode) {
 				if(console && console.warn) console.warn('Router.js : '+httpCode);
@@ -48,11 +53,12 @@
 				}
 			}
 		};
+		/**@private */
 		this._paused = false;
 		
 		window.onhashchange = function(e) {
 			if(!this._paused){
-				this._route( this.extractFragment(window.location.href) );
+				this._route( this._extractFragment(window.location.href) );
 			}
 			return true;
 		}.bind(this);
@@ -60,10 +66,11 @@
 	
 	/**
 	 * Extract fragments from url (everything after '#')
-	 * @param  String url
-	 * @return String Route fragment
+	 * @param  {String} url
+	 * @return {String} Route fragment
+	 * @private
 	 */
-	Router.prototype.extractFragment = function(url){
+	Router.prototype._extractFragment = function(url){
 		var hash_index = url.indexOf('#');
 		return hash_index >= 0 ? url.substring(hash_index) : '#/';
 	}
@@ -73,6 +80,7 @@
 	 * @param {String|Number} httpCode The httpCode of the error to thrown
 	 * @param {Object} err, Error to thrown
 	 * @param {String} url, Url which generated the error
+	 * @private
 	 */
 	Router.prototype._throwsRouteError = function( httpCode, err, url ) {
 		if(this._errors['_'+httpCode] instanceof Function)
@@ -90,6 +98,7 @@
 	 * @param {Object} params Params of request if any. Not mandatory
 	 * @throw error Error if urlObj is not 
 	 * @return {Object} Request object
+	 * @private
 	 */
 	Router.prototype._buildRequestObject = function(fragmentUrl, params, splat){
 		if(!fragmentUrl)
@@ -120,6 +129,7 @@
 	 * @param {Object} urlObj Object of the url which fired this route
 	 * @param {String} url Url which fired this route
 	 * @param {Array} matchedIndexes Array of matched indexes
+	 * @private
 	 */
 	Router.prototype._followRoute = function( fragmentUrl, url, matchedIndexes ) {
 		var index = matchedIndexes.splice(0, 1), 
@@ -162,6 +172,7 @@
 	 * @param {Object} urlObj Object of the url which fired this route
 	 * @param {String} url Url which fired this route
 	 * @param {Array} matchedIndexes Array of matched indexes
+	 * @private
 	 */
 	Router.prototype._routeBefores = function(befores, before, fragmentUrl, url, matchedIndexes) {
 		var next;
@@ -184,8 +195,9 @@
 	};
 	
 	/**
-	 * [On hashChange route request through registered handler
-	 * @param  {string} fragmentUrl
+	 * On hashChange route request through registered handler
+	 * @param  {String} fragmentUrl
+	 * @private
 	 */
 	Router.prototype._route = function( fragmentUrl ) {
 		var route = '', 
@@ -240,7 +252,7 @@
 		triggerNow = 'undefined' == typeof triggerNow ? false : triggerNow;
 		this._paused = false;
 		if(triggerNow){
-			this._route( this.extractFragment(window.location.href) );
+			this._route( this._extractFragment(window.location.href) );
 		}
 	};
 	
@@ -259,7 +271,7 @@
 	Router.prototype.redirect = function(url){
 		this.setLocation(url);
 		if(!this._paused)
-			this._route( this.extractFragment(url) );
+			this._route( this._extractFragment(url) );
 	};
 
 	/**
@@ -300,6 +312,7 @@
 	
 	/**
 	 * Adds a before callback. Will be fired before every route
+	 * @params {Function} callback
 	 */
 	Router.prototype.before = function(callback) {
 		this._befores.push(callback);
@@ -330,7 +343,7 @@
 	 */
 	Router.prototype.run = function( startUrl ){
 		if(!startUrl){
-			startUrl = this.extractFragment(window.location.href);
+			startUrl = this._extractFragment(window.location.href);
 		}
 		startUrl = startUrl.indexOf('#') == 0 ? startUrl : '#'+startUrl;
 		this.redirect( startUrl );
