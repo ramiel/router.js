@@ -61,7 +61,7 @@ Router constructor accept an object for options
 
 Valid options:
 
-1. `ignorecase` : The route do not consider casing. Default: true
+1. `ignorecase` : The router do not consider casing. Default: `true`
 
 
 ###Parametric route
