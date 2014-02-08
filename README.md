@@ -50,6 +50,20 @@ What if more than a route match your url? Well, the next parameter will be popul
 Method `addRoute` has many aliases. You can use also: `add`, `route`, `get`!
 ```
 
+###Options
+
+Router constructor accept an object for options
+
+```javascript
+	var options = {ignorecase: true}
+	var router = new Router(options);
+```
+
+Valid options:
+
+1. `ignorecase` : The router do not consider casing. Default: `true`
+
+
 ###Parametric route
 
 Let's see this:

@@ -1,6 +1,6 @@
 /***
  * @preserve Router.js
- * v 0.6.2
+ * v 0.6.3
  * author: Fabrizio Ruggeri
  * website: http://ramielcreations.com/projects/router-js/
  * @license GPL-v2
@@ -16,6 +16,18 @@
 				return originalFunction.apply(object, args.concat(Array.prototype.slice.call(arguments)));
 			};
 		};
+	}
+
+	/**
+	 * Commodity function to extend parameters and default options
+	 * @return {object} merged objects
+	 */
+	function extend(){
+		for(var i=1; i<arguments.length; i++)
+	    	for(var key in arguments[i])
+	    		if(arguments[i].hasOwnProperty(key))
+	            	arguments[0][key] = arguments[i][key];
+	    return arguments[0];
 	}
 	
 	/**
@@ -33,7 +45,9 @@
 	 * Router Class
 	 * @constructor
 	 */
-	var Router = function() {
+	var Router = function(options) {
+		/**@private*/
+		this._options = extend({ignorecase: true}, options);
 		/**@private */
 		this._routes = [];
 		/**@private */
@@ -288,7 +302,9 @@
 	Router.prototype.add = 
 	Router.prototype.route = 
 	Router.prototype.get = function(path, callback) {
-		var match, paramNames = [];
+		var match, 
+			modifiers = (this._options.ignorecase ? 'i' : ''), 
+			paramNames = [];
 		if('string' == typeof path) {
 			/*Remove leading backslash from the end of the string*/
 			path = path.replace(LEADING_BACKSLASHES_MATCH,'');
@@ -299,7 +315,7 @@
 			path = new RegExp(path
 					      .replace(PATH_NAME_MATCHER, PATH_REPLACER)
 					      .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER)
-					      .replace(PATH_EVERY_GLOBAL_MATCHER, PATH_EVERY_GLOBAL_REPLACER) + "(?:\\?.+)?$");
+					      .replace(PATH_EVERY_GLOBAL_MATCHER, PATH_EVERY_GLOBAL_REPLACER) + "(?:\\?.+)?$", modifiers);
 		}
 		this._routes.push({
 			'path' : path,
