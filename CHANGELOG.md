@@ -1,5 +1,8 @@
 Changelog
 =========
+v next
+Added support for options. ignorecase option, default true
+
 v 0.6.2
 Added map file
 Bugfix: Query string do not appear in regular params value
