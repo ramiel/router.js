@@ -91,6 +91,20 @@ Using previous example if we call 'http://www.webapp.com/#/users/jhon?key=value&
 	}
 ```
 
+###Req.get - One method to get them all (*new in 0.7*)
+Instead of looking in req.params and in req.query, you can use `req.get( key, default_value )` method.
+It will look in params, the in query. If nothing has found you can provide a fallback value or `undefined` will be returned.
+
+```javascript
+	//Calling #/users/john?age=25
+	router.addRoute('#/users/:username', function(req,next){
+		var username = req.get('username'); //will be 'john' because is found in params
+		var age = req.get('age',18); //will be 25 because is found in query
+		var surname = req.get('surname','Snow'); //will be 'Snow' because of provided default value
+		var address = req.get('address'); //will be undefined
+	});
+```
+
 ###Special symbols
 
 The other symbol you can use in your route is `*`. It matches every word before next backslash.
