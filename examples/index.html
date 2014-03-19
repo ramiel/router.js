@@ -6,10 +6,11 @@
 <script type="text/javascript">
 var router = new Router()
 				
-			 .addRoute('#/search/', function(req,next){
+			 .addRoute('#/search/:testparam', function(req,next){
 			 	console.group();
 			 	console.log('Matched /query/. Checking for query parameter' );
 			 	console.log(req.query);
+			 	console.log(req);
 			 	console.groupEnd();
 			 })
 			 
@@ -74,7 +75,7 @@ var router = new Router()
 			 });
 			 
 			 window.clickForm = function clickForm(){
-			 	router.redirect('#/search?' + $('form').serialize());
+			 	router.redirect('#/search/testvalue?' + $('form').serialize());
 			 	return false;
 			 };
 </script>
@@ -185,7 +186,7 @@ var router = new Router()
 	<li><a href="#/custom/everything">Is matched by /custom/* [#/custom/everything]'</a></li>
 	<li><a href="#/custom/everything/else">Is matched by /custom/** [#/custom/everything/else]'</a></li>
 	<li><a href="#/nothing/to/match">404 test [#/nothing/to/match]'</a></li>
-	<li><a href="javascript:void()" onclick="return window.clickForm()">query test [#/query?q=search for nothing]'</a></li>
+	<li><a href="javascript:void()" onclick="return window.clickForm()">query test [#/search?q=search for nothing]'</a></li>
 </ul>
 
 <form>
