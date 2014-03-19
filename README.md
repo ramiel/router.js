@@ -20,7 +20,8 @@ Include Router.js in your application
 ```javascript
 //Example
 require(["router", ...], function(Router, ...) {
-	//Your code
+	var router = new Router();
+	//...
 });
 ```
 
@@ -104,7 +105,7 @@ Using previous example if we call 'http://www.webapp.com/#/users/jhon?key=value&
 	}
 ```
 
-###Req.get - One method to get them all (*new in 0.7*)
+###Req.get - One method to get them all
 Instead of looking in req.params and in req.query, you can use `req.get( key, default_value )` method.
 It will look in params, the in query. If nothing has found you can provide a fallback value or `undefined` will be returned.
 
@@ -250,19 +251,30 @@ Have you noticed redirect method? Well it's time to talk about utility methods
 
 ##Utility methods
 
-In Router.js are present two utility method. Just two because probably you'll need just them. Actually there could be just one, but I\'m generous!
+In Router.js are present some utility methods.
 
+- `redirect`
 ```javascript
-	redirect(url)
+	router.redirect(url)
 ```
 
 this will redirect your application to desired url firing routes normally
 
+- `setLocation`
 ```javascript
-	setLocation(url)
+	router.setLocation(url)
 ```
 
 this will redirect your application to desired url **WITHOUT** firing any routes!
+
+- `play` `pause`
+```javascript
+	router.pause();
+	document.location.href='/#/ignore/me'; //This will be ignored until you call play
+	router.play();
+```
+
+`Pause` stop router to react to hash changes. `Play` ripristinate router functionalities.
 
 ##RegExp
 
@@ -283,7 +295,7 @@ You can use regular expression to obtain more grain fined routes
 
 ##Run
 
-Router has a special method (yes, another one, I lied). You can call run after you have setted all your route to immediately launch routes parsing.
+Router has a special method. You can call run after you have setted all your route to immediately launch routes parsing.
 Run has a parameter, 'startUrl'. If is setted it will redirect immediately to that url, alse it will read current browser url.
 If you do not call run Router will do nothing until next fragment change.
 
@@ -299,10 +311,27 @@ If you do not call run Router will do nothing until next fragment change.
 
 * I've used different router like library but some do too few, other too much. I need a little, clear script which do the essential.
 
-* Code written using Router.js is higly readable (not my fault Sammy.js!)
+* Code written using Router.js is higly readable
+
+##Compatibility
+Desktop:
+
+- Chrome 5.0+
+- Firefox 3.6+
+- Safari 5.0+
+- Opera 10.6+
+- IE 8+
+
+Mobile:
+- iOS Safari 4.0+
+- Android 
+	- Browser 2.2+
+    - Chrome all
+    - Firefox all
+- IE all
+- Opera Mobile 11.0+
  
 	
 ## Author
 
-
-Fabrizio 'ramiel' Ruggeri
+[Fabrizio 'ramiel' Ruggeri](http://ramielcreations.com/ "Ramiel's creations page")
