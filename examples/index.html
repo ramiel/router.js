@@ -10,6 +10,8 @@
 			 	console.group();
 			 	console.log('Matched /query/. Checking for query parameter' );
 			 	console.log(req.query);
+			 	console.log('Using req.get("q")',req.get('q'));
+			 	console.log('Using req.get("missing_param","default value")',req.get("missing_param","default value"));
 			 	console.log(req);
 			 	console.groupEnd();
 			 })
@@ -17,6 +19,7 @@
 			 .addRoute('#/:username', function(req, next){
 				 console.group();
 				 console.log('Routed to user',req.params.username);
+				 console.log('Can also use req.get(\'username\')',req.get('username'));
 				 console.log(arguments);
 				 console.groupEnd();
 			 })
@@ -116,6 +119,8 @@ var router = new Router()
 			.addRoute('#/search/', function(req,next){
 			 	console.group();
 			 	console.log('Matched /query/. Checking for query parameter' );
+			 	console.log('Using req.get("q")',req.get('q'));
+			 	console.log('Using req.get("missing_param","default value")',req.get("missing_param","default value"));
 			 	console.log(req.query);
 			 	console.groupEnd();
 			 })
@@ -123,6 +128,7 @@ var router = new Router()
 
 				 console.group();
 				 console.log('Routed to user',req.params.username);
+				  console.log('Can also use req.get(\'username\')',req.get('username'));
 				 console.log(arguments);
 				 console.groupEnd();
 			 })
