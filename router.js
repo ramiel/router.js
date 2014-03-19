@@ -42,6 +42,32 @@
 		LEADING_BACKSLASHES_MATCH = /\/*$/;
 	
 	/**
+	 * Request class
+	 * @param {string} href Url for request object
+	 * @constructor
+	 */
+	var Request = function(href){
+		this.href = href;
+		this.params;
+		this.query;
+		this.splat;
+	}
+
+	/**
+	 * Return value passed in request using, in order params, query and eventually default_value if provided
+	 * @param {string} key Key of the value to retrieve
+	 * @param {mixed} default_value Default value if nothing found. Default to nothing
+	 */
+	Request.prototype.get = function(key, default_value){
+		return (this.params && this.params[key] !== undefined) 
+				? this.params[key]
+				: (this.query && this.query[key] !== undefined)
+					? this.query[key]
+					: (default_value !== undefined)
+						? default_value : undefined;
+	}
+
+	/**
 	 * Router Class
 	 * @constructor
 	 */
@@ -117,8 +143,7 @@
 	Router.prototype._buildRequestObject = function(fragmentUrl, params, splat){
 		if(!fragmentUrl)
 			throw new Error('Unable to compile request object');
-		var request = {};
-		request.href = fragmentUrl;
+		var request = new Request(fragmentUrl);
 		if(params)
 			request.params = params;
 		var completeFragment = fragmentUrl.split('?');
@@ -149,7 +174,7 @@
 		var index = matchedIndexes.splice(0, 1), 
 			route = this._routes[index], 
 			match = url.match(route.path), 
-			request = {}, 
+			request, 
 			params = {},
 			splat = [];
 		if(!route){
@@ -318,11 +343,6 @@
 					      .replace(PATH_EVERY_GLOBAL_MATCHER, PATH_EVERY_GLOBAL_REPLACER) + "(?:\\?.+)?$", modifiers);
 		}
 		this._routes.push({
-			'path' : path,
-			'paramNames' : paramNames,
-			'routeAction' : callback
-		});
-		console.log({
 			'path' : path,
 			'paramNames' : paramNames,
 			'routeAction' : callback
