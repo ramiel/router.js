@@ -1,10 +1,10 @@
 <html>
 <head>
 	<title>Router.js Test</title>
-<script type="text/javascript" src="../router.js"></script>
-<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-<script type="text/javascript">
-var router = new Router()
+	<script type="text/javascript" src="../router.js"></script>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script type="text/javascript">
+	var router = new Router()
 				
 			 .addRoute('#/search/:testparam', function(req,next){
 			 	console.group();
@@ -21,7 +21,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute(/#\/foo\/bar\/?(.*)/i,function(req, next){
+			 .route(/#\/foo\/bar\/?(.*)/i,function(req, next){
 				 console.group();
 				 console.log('Matched regexp path');
 				 if(req.splats && req.splats[0]){
@@ -31,7 +31,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute('#/custom/*', function(req, next){
+			 .route('#/custom/*', function(req, next){
 				 console.group();
 				 console.log('Matched first word after /custom/' );
 				 console.log(arguments);
@@ -41,7 +41,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute('#/custom/**', function(req, next){
+			 .route('#/custom/**', function(req, next){
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
@@ -119,15 +119,15 @@ var router = new Router()
 			 	console.log(req.query);
 			 	console.groupEnd();
 			 })
-
 			 .addRoute('#/:username', function(req, next){
+
 				 console.group();
 				 console.log('Routed to user',req.params.username);
 				 console.log(arguments);
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute(/#\/foo\/bar\/?(.*)/i,function(req, next){
+			 .route(/#\/foo\/bar\/?(.*)/i,function(req, next){
 				 console.group();
 				 console.log('Matched regexp path');
 				 if(req.splats && req.splats[0]){
@@ -137,7 +137,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute('#/custom/*', function(req, next){
+			 .route('#/custom/*', function(req, next){
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
@@ -147,7 +147,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
-			 .addRoute('#/custom/**', function(req, next){
+			 .route('#/custom/**', function(req, next){
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);

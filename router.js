@@ -1,8 +1,9 @@
 /***
- * Router
- * v 0.6.0
+ * @preserve Router.js
+ * v 0.6.3
  * author: Fabrizio Ruggeri
  * website: http://ramielcreations.com/projects/router-js/
+ * @license GPL-v2
  */
 ;(function(window, undefined) {
 	/**
@@ -16,11 +17,23 @@
 			};
 		};
 	}
+
+	/**
+	 * Commodity function to extend parameters and default options
+	 * @return {object} merged objects
+	 */
+	function extend(){
+		for(var i=1; i<arguments.length; i++)
+	    	for(var key in arguments[i])
+	    		if(arguments[i].hasOwnProperty(key))
+	            	arguments[0][key] = arguments[i][key];
+	    return arguments[0];
+	}
 	
 	/**
 	 * Thanks to Sammy.js
 	 */
-	var PATH_REPLACER = "([^\/]+)",
+	var PATH_REPLACER = "([^\/\\?]+)",
 		PATH_NAME_MATCHER = /:([\w\d]+)/g,
 		PATH_EVERY_MATCHER = /\/\*(?!\*)/,
 		PATH_EVERY_REPLACER = "\/([^\/]+)",
@@ -30,10 +43,16 @@
 	
 	/**
 	 * Router Class
+	 * @constructor
 	 */
-	var Router = function() {
+	var Router = function(options) {
+		/**@private*/
+		this._options = extend({ignorecase: true}, options);
+		/**@private */
 		this._routes = [];
+		/**@private */
 		this._befores = [];
+		/**@private */
 		this._errors = {
 			'_'		: function(err, url, httpCode) {
 				if(console && console.warn) console.warn('Router.js : '+httpCode);
@@ -48,11 +67,12 @@
 				}
 			}
 		};
+		/**@private */
 		this._paused = false;
 		
 		window.onhashchange = function(e) {
 			if(!this._paused){
-				this._route( this.extractFragment(window.location.href) );
+				this._route( this._extractFragment(window.location.href) );
 			}
 			return true;
 		}.bind(this);
@@ -60,10 +80,11 @@
 	
 	/**
 	 * Extract fragments from url (everything after '#')
-	 * @param  String url
-	 * @return String Route fragment
+	 * @param  {String} url
+	 * @return {String} Route fragment
+	 * @private
 	 */
-	Router.prototype.extractFragment = function(url){
+	Router.prototype._extractFragment = function(url){
 		var hash_index = url.indexOf('#');
 		return hash_index >= 0 ? url.substring(hash_index) : '#/';
 	}
@@ -73,6 +94,7 @@
 	 * @param {String|Number} httpCode The httpCode of the error to thrown
 	 * @param {Object} err, Error to thrown
 	 * @param {String} url, Url which generated the error
+	 * @private
 	 */
 	Router.prototype._throwsRouteError = function( httpCode, err, url ) {
 		if(this._errors['_'+httpCode] instanceof Function)
@@ -90,6 +112,7 @@
 	 * @param {Object} params Params of request if any. Not mandatory
 	 * @throw error Error if urlObj is not 
 	 * @return {Object} Request object
+	 * @private
 	 */
 	Router.prototype._buildRequestObject = function(fragmentUrl, params, splat){
 		if(!fragmentUrl)
@@ -120,6 +143,7 @@
 	 * @param {Object} urlObj Object of the url which fired this route
 	 * @param {String} url Url which fired this route
 	 * @param {Array} matchedIndexes Array of matched indexes
+	 * @private
 	 */
 	Router.prototype._followRoute = function( fragmentUrl, url, matchedIndexes ) {
 		var index = matchedIndexes.splice(0, 1), 
@@ -162,6 +186,7 @@
 	 * @param {Object} urlObj Object of the url which fired this route
 	 * @param {String} url Url which fired this route
 	 * @param {Array} matchedIndexes Array of matched indexes
+	 * @private
 	 */
 	Router.prototype._routeBefores = function(befores, before, fragmentUrl, url, matchedIndexes) {
 		var next;
@@ -184,8 +209,9 @@
 	};
 	
 	/**
-	 * [On hashChange route request through registered handler
-	 * @param  {string} fragmentUrl
+	 * On hashChange route request through registered handler
+	 * @param  {String} fragmentUrl
+	 * @private
 	 */
 	Router.prototype._route = function( fragmentUrl ) {
 		var route = '', 
@@ -240,7 +266,7 @@
 		triggerNow = 'undefined' == typeof triggerNow ? false : triggerNow;
 		this._paused = false;
 		if(triggerNow){
-			this._route( this.extractFragment(window.location.href) );
+			this._route( this._extractFragment(window.location.href) );
 		}
 	};
 	
@@ -259,11 +285,11 @@
 	Router.prototype.redirect = function(url){
 		this.setLocation(url);
 		if(!this._paused)
-			this._route( this.extractFragment(url) );
+			this._route( this._extractFragment(url) );
 	};
 
 	/**
-	 * Add a routes to possible route match
+	 * Add a routes to possible route match. Alias : route, add, get
 	 * @param {String|RexExp} path A string or a regular expression to match
 	 * @param {Function} callback Function to be fired on path match
 	 *                            Callback will be fired with (req, next)
@@ -272,8 +298,13 @@
 	 * 																    'params': Object containing parameter for the request plus splat
 	 * 																}
 	 */
-	Router.prototype.addRoute = function(path, callback) {
-		var match, paramNames = [];
+	Router.prototype.addRoute = 
+	Router.prototype.add = 
+	Router.prototype.route = 
+	Router.prototype.get = function(path, callback) {
+		var match, 
+			modifiers = (this._options.ignorecase ? 'i' : ''), 
+			paramNames = [];
 		if('string' == typeof path) {
 			/*Remove leading backslash from the end of the string*/
 			path = path.replace(LEADING_BACKSLASHES_MATCH,'');
@@ -284,7 +315,7 @@
 			path = new RegExp(path
 					      .replace(PATH_NAME_MATCHER, PATH_REPLACER)
 					      .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER)
-					      .replace(PATH_EVERY_GLOBAL_MATCHER, PATH_EVERY_GLOBAL_REPLACER) + "$");
+					      .replace(PATH_EVERY_GLOBAL_MATCHER, PATH_EVERY_GLOBAL_REPLACER) + "(?:\\?.+)?$", modifiers);
 		}
 		this._routes.push({
 			'path' : path,
@@ -297,6 +328,7 @@
 	
 	/**
 	 * Adds a before callback. Will be fired before every route
+	 * @params {Function} callback
 	 */
 	Router.prototype.before = function(callback) {
 		this._befores.push(callback);
@@ -327,7 +359,7 @@
 	 */
 	Router.prototype.run = function( startUrl ){
 		if(!startUrl){
-			startUrl = this.extractFragment(window.location.href);
+			startUrl = this._extractFragment(window.location.href);
 		}
 		startUrl = startUrl.indexOf('#') == 0 ? startUrl : '#'+startUrl;
 		this.redirect( startUrl );
