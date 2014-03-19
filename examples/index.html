@@ -1,12 +1,25 @@
 <html>
 <head>
-<script type="text/javascript" src="../router.js"></script>
-<script type="text/javascript">
-var router = new Router()
-
-			 .route('#/:username', function(req, next){
+	<title>Router.js Test</title>
+	<script type="text/javascript" src="../router.js"></script>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script type="text/javascript">
+	var router = new Router()
+				
+			 .addRoute('#/search/:testparam', function(req,next){
+			 	console.group();
+			 	console.log('Matched /query/. Checking for query parameter' );
+			 	console.log(req.query);
+			 	console.log('Using req.get("q")',req.get('q'));
+			 	console.log('Using req.get("missing_param","default value")',req.get("missing_param","default value"));
+			 	console.log(req);
+			 	console.groupEnd();
+			 })
+			 
+			 .addRoute('#/:username', function(req, next){
 				 console.group();
 				 console.log('Routed to user',req.params.username);
+				 console.log('Can also use req.get(\'username\')',req.get('username'));
 				 console.log(arguments);
 				 console.groupEnd();
 			 })
@@ -41,6 +54,7 @@ var router = new Router()
 				 console.groupEnd();
 			 })
 			 
+			 
 			 .errors(404,function(){
 				 console.group();
 				 console.warn('404',arguments);
@@ -62,6 +76,11 @@ var router = new Router()
 					 next();
 				 console.groupEnd();
 			 });
+			 
+			 window.clickForm = function clickForm(){
+			 	router.redirect('#/search/testvalue?' + $('form').serialize());
+			 	return false;
+			 };
 </script>
 
 <style>
@@ -97,9 +116,19 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', end
 <pre>
 var router = new Router()
 
-			 .route('#/:username', function(req, next){
+			.addRoute('#/search/', function(req,next){
+			 	console.group();
+			 	console.log('Matched /query/. Checking for query parameter' );
+			 	console.log('Using req.get("q")',req.get('q'));
+			 	console.log('Using req.get("missing_param","default value")',req.get("missing_param","default value"));
+			 	console.log(req.query);
+			 	console.groupEnd();
+			 })
+			 .addRoute('#/:username', function(req, next){
+
 				 console.group();
 				 console.log('Routed to user',req.params.username);
+				  console.log('Can also use req.get(\'username\')',req.get('username'));
 				 console.log(arguments);
 				 console.groupEnd();
 			 })
@@ -163,8 +192,12 @@ var router = new Router()
 	<li><a href="#/custom/everything">Is matched by /custom/* [#/custom/everything]'</a></li>
 	<li><a href="#/custom/everything/else">Is matched by /custom/** [#/custom/everything/else]'</a></li>
 	<li><a href="#/nothing/to/match">404 test [#/nothing/to/match]'</a></li>
-	
+	<li><a href="javascript:void()" onclick="return window.clickForm()">query test [#/search?q=search for nothing]'</a></li>
 </ul>
+
+<form>
+	<input type="hidden" name="q" value="search for nothing" />
+</form>
 
 
 

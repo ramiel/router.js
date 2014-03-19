@@ -1,11 +1,15 @@
 /***
  * @preserve Router.js
- * v 0.6.3
- * author: Fabrizio Ruggeri
+ * @version 0.7.0
+ * @author: Fabrizio Ruggeri
  * website: http://ramielcreations.com/projects/router-js/
  * @license GPL-v2
  */
-;(function(window, undefined) {
+(function(name, definition) {
+    if (typeof module != 'undefined') module.exports = definition();
+    else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
+    else this[name] = definition();
+}('Router', function() {
 	/**
 	 * Provide Function Bind specification if browser desn't support it
 	 */
@@ -36,11 +40,37 @@
 	var PATH_REPLACER = "([^\/\\?]+)",
 		PATH_NAME_MATCHER = /:([\w\d]+)/g,
 		PATH_EVERY_MATCHER = /\/\*(?!\*)/,
-		PATH_EVERY_REPLACER = "\/([^\/]+)",
+		PATH_EVERY_REPLACER = "\/([^\/\\?]+)",
 		PATH_EVERY_GLOBAL_MATCHER = /\*{2}/,
-		PATH_EVERY_GLOBAL_REPLACER = "(.*)",
+		PATH_EVERY_GLOBAL_REPLACER = "(.*?)\\??",
 		LEADING_BACKSLASHES_MATCH = /\/*$/;
 	
+	/**
+	 * Request class
+	 * @param {string} href Url for request object
+	 * @constructor
+	 */
+	var Request = function(href){
+		this.href = href;
+		this.params;
+		this.query;
+		this.splat;
+	}
+
+	/**
+	 * Return value passed in request using, in order params, query and eventually default_value if provided
+	 * @param {string} key Key of the value to retrieve
+	 * @param {mixed} default_value Default value if nothing found. Default to nothing
+	 */
+	Request.prototype.get = function(key, default_value){
+		return (this.params && this.params[key] !== undefined) 
+				? this.params[key]
+				: (this.query && this.query[key] !== undefined)
+					? this.query[key]
+					: (default_value !== undefined)
+						? default_value : undefined;
+	}
+
 	/**
 	 * Router Class
 	 * @constructor
@@ -117,8 +147,7 @@
 	Router.prototype._buildRequestObject = function(fragmentUrl, params, splat){
 		if(!fragmentUrl)
 			throw new Error('Unable to compile request object');
-		var request = {};
-		request.href = fragmentUrl;
+		var request = new Request(fragmentUrl);
 		if(params)
 			request.params = params;
 		var completeFragment = fragmentUrl.split('?');
@@ -128,9 +157,9 @@
 			request.query = {};
 			for(var i = 0, qLen = queryString.length; i < qLen; i++){
 				queryKeyValue = queryString[i].split('=');
-				request.query[decodeURI(queryKeyValue[0])] = decodeURI(queryKeyValue[1]);
+				request.query[decodeURI(queryKeyValue[0])] = decodeURI(queryKeyValue[1].replace(/\+/g, '%20'));
 			}
-			request.queryString = request.query; //Leaved for compatibility. NOTE will be dropped on version >0.7.0
+			request.query;
 		}
 		if(splat && splat.length > 0){
 			request.splats = splat;
@@ -149,7 +178,7 @@
 		var index = matchedIndexes.splice(0, 1), 
 			route = this._routes[index], 
 			match = url.match(route.path), 
-			request = {}, 
+			request, 
 			params = {},
 			splat = [];
 		if(!route){
@@ -365,6 +394,5 @@
 		this.redirect( startUrl );
 	};
 
-	window.Router = Router;
-
-})(window);
+	return Router;
+}));
