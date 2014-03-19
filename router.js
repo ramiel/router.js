@@ -5,7 +5,11 @@
  * website: http://ramielcreations.com/projects/router-js/
  * @license GPL-v2
  */
-;(function(window, undefined) {
+(function(name, definition) {
+    if (typeof module != 'undefined') module.exports = definition();
+    else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
+    else this[name] = definition();
+}('Router', function() {
 	/**
 	 * Provide Function Bind specification if browser desn't support it
 	 */
@@ -390,6 +394,5 @@
 		this.redirect( startUrl );
 	};
 
-	window.Router = Router;
-
-})(window);
+	return Router;
+}));

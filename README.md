@@ -10,7 +10,20 @@ Router.js helps you to intercept request done trough fragment and match them usi
 
 Include Router.js in your application
 
-	<script type="text/javascript" src="js/router.js">
+####Standard
+
+```html
+<script type="text/javascript" src="js/router.js">
+```
+
+####RequireJS
+```javascript
+//Example
+require(["router", ...], function(Router, ...) {
+	//Your code
+});
+```
+
 
 according to your directory template.
 
@@ -22,10 +35,10 @@ Now just define a simple route. A route is made of two components
 Let's see
 
 ```javascript
-	var router = new Router()
-		   	.addRoute('#/users', function(req, next){
-				/* Do something */
-			});
+var router = new Router()
+   	.addRoute('#/users', function(req, next){
+		/* Do something */
+	});
 ```
 
 There are three noticeble aspects. Your router object and all its functions are chainable. So after an `addRoute` Route you can chain onther one and so on.
