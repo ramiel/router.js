@@ -36,9 +36,9 @@
 	var PATH_REPLACER = "([^\/\\?]+)",
 		PATH_NAME_MATCHER = /:([\w\d]+)/g,
 		PATH_EVERY_MATCHER = /\/\*(?!\*)/,
-		PATH_EVERY_REPLACER = "\/([^\/]+)",
+		PATH_EVERY_REPLACER = "\/([^\/\\?]+)",
 		PATH_EVERY_GLOBAL_MATCHER = /\*{2}/,
-		PATH_EVERY_GLOBAL_REPLACER = "(.*)",
+		PATH_EVERY_GLOBAL_REPLACER = "(.*?)\\??",
 		LEADING_BACKSLASHES_MATCH = /\/*$/;
 	
 	/**
@@ -318,6 +318,11 @@
 					      .replace(PATH_EVERY_GLOBAL_MATCHER, PATH_EVERY_GLOBAL_REPLACER) + "(?:\\?.+)?$", modifiers);
 		}
 		this._routes.push({
+			'path' : path,
+			'paramNames' : paramNames,
+			'routeAction' : callback
+		});
+		console.log({
 			'path' : path,
 			'paramNames' : paramNames,
 			'routeAction' : callback
