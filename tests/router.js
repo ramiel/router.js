@@ -1,62 +1,60 @@
+var promise = function(){
+		this.on = null;
+	};
+promise.prototype.solve = function(){
+	if(this.on instanceof Function){
+		this.on();
+	}
+};
+
+promise.prototype.reject = function(err){
+	err = err || 'generic error';
+	if(this.on instanceof Function){
+		this.on(err);
+	}
+};
+
 describe("Router suite.", function() {
 	it("Check that Router exists and is a Function", function() {
   		Router.should.be.ok;
 	});
 
-	describe("Once router is instantiated,",function(){
-
-
-		it('it is defined',function(){
-	  		router.should.be.an.instanceOf(Router)
-		});
-
-		it("it has ['redirect','setLocation','add','get','addRoute','play','pause'] methods",function(done){
-			console.log(router);
-			['redirect','add','get','addRoute','play','pause','setLocation'].forEach(function(prop){
-				router.should.have.property(prop);
-			});
-			done();
-		});
-
-		
-	});
-
-	var router,
-		href ='#/user/jhon';
-
-	var bp = {
-		solved : function(){
-			bp.on();
-		},
-		on: null
-	};
-
-
-	var p = {
-		solved : function(){
-			if(p.on){
-				p.on();
-			}
-		},
-		on: null
-	};
+	var router;
 
 	describe('Testing simple route',function(){
+		var p,bp,
+			href ='#/user/jhon';
+
 		beforeEach(function(done){
+			p = new promise();
+			bp = new promise();
 			router = new Router();
 			router
 				.before(function(req,next){
 					req.should.have.property('href');
-					bp.solved();
+					bp.solve();
 					next();
 				})
 				.add('/user/:username',function(req,next){
 					req.should.have.property('href','#/user/jhon');
 					req.params.should.have.property('username','jhon');
-					p.solved();
+					p.solve();
 				})
 				.run('#/');
 			done();
+		});
+
+		describe("Once router is instantiated,",function(){
+			it('it is defined',function(){
+		  		router.should.be.an.instanceOf(Router)
+			});
+			it("it has ['redirect','setLocation','add','get','addRoute','play','pause'] methods",function(done){
+				console.log(router);
+				['redirect','add','get','addRoute','play','pause','setLocation'].forEach(function(prop){
+					router.should.have.property(prop);
+				});
+				done();
+			});		
 		});
 
 		describe("Navigating",function(){
@@ -72,8 +70,6 @@ describe("Router suite.", function() {
 				window.document.location.href = href;			
 			});
 		});
-	});
-
-	
+	});	
   
 });
