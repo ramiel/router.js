@@ -310,7 +310,7 @@ Splats is an array containing all regexp matches (everyting between two '( )' ).
 You can use regular expression to obtain more grain fined routes but it's up to you to handle them correctly
 
 
-##Run
+##Run and Destroy
 
 Router has a special method. You can call run after you have setted all your route to immediately launch routes parsing.
 Run has a parameter, 'startUrl'. If is setted it will redirect immediately to that url, alse it will read current browser url.
@@ -322,6 +322,13 @@ router
 	  /* code */
 	})
 	.run('#/');
+```
+If you need to dispose a router, you have to call `destroy` to remove any event handler and then simply set router to `null`
+
+```javascript
+router.destroy();
+router = null;
+//all clean
 ```
 
 #Why
