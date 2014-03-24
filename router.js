@@ -23,6 +23,32 @@
 	}
 
 	/**
+	 * Commodity function to bind hashchange event
+	 * @param {DOMElement} el       Element of DOM
+	 * @param {Function} listener Callback
+	 */
+	function addHashchangeListener( el, listener ){
+		if (el.addEventListener) {
+		  el.addEventListener('hashchange', listener, false); 
+		} else if (el.attachEvent)  {
+		  el.attachEvent('hashchange', listener);
+		}
+	}
+
+	/**
+	 * Commodity function to unbind hashchange event
+	 * @param  {DOMElement} el       Element of DOM
+	 * @param  {Function} listener Callback
+	 */
+	function removeHashchangeListener( el, listener ){
+		if (el.removeEventListener) {
+		  el.removeEventListener('hashchange', listener, false); 
+		} else if (el.detachEvent)  {
+		  el.detachEvent('hashchange', listener);
+		}
+	}
+
+	/**
 	 * Commodity function to extend parameters and default options
 	 * @return {object} merged objects
 	 */
@@ -99,14 +125,16 @@
 		};
 		/**@private */
 		this._paused = false;
-		
-		window.onhashchange = function(e) {
-			if(!this._paused){
-				this._route( this._extractFragment(window.location.href) );
-			}
-			return true;
-		}.bind(this);
+		this._hasChangeHandler = this._onHashChange.bind(this);
+		addHashchangeListener(window,this._hasChangeHandler);
 	};
+
+	Router.prototype._onHashChange = function(e){
+		if(!this._paused){
+			this._route( this._extractFragment(window.location.href) );
+		}
+		return true;
+	}
 	
 	/**
 	 * Extract fragments from url (everything after '#')
@@ -283,6 +311,7 @@
 	/**
 	 * Pause router to be binded on hashchange
 	 * @return {Router} return router
+	*/
 	Router.prototype.pause = function(){
 		this._paused = true;
 		return this;
@@ -402,6 +431,15 @@
 		this.redirect( startUrl );
 		return this;
 	};
+
+	/**
+	 * Remove every reference to DOM and event listeners
+	 * @return {Router} This router
+	 */
+	Router.prototype.destroy = function(){
+		removeHashchangeListener(window, this._hasChangeHandler);
+		return this;
+	}
 
 	return Router;
 }));

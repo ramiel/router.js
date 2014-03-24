@@ -30,6 +30,10 @@ describe("Router suite.", function() {
 			href ='#/user/jhon';
 
 		beforeEach(function(){
+			if(router){
+				router.destroy();
+				router = null;
+			}
 			router = new Router();
 		});
 
@@ -41,14 +45,18 @@ describe("Router suite.", function() {
 				['redirect','add','get','addRoute','play','pause','setLocation'].forEach(function(prop){
 					router.should.have.property(prop);
 				});
-			});		
+			});
+
 		});
 
 		describe("Navigating to #/user/jhon",function(){
 			beforeEach(function(){
 				p = new promise();
 				bp = new promise();
-				router = null;
+				if(router){
+					router.destroy();
+					router = null;
+				}
 				router = new Router()
 					.before(function(req,next){
 						req.should.have.property('href');
