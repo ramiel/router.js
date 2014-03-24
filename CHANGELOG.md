@@ -1,5 +1,9 @@
 Changelog
 =========
+###v 0.7.1
+- Correct return value in "run" method
+- Introduced a test suite
+
 ###v 0.7.0
 - Request object has `get` method to retrieve parameters wherever they are passed
 - Bugfix: Splats do not contain query anymore in some cases
