@@ -1,6 +1,6 @@
 /***
  * @preserve Router.js
- * @version 0.7.1
+ * @version 0.8.0
  * @author: Fabrizio Ruggeri
  * website: http://ramielcreations.com/projects/router-js/
  * @license GPL-v2
@@ -282,14 +282,16 @@
 	
 	/**
 	 * Pause router to be binded on hashchange
-	 */
+	 * @return {Router} return router
 	Router.prototype.pause = function(){
 		this._paused = true;
+		return this;
 	};
 	
 	/**
 	 * Unpause router to be binded on hashchange
-	 * @param {Boolean} triggerNow If true evaluate location immediately
+	 * @param   {Boolean} triggerNow If true evaluate location immediately
+	 * @return {Router} return router
 	 */
 	Router.prototype.play = function(triggerNow){
 		triggerNow = 'undefined' == typeof triggerNow ? false : triggerNow;
@@ -297,24 +299,30 @@
 		if(triggerNow){
 			this._route( this._extractFragment(window.location.href) );
 		}
+		return this;
 	};
 	
 	/**
 	 * Set location but doesn't fire route handler
 	 * @param {String} url Url to set location to
+	 * @return {Router} return router
+	 * 
 	 */
 	Router.prototype.setLocation = function(url){
 		window.history.pushState(null,'',url);
+		return this;
 	};
 	
 	/**
 	 * Set location and fires route handler
 	 * @param {String} url Url to redirect to
+	 * @return {Router} return router
 	 */
 	Router.prototype.redirect = function(url){
 		this.setLocation(url);
 		if(!this._paused)
 			this._route( this._extractFragment(url) );
+		return this;
 	};
 
 	/**
