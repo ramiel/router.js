@@ -1,6 +1,6 @@
 /***
  * @preserve Router.js
- * @version 0.7.0
+ * @version 0.7.1
  * @author: Fabrizio Ruggeri
  * website: http://ramielcreations.com/projects/router-js/
  * @license GPL-v2
@@ -392,6 +392,7 @@
 		}
 		startUrl = startUrl.indexOf('#') == 0 ? startUrl : '#'+startUrl;
 		this.redirect( startUrl );
+		return this;
 	};
 
 	return Router;
