@@ -129,6 +129,10 @@
 		addHashchangeListener(window,this._hasChangeHandler);
 	};
 
+	/**
+	 * Handler for hashchange event
+	 * @param  {event} e Event
+	 */
 	Router.prototype._onHashChange = function(e){
 		if(!this._paused){
 			this._route( this._extractFragment(window.location.href) );
