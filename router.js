@@ -392,6 +392,7 @@
 		}
 		startUrl = startUrl.indexOf('#') == 0 ? startUrl : '#'+startUrl;
 		this.redirect( startUrl );
+		return this;
 	};
 
 	return Router;
