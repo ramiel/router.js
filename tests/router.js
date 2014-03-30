@@ -3,7 +3,7 @@ var promise = function(){
 	};
 promise.prototype.solve = function(){
 	if(this.on instanceof Function){
-		this.on();
+		this.on.apply(this.on,Array.prototype.slice.call(arguments));
 	}
 };
 
@@ -72,10 +72,59 @@ describe("Router suite.", function() {
 		});
 	});
 
-	describe.skip('Testing',function(){
+	describe('Testing',function(){
+		var router;
+		beforeEach(function(done){
+			router = new Router().run('#/');
+			done();
+		});
+		afterEach(function(done){
+			if(router && router.destroy)
+				router.destroy();
+			router = null;
+			done();
+		});
 
-		describe('options',function(){});
-		describe('queries',function(){});
+		describe('queries',function(){
+			describe('calling #/user?a=b',function(){
+				it('query exists in req and its property "a" has value "b" ',function(done){
+					var p = new promise();
+					router.add('#/user',function(req,next){
+						console.log(req);
+						p.solve(null,req);
+					});
+					p.on=function(err,req){
+						console.log(req);
+						req.should.have.property('query');
+						req.query.should.have.property('a','b');
+						done();
+					};
+					window.document.location.href = '#/user?a=b&other=value';
+				});
+			});
+		});
+
+		describe('options',function(){
+			describe('setting ignorecase to false',function(){				
+				it('ignore #/user calling #/User',function(done){
+					var p = new promise();
+					router = new Router({ignorecase:false})
+						.add('#/user',function(){
+							p.solve();
+						})
+						.errors(404, function( err, href){
+							console.log(err);
+							p.reject(err);
+					    });
+					p.on=function(err){
+						err.should.be.ok;
+						done();
+					};
+					window.document.location.href = '#/User';
+				});
+			});
+		});
+		
 		describe('Req.get',function(){});
 		describe('special symbols',function(){});
 		describe('next',function(){});
