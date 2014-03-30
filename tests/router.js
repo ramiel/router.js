@@ -1,7 +1,3 @@
-/**
- * This little promise function must be replaced
- * @return {[type]} [description]
- */
 var promise = function(){
 		this.on = null;
 	};
@@ -29,56 +25,63 @@ describe("Router suite.", function() {
 		var p,bp,
 			href ='#/user/jhon';
 
-		beforeEach(function(){
-			if(router){
-				router.destroy();
-				router = null;
-			}
+		beforeEach(function(done){
+			p = new promise();
+			bp = new promise();
 			router = new Router();
+			router
+				.before(function(req,next){
+					req.should.have.property('href');
+					bp.solve();
+					next();
+				})
+				.add('/user/:username',function(req,next){
+					req.should.have.property('href','#/user/jhon');
+					req.params.should.have.property('username','jhon');
+					p.solve();
+				})
+				.run('#/');
+			done();
 		});
 
 		describe("Once router is instantiated,",function(){
 			it('it is defined',function(){
-		  		router.should.be.an.instanceOf(Router);
+		  		router.should.be.an.instanceOf(Router)
 			});
-			it("it has ['redirect','setLocation','add','get','addRoute','play','pause'] methods",function(){
+			it("it has ['redirect','setLocation','add','get','addRoute','play','pause'] methods",function(done){
+				console.log(router);
 				['redirect','add','get','addRoute','play','pause','setLocation'].forEach(function(prop){
 					router.should.have.property(prop);
 				});
-			});
-
+				done();
+			});		
 		});
 
-		describe("Navigating to #/user/jhon",function(){
-			beforeEach(function(){
-				p = new promise();
-				bp = new promise();
-				if(router){
-					router.destroy();
-					router = null;
-				}
-				router = new Router()
-					.before(function(req,next){
-						req.should.have.property('href');
-						bp.solve();
-						next();
-					})
-					.add('/user/:username',function(req,next){
-						req.should.have.property('href','#/user/jhon');
-						req.params.should.have.property('username','jhon');
-						p.solve();
-					})
-					.run('#/');
-			});
+		describe("Navigating",function(){
 			it('it runs "befores"',function(done){
 				bp.on=done;
 				window.document.location.href = href;
 			});
+		});
+
+		describe("Navigating",function(){
 			it('it reachs /user/:username route, and :username is "jhon"',function(done){
 				p.on=done;
 				window.document.location.href = href;			
 			});
 		});
-	});	
+	});
+
+	describe.skip('Testing',function(){
+
+		describe('options',function(){});
+		describe('queries',function(){});
+		describe('Req.get',function(){});
+		describe('special symbols',function(){});
+		describe('next',function(){});
+		describe('error handling',function(){});
+		describe('methods',function(){});
+		describe('run and destroy',function(){});
+	});
   
 });
