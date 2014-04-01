@@ -125,7 +125,24 @@ describe("Router suite.", function() {
 			});
 		});
 		
-		describe('Req.get',function(){});
+		describe('Req.get',function(){
+			describe('defining #/user/:name and calling #/user/jhon?surname=snow',function(){
+				it('',function(done){
+					var p = new promise();
+					router.add('#/user',function(req,next){
+						console.log(req);
+						p.solve(null,req);
+					});
+					p.on=function(err,req){
+						console.log(req);
+						req.should.have.property('query');
+						req.query.should.have.property('a','b');
+						done();
+					};
+					window.document.location.href = '#/user?a=b&other=value';
+				});
+			});
+		});
 		describe('special symbols',function(){});
 		describe('next',function(){});
 		describe('error handling',function(){});
