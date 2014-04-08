@@ -261,8 +261,11 @@ describe("Router suite.", function() {
 					};
 					window.document.location.href = '#/user/jhon';
 				});
-				it('the next callback in first route is called',function(done){
-					second.on=done;
+				it('the next callback in first route is called and no other nexts are present',function(done){
+					second.on=function(err,req,next){
+						expect(next).to.be.null;
+						done();
+					};
 					window.document.location.href = '#/user/jhon';
 				});
 				it('the next callback in first route is called with a 500 error',function(done){
@@ -275,7 +278,37 @@ describe("Router suite.", function() {
 				});
 			});
 		});
-		describe('error handling',function(){});
+
+		describe.skip('error handling',function(){
+			var first = new promise(),
+				second = new promise(),
+				bef = new promise(),
+				errp = new promise();
+			beforeEach(function(done){
+				router
+				.add('#/user/:username',function(req,next){
+					if(req.get('username') == 'admin')
+						next(500);
+					first.solve(null,req,next);
+					next();
+				})
+				.errors(500,function(err,href){
+					errp.solve(err,href);
+				});
+				done();
+			});
+
+			describe('Defining a before, two matching routes and an error route',function(){
+				it('the next callback in first route is called with a 500 error',function(done){
+					errp.on=function(err,href){
+						err.should.be.equal(500);
+						href.should.be.equal('#/user/admin');
+						done();
+					};
+					window.document.location.href = '#/user/admin';
+				});
+			});
+		});
 		describe('methods',function(){});
 		describe('run and destroy',function(){});
 	});
