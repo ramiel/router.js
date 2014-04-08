@@ -174,7 +174,52 @@ describe("Router suite.", function() {
 				});
 			});
 		});
-		describe('special symbols',function(){});
+
+		describe('special symbols',function(){
+			var p = new promise(),
+				multi = new promise(),
+				errp = new promise();
+			beforeEach(function(done){
+				router
+				.add('#/user/*',function(req,next){
+					p.solve(null,req,next);
+				})
+				.add('#/multi/**',function(req,next){
+					multi.solve(null,req,next);
+				})
+				.errors(404,function(err, href){
+					errp.solve(err,href);
+				});
+				done();
+			});
+			
+			describe('defining #/user/* and calling #/user/jhon',function(){
+				it('it will match',function(done){
+					p.on=done;
+					window.document.location.href = '#/user/jhon';
+				});
+				it('but will not match #/user/jhon/snow',function(done){
+					errp.on=function(err,href){
+						href.should.be.a('string');
+						done();
+					};
+					window.document.location.href = '#/user/jhon/snow';
+				});
+			});
+
+			describe('defining #/multi/** and calling #/multi/users',function(){
+				it('it will match',function(done){
+					multi.on=done;
+					window.document.location.href = '#/multi/users';
+				});
+				it('and will match #/multi/users/is/a/crowd',function(done){
+					multi.on=done;
+					window.document.location.href = '#/multi/users/is/a/crowd';
+				});
+			});
+
+		});
+
 		describe('next',function(){});
 		describe('error handling',function(){});
 		describe('methods',function(){});
