@@ -220,7 +220,7 @@ describe("Router suite.", function() {
 
 		});
 
-		describe.only('next',function(){
+		describe('next',function(){
 			var first = new promise(),
 				second = new promise(),
 				bef = new promise(),
