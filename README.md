@@ -1,6 +1,8 @@
 Router.js
 =========
 
+[![Build Status](https://travis-ci.org/ramiel/router.js.svg?branch=master)](https://travis-ci.org/ramiel/router.js)
+
 Discover on [Ramiel's creations](http://ramielcreations.com/projects/router-js/ "Ramiel's creations page")
 
 Router.js is a simple yet powerful javascript plugin to handle hash fragment in order to route request.
