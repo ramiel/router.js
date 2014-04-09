@@ -1,6 +1,9 @@
 Changelog
 =========
 ###v 0.8.0
+- Added some tests
+
+###v 0.8.0
 - Fixed return value for all functions
 - Added `destroy` method to clean all listeners
 
