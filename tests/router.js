@@ -279,18 +279,26 @@ describe("Router suite.", function() {
 			});
 		});
 
-		describe.skip('error handling',function(){
+		describe.only('error handling',function(){
 			var first = new promise(),
 				second = new promise(),
 				bef = new promise(),
 				errp = new promise();
 			beforeEach(function(done){
 				router
+				.before(function(req,next){
+					if(req.href == '#/user/fireerror')
+						next('error message',500);
+					next();
+				})
 				.add('#/user/:username',function(req,next){
 					if(req.get('username') == 'admin')
-						next(500);
+						next('error message',500);
 					first.solve(null,req,next);
 					next();
+				})
+				.add('#/user/*',function(req,next){
+					second.solve(null,req,next)
 				})
 				.errors(500,function(err,href){
 					errp.solve(err,href);
@@ -301,11 +309,19 @@ describe("Router suite.", function() {
 			describe('Defining a before, two matching routes and an error route',function(){
 				it('the next callback in first route is called with a 500 error',function(done){
 					errp.on=function(err,href){
-						err.should.be.equal(500);
+						err.should.be.equal('error message');
 						href.should.be.equal('#/user/admin');
 						done();
 					};
 					window.document.location.href = '#/user/admin';
+				});
+				it('the next callback in before is called with a 500 error',function(done){
+					errp.on=function(err,href){
+						err.should.be.equal('error message');
+						href.should.be.equal('#/user/fireerror');
+						done();
+					};
+					window.document.location.href = '#/user/fireerror';
 				});
 			});
 		});
