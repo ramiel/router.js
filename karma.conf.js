@@ -1,33 +1,51 @@
 // Karma configuration
-// Generated on Sun Sep 08 2013 11:46:51 GMT+0200 (CEST)
+// Generated on Sat Mar 22 2014 14:03:49 GMT+0100 (CET)
 
 module.exports = function(config) {
   config.set({
 
-    // base path, that will be used to resolve files and exclude
+    // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
 
     // frameworks to use
-    frameworks: ['jasmine'],
+    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+    frameworks: ['mocha', 'chai', 'chai-as-promised' ],
+
+    client: {
+        mocha: {
+            ui: 'bdd'
+            //,require: 'should'
+        }
+    },
 
 
     // list of files / patterns to load in the browser
     files: [
-      '*.js',
-      'test/*.js'
+      { pattern : 'node_modules/mocha/mocha.js', included: false },
+      { pattern :'router.js',served:true,included:true,watched:true },
+      //'tests/*.js',
+      'tests/**/*.js'
     ],
 
 
     // list of files to exclude
     exclude: [
-      
+      '*.min.js'
     ],
 
 
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    preprocessors: {
+    
+    },
+
+
     // test results reporter to use
-    // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress'],
+    // possible values: 'dots', 'progress'
+    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+    reporters: ['mocha'],
 
 
     // web server port
@@ -47,23 +65,14 @@ module.exports = function(config) {
     autoWatch: true,
 
 
-    // Start these browsers, currently available:
-    // - Chrome
-    // - ChromeCanary
-    // - Firefox
-    // - Opera
-    // - Safari (only Mac)
-    // - PhantomJS
-    // - IE (only Windows)
-    browsers: ['Chrome', 'Firefox'],
-
-
-    // If browser does not capture in given timeout [ms], kill it
-    captureTimeout: 60000,
+    // start these browsers
+    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+    browsers: ['PhantomJS'/*,'Firefox','Chrome'*/],
+    //browsers: ['Firefox'/*,'Firefox','Chrome'*/],
 
 
     // Continuous Integration mode
-    // if true, it capture browsers, run tests and exit
+    // if true, Karma captures browsers, runs the tests and exits
     singleRun: false
   });
 };

@@ -1,21 +1,52 @@
 /***
  * @preserve Router.js
- * v 0.6.3
- * author: Fabrizio Ruggeri
- * website: http://ramielcreations.com/projects/router-js/
+ * @version 0.8.3
+ * @author: Fabrizio Ruggeri
+ * @website: http://ramielcreations.com/projects/router-js/
  * @license GPL-v2
  */
-;(function(window, undefined) {
+/*jshint expr:true */
+(function(name, definition) {
+    if (typeof module != 'undefined') module.exports = definition();
+    else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
+    else this[name] = definition();
+}('Router', function() {
 	/**
 	 * Provide Function Bind specification if browser desn't support it
 	 */
-	if(!Function.prototype['bind']) {
-		Function.prototype['bind'] = function(object) {
-			var originalFunction = this, args = Array.prototype.slice.call(arguments), object = args.shift();
+	if(!Function.prototype.bind) {
+		Function.prototype.bind = function(object) {
+			var originalFunction = this, args = Array.prototype.slice.call(arguments); object = args.shift();
 			return function() {
 				return originalFunction.apply(object, args.concat(Array.prototype.slice.call(arguments)));
 			};
 		};
+	}
+
+	/**
+	 * Commodity function to bind hashchange event
+	 * @param {DOMElement} el       Element of DOM
+	 * @param {Function} listener Callback
+	 */
+	function addHashchangeListener( el, listener ){
+		if (el.addEventListener) {
+		  el.addEventListener('hashchange', listener, false); 
+		} else if (el.attachEvent)  {
+		  el.attachEvent('hashchange', listener);
+		}
+	}
+
+	/**
+	 * Commodity function to unbind hashchange event
+	 * @param  {DOMElement} el       Element of DOM
+	 * @param  {Function} listener Callback
+	 */
+	function removeHashchangeListener( el, listener ){
+		if (el.removeEventListener) {
+		  el.removeEventListener('hashchange', listener, false); 
+		} else if (el.detachEvent)  {
+		  el.detachEvent('hashchange', listener);
+		}
 	}
 
 	/**
@@ -36,11 +67,37 @@
 	var PATH_REPLACER = "([^\/\\?]+)",
 		PATH_NAME_MATCHER = /:([\w\d]+)/g,
 		PATH_EVERY_MATCHER = /\/\*(?!\*)/,
-		PATH_EVERY_REPLACER = "\/([^\/]+)",
+		PATH_EVERY_REPLACER = "\/([^\/\\?]+)",
 		PATH_EVERY_GLOBAL_MATCHER = /\*{2}/,
-		PATH_EVERY_GLOBAL_REPLACER = "(.*)",
+		PATH_EVERY_GLOBAL_REPLACER = "(.*?)\\??",
 		LEADING_BACKSLASHES_MATCH = /\/*$/;
 	
+	/**
+	 * Request class
+	 * @param {string} href Url for request object
+	 * @constructor
+	 */
+	var Request = function(href){
+		this.href = href;
+		this.params;
+		this.query;
+		this.splat;
+	};
+
+	/**
+	 * Return value passed in request using, in order params, query and eventually default_value if provided
+	 * @param {string} key Key of the value to retrieve
+	 * @param {mixed} default_value Default value if nothing found. Default to nothing
+	 */
+	Request.prototype.get = function(key, default_value){
+		return (this.params && this.params[key] !== undefined) ? 
+				this.params[key]
+				: (this.query && this.query[key] !== undefined) ?
+					this.query[key]
+					: (default_value !== undefined) ?
+						default_value : undefined;
+	};
+
 	/**
 	 * Router Class
 	 * @constructor
@@ -69,13 +126,19 @@
 		};
 		/**@private */
 		this._paused = false;
-		
-		window.onhashchange = function(e) {
-			if(!this._paused){
-				this._route( this._extractFragment(window.location.href) );
-			}
-			return true;
-		}.bind(this);
+		this._hasChangeHandler = this._onHashChange.bind(this);
+		addHashchangeListener(window,this._hasChangeHandler);
+	};
+
+	/**
+	 * Handler for hashchange event
+	 * @param  {event} e Event
+	 */
+	Router.prototype._onHashChange = function(e){
+		if(!this._paused){
+			this._route( this._extractFragment(window.location.href) );
+		}
+		return true;
 	};
 	
 	/**
@@ -87,7 +150,7 @@
 	Router.prototype._extractFragment = function(url){
 		var hash_index = url.indexOf('#');
 		return hash_index >= 0 ? url.substring(hash_index) : '#/';
-	}
+	};
 
 	/**
 	 * Internally launched when an error in route or in nexts happens
@@ -100,7 +163,7 @@
 		if(this._errors['_'+httpCode] instanceof Function)
 			this._errors['_'+httpCode](err, url, httpCode);
 		else{
-			this._errors['_'](err, url, httpCode);
+			this._errors._(err, url, httpCode);
 		}
 		return false;
 	};
@@ -117,8 +180,7 @@
 	Router.prototype._buildRequestObject = function(fragmentUrl, params, splat){
 		if(!fragmentUrl)
 			throw new Error('Unable to compile request object');
-		var request = {};
-		request.href = fragmentUrl;
+		var request = new Request(fragmentUrl);
 		if(params)
 			request.params = params;
 		var completeFragment = fragmentUrl.split('?');
@@ -128,9 +190,9 @@
 			request.query = {};
 			for(var i = 0, qLen = queryString.length; i < qLen; i++){
 				queryKeyValue = queryString[i].split('=');
-				request.query[decodeURI(queryKeyValue[0])] = decodeURI(queryKeyValue[1]);
+				request.query[decodeURI(queryKeyValue[0])] = decodeURI(queryKeyValue[1].replace(/\+/g, '%20'));
 			}
-			request.queryString = request.query; //Leaved for compatibility. NOTE will be dropped on version >0.7.0
+			request.query;
 		}
 		if(splat && splat.length > 0){
 			request.splats = splat;
@@ -149,7 +211,7 @@
 		var index = matchedIndexes.splice(0, 1), 
 			route = this._routes[index], 
 			match = url.match(route.path), 
-			request = {}, 
+			request, 
 			params = {},
 			splat = [];
 		if(!route){
@@ -167,7 +229,7 @@
 			}
 		}
 		/*Build next callback*/
-		var next = (matchedIndexes.length == 0) ? null : (function(uO, u,mI,context){
+		var next = (matchedIndexes.length === 0) ? null : (function(uO, u,mI,context){
 			return function(err, error_code){
 				if(err)	
 					return this._throwsRouteError( error_code || 500, err, fragmentUrl );
@@ -219,7 +281,7 @@
 			matchedIndexes = [],
 			urlToTest;
 		var url = fragmentUrl;
-		if(url.length == 0)
+		if(url.length === 0)
 			return true;
 		url = url.replace( LEADING_BACKSLASHES_MATCH, '');
 		urlToTest = (url.split('?'))[0]
@@ -253,14 +315,17 @@
 	
 	/**
 	 * Pause router to be binded on hashchange
-	 */
+	 * @return {Router} return router
+	*/
 	Router.prototype.pause = function(){
 		this._paused = true;
+		return this;
 	};
 	
 	/**
 	 * Unpause router to be binded on hashchange
-	 * @param {Boolean} triggerNow If true evaluate location immediately
+	 * @param   {Boolean} triggerNow If true evaluate location immediately
+	 * @return {Router} return router
 	 */
 	Router.prototype.play = function(triggerNow){
 		triggerNow = 'undefined' == typeof triggerNow ? false : triggerNow;
@@ -268,24 +333,30 @@
 		if(triggerNow){
 			this._route( this._extractFragment(window.location.href) );
 		}
+		return this;
 	};
 	
 	/**
 	 * Set location but doesn't fire route handler
 	 * @param {String} url Url to set location to
+	 * @return {Router} return router
+	 * 
 	 */
 	Router.prototype.setLocation = function(url){
 		window.history.pushState(null,'',url);
+		return this;
 	};
 	
 	/**
 	 * Set location and fires route handler
 	 * @param {String} url Url to redirect to
+	 * @return {Router} return router
 	 */
 	Router.prototype.redirect = function(url){
 		this.setLocation(url);
 		if(!this._paused)
 			this._route( this._extractFragment(url) );
+		return this;
 	};
 
 	/**
@@ -309,7 +380,7 @@
 			/*Remove leading backslash from the end of the string*/
 			path = path.replace(LEADING_BACKSLASHES_MATCH,'');
 			/*Param Names are all the one defined as :param in the path*/
-			while(( match = PATH_NAME_MATCHER.exec(path)) != null) {
+			while(( match = PATH_NAME_MATCHER.exec(path)) !== null) {
 				paramNames.push(match[1]);
 			}
 			path = new RegExp(path
@@ -361,10 +432,19 @@
 		if(!startUrl){
 			startUrl = this._extractFragment(window.location.href);
 		}
-		startUrl = startUrl.indexOf('#') == 0 ? startUrl : '#'+startUrl;
+		startUrl = startUrl.indexOf('#') === 0 ? startUrl : '#'+startUrl;
 		this.redirect( startUrl );
+		return this;
 	};
 
-	window.Router = Router;
+	/**
+	 * Remove every reference to DOM and event listeners
+	 * @return {Router} This router
+	 */
+	Router.prototype.destroy = function(){
+		removeHashchangeListener(window, this._hasChangeHandler);
+		return this;
+	};
 
-})(window);
+	return Router;
+}));

@@ -1,0 +1,33 @@
+{
+  "name": "router.js",
+  "version": "0.8.3",
+  "homepage": "https://github.com/ramiel/Router.js",
+  "authors": [
+    "Fabrizio Ruggeri <fabrizio.ruggeri@gmail.com>"
+  ],
+  "description": "Lightweight and powerful router for javascript applications",
+  "main": "router.js",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "keywords": [
+    "router",
+    "orchestration",
+    "route",
+    "routes",
+    "url",
+    "hash",
+    "hashtag",
+    "location"
+  ],
+  "license": "GPL-2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "examples"
+  ]
+}
