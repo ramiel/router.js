@@ -323,8 +323,109 @@ describe("Router suite.", function() {
 				});
 			});
 		});
-		describe('methods',function(){});
-		describe('run and destroy',function(){});
+
+		describe('methods',function(){
+			var first,second;
+			beforeEach(function(done){
+				second=new promise();
+				first=new promise();
+				router
+					.add('#/path/first',function(req,next){
+						first.solve('fired',req,next);
+					})
+					.add('#/path/second',function(req,next){
+						second.solve(null,req,next)
+					});
+				router.pause();
+				done();
+			});
+
+			describe('pause should',function(){
+				it('stop route handling',function(done){
+					first.on=done;
+					window.document.location.href = '#/path/first';
+					setTimeout(function(){
+						first.solve();
+					},1);					
+				});
+			});
+
+			describe('play should',function(){
+				it('restore route handling',function(done){
+					router.play();
+					second.on=done;
+					window.document.location.href = '#/path/second';
+				});
+			});
+
+			describe('setLocation should',function(){
+				it('change href',function(){
+					router.play();
+					router.setLocation('#/new/location');
+					/#\/new\/location$/.test(window.document.location.href).should.be.ok;
+				});
+			});
+
+			describe.only('redirect should',function(){
+				it('change href and fire route',function(done){
+					router.play();
+					second.on=function(){
+						/#\/path\/second$/.test(window.document.location.href).should.be.ok;
+						done();	
+					};
+					router.redirect('#/path/second');					
+				});
+			});
+
+		});
+
+
+		describe('run and destroy',function(){
+
+			var first,second,third;
+			beforeEach(function(done){
+				second=new promise();
+				first=new promise();
+				third=new promise();
+				router
+					.add('#/path/first',function(req,next){
+						first.solve(null,req,next);
+					})
+					.add('#/path/second',function(req,next){
+						second.solve(null,req,next)
+					})
+					.add('#/path/third',function(req,next){
+						third.solve('error');
+					});
+				window.location.href='#/path/first';
+				done();
+			});
+
+			describe('"run" with no parameter',function(){
+				it('launch router with current url',function(done){
+					first.on=done;
+					router.run();
+				});
+			});
+
+			describe('"run" with parameter',function(){
+				it('launch router with specified url',function(done){
+					second.on=done;
+					router.run('#/path/second');
+				});
+			});
+
+			describe('destroy',function(){
+				it('remove router event halders',function(done){
+					router.destroy();
+					third.on=done;
+					window.location.href='#/path/third';
+					setTimeout(function(){
+						done();
+					},1);
+				});
+			});
+		});
 	});
   
 });
