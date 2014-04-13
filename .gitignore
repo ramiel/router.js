@@ -3,3 +3,4 @@
 compiler.jar
 .directory
 node_modules/
+.sublime-grunt.cache
