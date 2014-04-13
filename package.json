@@ -1,7 +1,7 @@
 {
   "name": "router.js",
   "basename": "router",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Lightweight and powerful router for javascript applications",
   "author": "Fabrizio Ruggeri <fabrizio.ruggeri@gmail.com>",
   "website": "http://ramielcreations.com/projects/router-js/",
