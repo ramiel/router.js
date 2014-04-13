@@ -5,6 +5,7 @@ Changelog
 - JSHint of code
 - Karma Grunt integration
 - Removed unused warning from tests
+- Test completed
 
 ###v 0.8.2
 - Added some tests
