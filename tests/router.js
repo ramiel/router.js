@@ -277,7 +277,7 @@ describe("Router suite.", function() {
 			});
 		});
 
-		describe.only('error handling',function(){
+		describe('error handling',function(){
 			var first = new promise(),
 				second = new promise(),
 				bef = new promise(),
