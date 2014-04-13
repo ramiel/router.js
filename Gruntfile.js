@@ -5,40 +5,47 @@ module.exports = function(grunt) {
 	    pkg: grunt.file.readJSON('package.json'),
 
 	    uglify: {
-	     	options: {
-		        banner: '/*!\n<%= pkg.basename %>\n'+
-		        '@version: <%= pkg.version %>\n'+
-		        '@description: <%= pkg.description %>\n'+
-		        '@author: <%= pkg.author %>\n'+
-		        '@website: <%= pkg.website %>\n'+
-		        '@license <%= pkg.license %>\n'+
-		        //'Build on <%= grunt.template.today("yyyy-mm-dd") %>\n'+
-		        '*/',
-		        sourceMap: true,
-		        sourceMapName: '<%= pkg.basename %>.min.js.map'
-	    	},
-	      	build: {
-	    		src: '<%= pkg.basename %>.js',
-		        dest: '<%= pkg.basename %>.min.js'
-	      	}
+	     	//all:{
+	     		options: {
+			        banner: '/*!\n<%= pkg.basename %>\n'+
+			        '@version: <%= pkg.version %>\n'+
+			        '@description: <%= pkg.description %>\n'+
+			        '@author: <%= pkg.author %>\n'+
+			        '@website: <%= pkg.website %>\n'+
+			        '@license <%= pkg.license %>\n'+
+			        //'Build on <%= grunt.template.today("yyyy-mm-dd") %>\n'+
+			        '*/',
+			        sourceMap: true,
+			        sourceMapName: '<%= pkg.basename %>.min.js.map'
+		    	},
+		      	build: {
+		    		src: '<%= pkg.basename %>.js',
+			        dest: '<%= pkg.basename %>.min.js'
+		      	}
+	      	//}
 		},
 
 	    jshint: {
-	    	files: {
-		        src: ['<%= pkg.basename %>.js']
-		      }
+	    	build:{
+		    	files: {
+			        src: ['<%= pkg.basename %>.js']
+			    }
+			}
 	    },
 
 	    karma: {
+	    	options: {
+				configFile: 'karma.conf.js',
+			    singleRun: true,
+			    browsers: ['PhantomJS'],
+			    autoWatch: true,
+			    logLevel: 'OFF'				    
+			},
 	    	unit:{
-			 	options: {
-					configFile: 'karma.conf.js',
-				    singleRun: true,
-				    browsers: ['PhantomJS'],
-				    autoWatch: true,
-				    logLevel: 'OFF',
-				    reporters: 'dots'
-				}
+			 	reporters: 'dots'
+			},
+			dev: {
+				reporters: 'mocha'
 			}
 		},
 
@@ -53,9 +60,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-newer');
 
   	// Default task(s).
-	grunt.registerTask('default', ['uglify','jshint','karma']);
-	grunt.registerTask('precommit', ['uglify']);
-	grunt.registerTask('test', ['karma']);
+	grunt.registerTask('default', ['newer:uglify:build','jshint','karma:unit']);
+	grunt.registerTask('precommit', ['newer:uglify:build']);
+	grunt.registerTask('test', ['jshint','karma:dev']);
 };
