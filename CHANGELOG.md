@@ -1,6 +1,10 @@
 Changelog
 =========
-###v 0.8.0
+###v 0.8.3
+- Grunt configured
+- JSHint of code
+
+###v 0.8.2
 - Added some tests
 
 ###v 0.8.0

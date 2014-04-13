@@ -5,6 +5,7 @@
  * website: http://ramielcreations.com/projects/router-js/
  * @license GPL-v2
  */
+/*jshint expr:true */
 (function(name, definition) {
     if (typeof module != 'undefined') module.exports = definition();
     else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
@@ -13,9 +14,9 @@
 	/**
 	 * Provide Function Bind specification if browser desn't support it
 	 */
-	if(!Function.prototype['bind']) {
-		Function.prototype['bind'] = function(object) {
-			var originalFunction = this, args = Array.prototype.slice.call(arguments), object = args.shift();
+	if(!Function.prototype.bind) {
+		Function.prototype.bind = function(object) {
+			var originalFunction = this, args = Array.prototype.slice.call(arguments); object = args.shift();
 			return function() {
 				return originalFunction.apply(object, args.concat(Array.prototype.slice.call(arguments)));
 			};
@@ -81,7 +82,7 @@
 		this.params;
 		this.query;
 		this.splat;
-	}
+	};
 
 	/**
 	 * Return value passed in request using, in order params, query and eventually default_value if provided
@@ -89,13 +90,13 @@
 	 * @param {mixed} default_value Default value if nothing found. Default to nothing
 	 */
 	Request.prototype.get = function(key, default_value){
-		return (this.params && this.params[key] !== undefined) 
-				? this.params[key]
-				: (this.query && this.query[key] !== undefined)
-					? this.query[key]
-					: (default_value !== undefined)
-						? default_value : undefined;
-	}
+		return (this.params && this.params[key] !== undefined) ? 
+				this.params[key]
+				: (this.query && this.query[key] !== undefined) ?
+					this.query[key]
+					: (default_value !== undefined) ?
+						default_value : undefined;
+	};
 
 	/**
 	 * Router Class
@@ -138,7 +139,7 @@
 			this._route( this._extractFragment(window.location.href) );
 		}
 		return true;
-	}
+	};
 	
 	/**
 	 * Extract fragments from url (everything after '#')
@@ -149,7 +150,7 @@
 	Router.prototype._extractFragment = function(url){
 		var hash_index = url.indexOf('#');
 		return hash_index >= 0 ? url.substring(hash_index) : '#/';
-	}
+	};
 
 	/**
 	 * Internally launched when an error in route or in nexts happens
@@ -162,7 +163,7 @@
 		if(this._errors['_'+httpCode] instanceof Function)
 			this._errors['_'+httpCode](err, url, httpCode);
 		else{
-			this._errors['_'](err, url, httpCode);
+			this._errors._(err, url, httpCode);
 		}
 		return false;
 	};
@@ -228,7 +229,7 @@
 			}
 		}
 		/*Build next callback*/
-		var next = (matchedIndexes.length == 0) ? null : (function(uO, u,mI,context){
+		var next = (matchedIndexes.length === 0) ? null : (function(uO, u,mI,context){
 			return function(err, error_code){
 				if(err)	
 					return this._throwsRouteError( error_code || 500, err, fragmentUrl );
@@ -280,7 +281,7 @@
 			matchedIndexes = [],
 			urlToTest;
 		var url = fragmentUrl;
-		if(url.length == 0)
+		if(url.length === 0)
 			return true;
 		url = url.replace( LEADING_BACKSLASHES_MATCH, '');
 		urlToTest = (url.split('?'))[0]
@@ -379,7 +380,7 @@
 			/*Remove leading backslash from the end of the string*/
 			path = path.replace(LEADING_BACKSLASHES_MATCH,'');
 			/*Param Names are all the one defined as :param in the path*/
-			while(( match = PATH_NAME_MATCHER.exec(path)) != null) {
+			while(( match = PATH_NAME_MATCHER.exec(path)) !== null) {
 				paramNames.push(match[1]);
 			}
 			path = new RegExp(path
@@ -431,7 +432,7 @@
 		if(!startUrl){
 			startUrl = this._extractFragment(window.location.href);
 		}
-		startUrl = startUrl.indexOf('#') == 0 ? startUrl : '#'+startUrl;
+		startUrl = startUrl.indexOf('#') === 0 ? startUrl : '#'+startUrl;
 		this.redirect( startUrl );
 		return this;
 	};
@@ -443,7 +444,7 @@
 	Router.prototype.destroy = function(){
 		removeHashchangeListener(window, this._hasChangeHandler);
 		return this;
-	}
+	};
 
 	return Router;
 }));
