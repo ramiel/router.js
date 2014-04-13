@@ -14,6 +14,9 @@ promise.prototype.reject = function(err){
 	}
 };
 
+//Disabling router.js error default warnings
+console.warn=null;
+
 describe("Router suite.", function() {
 	it("Check that Router exists and is a Function", function() {
   		Router.should.be.ok;
@@ -41,7 +44,6 @@ describe("Router suite.", function() {
 		  		router.should.be.an.instanceOf(Router)
 			});
 			it("it has ['redirect','setLocation','add','get','addRoute','play','pause'] methods",function(done){
-				console.log(router);
 				['redirect','add','get','addRoute','play','pause','setLocation'].forEach(function(prop){
 					router.should.have.property(prop);
 				});
@@ -72,7 +74,6 @@ describe("Router suite.", function() {
 				p.on=function(err,req){
 					req.should.have.property('href','#/user/jhon');
 					req.params.should.have.property('username','jhon');
-					console.log("qui",req);
 					done()
 				};
 				window.document.location.href = href;			
@@ -98,11 +99,9 @@ describe("Router suite.", function() {
 				it('query exists in req and its property "a" has value "b" ',function(done){
 					var p = new promise();
 					router.add('#/user',function(req,next){
-						console.log(req);
 						p.solve(null,req);
 					});
 					p.on=function(err,req){
-						console.log(req);
 						req.should.have.property('query');
 						req.query.should.have.property('a','b');
 						done();
@@ -121,7 +120,6 @@ describe("Router suite.", function() {
 							p.solve();
 						})
 						.errors(404, function( err, href){
-							console.log(err);
 							p.reject(err);
 					    });
 					p.on=function(err){

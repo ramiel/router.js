@@ -3,6 +3,8 @@ Changelog
 ###v 0.8.3
 - Grunt configured
 - JSHint of code
+- Karma Grunt integration
+- Removed unused warning from tests
 
 ###v 0.8.2
 - Added some tests
