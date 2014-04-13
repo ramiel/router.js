@@ -31,7 +31,7 @@
     "grunt-newer": "^0.7.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "./node_modules/karma/bin/karma start --single-run --browsers PhantomJS"
   },
   "license": "GPL2",
   "engine": "node >= 0.8.0"
