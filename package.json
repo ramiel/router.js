@@ -25,7 +25,9 @@
     "karma-chai-plugins": "^0.2.0",
     "grunt": "^0.4.4",
     "grunt-contrib-uglify": "^0.4.0",
-    "grunt-contrib-jshint": "^0.10.0"
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-karma": "^0.8.2",
+    "grunt-contrib-watch": "^0.6.1"
   },
   "scripts": {
     "test": "./node_modules/karma/bin/karma start --single-run --browsers PhantomJS"
