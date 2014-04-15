@@ -366,7 +366,7 @@ describe("Router suite.", function() {
 				});
 			});
 
-			describe.only('redirect should',function(){
+			describe('redirect should',function(){
 				it('change href and fire route',function(done){
 					router.play();
 					second.on=function(){

@@ -1,5 +1,8 @@
 Changelog
 =========
+###v 0.8.4
+- Enabled removed tests
+
 ###v 0.8.3
 - Grunt configured
 - JSHint of code
