@@ -1,6 +1,6 @@
 /***
  * @preserve Router.js
- * @version 0.8.3
+ * @version 0.8.4
  * @author: Fabrizio Ruggeri
  * @website: http://ramielcreations.com/projects/router-js/
  * @license GPL-v2

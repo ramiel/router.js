@@ -1,4 +1,0 @@
-0.7.0
-
-Removed queryString key in req object
-Query are decoded correctly. Now '+'s introduced by encodeuri is shifted to spaces
