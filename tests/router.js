@@ -245,23 +245,26 @@ describe("Router suite.", function() {
 			});
 
 			describe('Defining a before, two matching routes and an error route',function(){
-				it('in the before next is function',function(done){
+				it('in the before next is function (and so req.hasNext)',function(done){
 					bef.on=function(err,req,next){
 						next.should.be.a('function');
+						req.hasNext.should.be.true;
 						done();
 					}
 					window.document.location.href = '#/user/jhon';
 				});
-				it('the next callback in before is called',function(done){
+				it('the next callback in before is called (and so req.hasNext)',function(done){
 					first.on=function(err,req,next){
 						next.should.be.a('function');
+						req.hasNext.should.be.true;
 						done();
 					};
 					window.document.location.href = '#/user/jhon';
 				});
-				it('the next callback in first route is called and no other nexts are present',function(done){
+				it('the next callback in first route is called and no other nexts are present (and so not req.hasNext)',function(done){
 					second.on=function(err,req,next){
 						expect(next).to.be.null;
+						req.hasNext.should.be.false;
 						done();
 					};
 					window.document.location.href = '#/user/jhon';

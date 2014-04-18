@@ -82,6 +82,7 @@
 		this.params;
 		this.query;
 		this.splat;
+		this.hasNext = false;
 	};
 
 	/**
@@ -177,7 +178,7 @@
 	 * @return {Object} Request object
 	 * @private
 	 */
-	Router.prototype._buildRequestObject = function(fragmentUrl, params, splat){
+	Router.prototype._buildRequestObject = function(fragmentUrl, params, splat, hasNext){
 		if(!fragmentUrl)
 			throw new Error('Unable to compile request object');
 		var request = new Request(fragmentUrl);
@@ -196,6 +197,9 @@
 		}
 		if(splat && splat.length > 0){
 			request.splats = splat;
+		}
+		if(hasNext === true){
+			request.hasNext = true;
 		}
 		return request;
 	};
@@ -229,15 +233,15 @@
 			}
 		}
 		/*Build next callback*/
-		var next = (matchedIndexes.length === 0) ? null : (function(uO, u,mI,context){
+		var hasNext = (matchedIndexes.length !== 0)
+		var next = !hasNext ? null : (function(uO, u,mI,context){
 			return function(err, error_code){
 				if(err)	
 					return this._throwsRouteError( error_code || 500, err, fragmentUrl );
 				this._followRoute(uO, u, mI);
 				}.bind(this);
 			}.bind(this)(fragmentUrl, url, matchedIndexes));
-		
-		request = this._buildRequestObject( fragmentUrl, params, splat );
+		request = this._buildRequestObject( fragmentUrl, params, splat, hasNext );
 		route.routeAction(request, next);
 	};
 	
@@ -267,7 +271,7 @@
 				this._followRoute(fragmentUrl, url, matchedIndexes);
 			}.bind(this);
 		}
-		before( this._buildRequestObject( fragmentUrl ), next );
+		before( this._buildRequestObject( fragmentUrl, null, null, true ), next );
 	};
 	
 	/**
