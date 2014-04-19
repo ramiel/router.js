@@ -186,10 +186,17 @@ call next, then also the second match will be fired and so on. Remember, `next` 
 
 Next will be useful also to fire erros, we will see this in a while, after talking about error handling
 
-**Note**:
+**Note:**
+`req` has a property: `hasNext`. You can use it to know if can call next instead of check `next` i.e.
+
+```javascript
+...
+if( req.hasNext )
+	next();
 ```
-Have you noticed that addRoute are chainable? This is true for every router methods!
-```
+
+**Note:**
+Have you noticed that `addRoute` methods are chainable? So this is for every router methods!
 
 ##Error handling
 
