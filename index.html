@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Router.js by ramiel</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Router.js</h1>
+        <h2>Router.js is a simple yet powerful javascript plugin to handle hash fragment in order to route requests</h2>
+        <a href="https://github.com/ramiel/router.js" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="routerjs" class="anchor" href="#routerjs"><span class="octicon octicon-link"></span></a>Router.js</h1>
+
+<p><a href="https://travis-ci.org/ramiel/router.js"><img src="https://travis-ci.org/ramiel/router.js.svg?branch=master" alt="Build Status"></a></p>
+
+<p>Discover on <a href="http://ramielcreations.com/projects/router-js/" title="Ramiel's creations page">Ramiel's creations</a></p>
+
+<p>Router.js is a simple yet powerful javascript plugin to handle hash fragment in order to route request.
+Router.js helps you to intercept request done trough fragment and match them using string or regular expressions.</p>
+
+<h2>
+<a name="basics" class="anchor" href="#basics"><span class="octicon octicon-link"></span></a>Basics</h2>
+
+<p>Include Router.js in your application</p>
+
+<h4>
+<a name="standard" class="anchor" href="#standard"><span class="octicon octicon-link"></span></a>Standard</h4>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"js/router.js"</span><span class="nt">&gt;</span>
+</pre></div>
+
+<h4>
+<a name="requirejs" class="anchor" href="#requirejs"><span class="octicon octicon-link"></span></a>RequireJS</h4>
+
+<div class="highlight highlight-javascript"><pre><span class="c1">//Example</span>
+<span class="nx">require</span><span class="p">([</span><span class="s2">"router"</span><span class="p">,</span> <span class="p">...],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Router</span><span class="p">,</span> <span class="p">...)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Router</span><span class="p">();</span>
+    <span class="c1">//...</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>according to your directory template.</p>
+
+<p>Now just define a simple route. A route is made of two components</p>
+
+<ul>
+<li>Matching string/regexp</li>
+<li>Callback</li>
+</ul><p>Let's see</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Router</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+        <span class="cm">/* Do something */</span>
+    <span class="p">});</span>
+</pre></div>
+
+<p>There are three noticeble aspects. Your router object and all its functions are chainable. So after an <code>addRoute</code> Route you can chain onther one and so on.
+The matching string is '#/users', so if your fragment match this pattern your callback will be fired.</p>
+
+<p>Callback is populated with two arguments:</p>
+
+<ul>
+<li><code>req</code></li>
+<li><code>next</code></li>
+</ul><p>req is an object containing</p>
+
+<ol>
+<li>
+<code>href</code>, which is the url that matched</li>
+<li>
+<code>params</code>, all the params recognized in the url. We will talk about this in a while</li>
+<li>
+<code>query</code>, all the params passed as regular html query string</li>
+</ol><p>What if more than a route match your url? Well, the next parameter will be populated with a function you can call to execute the next route which match. Elsewhere next is null</p>
+
+<p><strong>Note</strong>:</p>
+
+<pre><code>Method `addRoute` has many aliases. You can use also: `add`, `route`, `get`!
+</code></pre>
+
+<h3>
+<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h3>
+
+<p>Router constructor accept an object for options</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span><span class="nx">ignorecase</span><span class="o">:</span> <span class="kc">true</span><span class="p">}</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Router</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+</pre></div>
+
+<p>Valid options:</p>
+
+<ol>
+<li>
+<code>ignorecase</code> : The router do not consider casing. Default: <code>true</code>
+</li>
+</ol><h3>
+<a name="parametric-route" class="anchor" href="#parametric-route"><span class="octicon octicon-link"></span></a>Parametric route</h3>
+
+<p>Let's see this:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/:username'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">username</span><span class="p">;</span>
+    <span class="p">});</span>
+</pre></div>
+
+<p>well, if the called url is '<a href="http://www.webapp.com/#/users/john">http://www.webapp.com/#/users/john</a>', then <code>username</code> in the callback will be 'john'!</p>
+
+<p>You can use as many params you want, they will appear in the <code>params</code> property of <code>req</code> object.</p>
+
+<h3>
+<a name="query-string" class="anchor" href="#query-string"><span class="octicon octicon-link"></span></a>Query string</h3>
+
+<p>Using previous example if we call '<a href="http://www.webapp.com/#/users/jhon?key=value&amp;foo=bar">http://www.webapp.com/#/users/jhon?key=value&amp;foo=bar</a>' then in req <code>query</code> will be populated and will be the following object</p>
+
+<div class="highlight highlight-javascript"><pre><span class="p">...</span>
+<span class="nx">query</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">key</span><span class="o">:</span> <span class="s1">'value'</span><span class="p">,</span>
+    <span class="nx">foo</span><span class="o">:</span> <span class="s1">'bar'</span>  
+<span class="p">}</span>
+</pre></div>
+
+<p>so you can write</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/:username'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">query</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">foo</span><span class="p">)</span> <span class="o">?</span> <span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">foo</span> <span class="o">:</span> <span class="s1">'not foo'</span><span class="p">;</span>
+    <span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="reqget---one-method-to-get-them-all" class="anchor" href="#reqget---one-method-to-get-them-all"><span class="octicon octicon-link"></span></a>Req.get - One method to get them all</h3>
+
+<p>Instead of looking in req.params and in req.query, you can use <code>req.get( key, default_value )</code> method.
+It will look in params, the in query. If nothing has found you can provide a fallback value or <code>undefined</code> will be returned.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="c1">//Calling #/users/john?age=25</span>
+<span class="nx">router</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/:username'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'username'</span><span class="p">);</span> <span class="c1">//will be 'john' because is found in params</span>
+        <span class="kd">var</span> <span class="nx">age</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'age'</span><span class="p">,</span><span class="mi">18</span><span class="p">);</span> <span class="c1">//will be 25 because is found in query</span>
+        <span class="kd">var</span> <span class="nx">surname</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'surname'</span><span class="p">,</span><span class="s1">'Snow'</span><span class="p">);</span> <span class="c1">//will be 'Snow' because of provided default value</span>
+        <span class="kd">var</span> <span class="nx">address</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'address'</span><span class="p">);</span> <span class="c1">//will be undefined</span>
+    <span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="special-symbols" class="anchor" href="#special-symbols"><span class="octicon octicon-link"></span></a>Special symbols</h3>
+
+<p>The other symbol you can use in your route is <code>*</code>. It matches every word before next backslash.
+Consider:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/*'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+        <span class="cm">/* First word after /users/ will match this route */</span>
+    <span class="p">});</span>
+</pre></div>
+
+<p>Now all of this url will match the rule:</p>
+
+<ul>
+<li><a href="http://www.webapp.com/#/users/john">http://www.webapp.com/#/users/john</a></li>
+<li><a href="http://www.webapp.com/#/users/asdasd">http://www.webapp.com/#/users/asdasd</a></li>
+<li><a href="http://www.webapp.com/#/users/lua">http://www.webapp.com/#/users/lua</a></li>
+</ul><p>The url <a href="http://www.webapp.com/#/users/john/foo">http://www.webapp.com/#/users/john/foo</a> will not match! Remember that I've said 'before next backslash'!
+To match even it you must use the <code>**</code> matcher. It means <strong>everything</strong></p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/**'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+        <span class="cm">/* Everithing after /users/ will match this route */</span>
+    <span class="p">});</span>
+</pre></div>
+
+<p>All of this urls match the rule:</p>
+
+<ul>
+<li><a href="http://www.webapp.com/#/users/john">http://www.webapp.com/#/users/john</a></li>
+<li><a href="http://www.webapp.com/#/users/john/snow">http://www.webapp.com/#/users/john/snow</a></li>
+<li><a href="http://www.webapp.com/#/users/john/snow/wolf">http://www.webapp.com/#/users/john/snow/wolf</a></li>
+</ul><h2>
+<a name="next-argument" class="anchor" href="#next-argument"><span class="octicon octicon-link"></span></a>Next argument</h2>
+
+<p>Considering this routes:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/:username'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">username</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span> <span class="nx">username</span> <span class="o">!=</span> <span class="s1">'admin'</span> <span class="o">&amp;&amp;</span> <span class="nx">next</span> <span class="k">instanceof</span> <span class="nb">Function</span><span class="p">)</span>
+                <span class="nx">next</span><span class="p">();</span>
+
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/*'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>                  
+        <span class="nx">alert</span><span class="p">(</span><span class="s1">'You are not admin!'</span><span class="p">);</span>
+    <span class="p">});</span>
+</pre></div>
+
+<p>As you can see both the routes match the url <code>http://www.webapp.com/#/users/john</code>. In Router.js only the first declared match will be called unless you explicitly
+call next, then also the second match will be fired and so on. Remember, <code>next</code> will be a function only if another route matches.</p>
+
+<p>Next will be useful also to fire erros, we will see this in a while, after talking about error handling</p>
+
+<p><strong>Note</strong>:</p>
+
+<pre><code>Have you noticed that addRoute are chainable? This is true for every router methods!
+</code></pre>
+
+<h2>
+<a name="error-handling" class="anchor" href="#error-handling"><span class="octicon octicon-link"></span></a>Error handling</h2>
+
+<p>We can handle errors just like http protocol handle it, by http codes.
+An example is better than million words</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/:username'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+        <span class="cm">/*do something*/</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">errors</span><span class="p">(</span><span class="mi">404</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">href</span><span class="p">){</span>
+        <span class="nx">alert</span><span class="p">(</span><span class="s1">'Page not foud!'</span> <span class="o">+</span> <span class="nx">href</span> <span class="p">);</span>
+    <span class="p">});</span>
+</pre></div>
+
+<p>In this example if we point browser to <code>http://www.webapp.com/#/route/inexistent</code> no route will match our url. Router.js will fire a '404' error.
+You can subscribe to 404 situations just with <code>.errors(404, function(err,href){...})</code></p>
+
+<p>Router will match for you 404 and 500 situation but will fire a general error for all http code you forgot to register</p>
+
+<h2>
+<a name="befores" class="anchor" href="#befores"><span class="octicon octicon-link"></span></a>Befores</h2>
+
+<p>Sometimes you just want to execute some actions before the route matches and then continue on regular matches. Then <code>before</code> is what you need.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span>
+    <span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span> <span class="nx">userIsLogged</span><span class="p">()</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span>
+            <span class="nx">next</span><span class="p">();</span>
+        <span class="k">else</span>
+            <span class="nx">next</span><span class="p">(</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">'User not logged'</span><span class="p">),</span> <span class="mi">403</span><span class="p">);</span>
+    <span class="p">})</span>
+
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/:username'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+                        <span class="cm">/*do something*/</span>
+    <span class="p">})</span>
+
+    <span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="mi">403</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">href</span><span class="p">){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">'While attempting to access to '</span><span class="o">+</span> <span class="nx">href</span> <span class="o">+</span><span class="s1">' the following error happened: '</span><span class="o">+</span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">});</span>
+</pre></div>
+
+<p><code>Befores</code> will be executed before normal route. If <code>next</code> is called in before then the route is followed, else if <code>next</code> is called with an error then the error is fired and the route is not followed.
+You can specify even error type (403 in this case), elsewhere it will be a 500</p>
+
+<p>You can add as many <code>befores</code> you want, they will be fired sequentially when you call <code>next</code></p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="kd">function</span><span class="p">(){...})</span>
+      <span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="kd">function</span><span class="p">(){...});</span>
+</pre></div>
+
+<p>Remember that in before req has just <code>href</code> property cause is the only you know at before time. </p>
+
+<h2>
+<a name="this-meaning" class="anchor" href="#this-meaning"><span class="octicon octicon-link"></span></a>This meaning</h2>
+
+<p>Context inside callback, befores or errors have no special meaning to avoid complexity. If you need to force your context inside a callback you can use <code>bind</code>.
+Bind is the browser implementation or our if missing. Let's see at an example</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">function</span><span class="p">(){</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">property</span> <span class="o">=</span> <span class="s1">'foo'</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Router</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">'#/mine/route'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+                            <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">property</span><span class="p">;</span>
+                            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span> <span class="cm">/* will print 'foo' */</span>
+                            <span class="nx">router</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">'#/'</span><span class="o">+</span><span class="nx">p</span><span class="p">);</span>
+                    <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+
+<span class="p">}</span>
+</pre></div>
+
+<p>If you need your router inside a callback just refer to it as router.
+Have you noticed redirect method? Well it's time to talk about utility methods</p>
+
+<h2>
+<a name="utility-methods" class="anchor" href="#utility-methods"><span class="octicon octicon-link"></span></a>Utility methods</h2>
+
+<p>In Router.js are present some utility methods.</p>
+
+<ul>
+<li><code>redirect</code></li>
+</ul><div class="highlight highlight-javascript"><pre><span class="nx">router</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+</pre></div>
+
+<p>this will redirect your application to desired url firing routes normally</p>
+
+<ul>
+<li><code>setLocation</code></li>
+</ul><div class="highlight highlight-javascript"><pre><span class="nx">router</span><span class="p">.</span><span class="nx">setLocation</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+</pre></div>
+
+<p>this will redirect your application to desired url <strong>WITHOUT</strong> firing any routes!</p>
+
+<ul>
+<li>
+<code>play</code> <code>pause</code>
+</li>
+</ul><div class="highlight highlight-javascript"><pre><span class="nx">router</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="o">=</span><span class="s1">'/#/ignore/me'</span><span class="p">;</span> <span class="c1">//This will be ignored until you call play</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">play</span><span class="p">();</span>
+</pre></div>
+
+<p><code>Pause</code> stop router to react to hash changes. <code>Play</code> ripristinate router functionalities.</p>
+
+<h2>
+<a name="regexp" class="anchor" href="#regexp"><span class="octicon octicon-link"></span></a>RegExp</h2>
+
+<p>We already said that you can use regular expression to better match your route</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span><span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="sr">/#\/foo\/bar\/?(.*)/i</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+
+    <span class="cm">/* req gained splats property which contains an array with all your custom matches*/</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>So calling '<a href="http://www.webapp.com/#/foo/bar/custom">http://www.webapp.com/#/foo/bar/custom</a>' will follow the route and in req you will find a property called splats.
+Splats is an array containing all regexp matches (everyting between two '( )' ). In this cas <code>req.splats[0]</code> is <code>custom</code></p>
+
+<p>You can use regular expression to obtain more grain fined routes but it's up to you to handle them correctly</p>
+
+<h2>
+<a name="run-and-destroy" class="anchor" href="#run-and-destroy"><span class="octicon octicon-link"></span></a>Run and Destroy</h2>
+
+<p>Router has a special method. You can call run after you have setted all your route to immediately launch routes parsing.
+Run has a parameter, 'startUrl'. If is setted it will redirect immediately to that url, alse it will read current browser url.
+If you do not call run Router will do nothing until next fragment change.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span>
+    <span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="s1">'#/users/:username'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+      <span class="cm">/* code */</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s1">'#/'</span><span class="p">);</span>
+</pre></div>
+
+<p>If you need to dispose a router, you have to call <code>destroy</code> to remove any event handler and then simply set router to <code>null</code></p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+<span class="nx">router</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="c1">//all clean</span>
+</pre></div>
+
+<h1>
+<a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>Why</h1>
+
+<ul>
+<li><p>I've used different router like library but some do too few, other too much. I need a little, clear script which do the essential.</p></li>
+<li><p>Code written using Router.js is higly readable</p></li>
+</ul><h2>
+<a name="compatibility" class="anchor" href="#compatibility"><span class="octicon octicon-link"></span></a>Compatibility</h2>
+
+<p>Desktop:</p>
+
+<ul>
+<li>Chrome 5.0+</li>
+<li>Firefox 3.6+</li>
+<li>Safari 5.0+</li>
+<li>Opera 10.6+</li>
+<li>IE 8+</li>
+</ul><p>Mobile:</p>
+
+<ul>
+<li>iOS Safari 4.0+</li>
+<li>Android 
+
+<ul>
+<li>Browser 2.2+</li>
+<li>Chrome all</li>
+<li>Firefox all</li>
+</ul>
+</li>
+<li>IE all</li>
+<li>Opera Mobile 11.0+</li>
+</ul><h2>
+<a name="author" class="anchor" href="#author"><span class="octicon octicon-link"></span></a>Author</h2>
+
+<p><a href="http://ramielcreations.com/" title="Ramiel's creations page">Fabrizio 'ramiel' Ruggeri</a></p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/ramiel/router.js/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/ramiel/router.js/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/ramiel/router.js"></a> is maintained by <a href="https://github.com/ramiel">ramiel</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
