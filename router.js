@@ -76,6 +76,7 @@
 	 * Request class
 	 * @param {string} href Url for request object
 	 * @constructor
+	 * @class
 	 */
 	var Request = function(href){
 		this.href = href;
@@ -100,17 +101,19 @@
 	};
 
 	/**
-	 * Router Class
+	 * Router main class
+	 * @param {object} [options={ignorecase:true}] Options for the instance of the router
+	 * @class Router
 	 * @constructor
 	 */
 	var Router = function(options) {
-		/**@private*/
+		/** @private*/
 		this._options = extend({ignorecase: true}, options);
-		/**@private */
+		/** @private */
 		this._routes = [];
-		/**@private */
+		/** @private */
 		this._befores = [];
-		/**@private */
+		/** @private */
 		this._errors = {
 			'_'		: function(err, url, httpCode) {
 				if(console && console.warn) console.warn('Router.js : '+httpCode);
@@ -125,7 +128,7 @@
 				}
 			}
 		};
-		/**@private */
+		/** @private */
 		this._paused = false;
 		this._hasChangeHandler = this._onHashChange.bind(this);
 		addHashchangeListener(window,this._hasChangeHandler);
@@ -133,7 +136,7 @@
 
 	/**
 	 * Handler for hashchange event
-	 * @param  {event} e Event
+	 * @param  {object} e Event
 	 */
 	Router.prototype._onHashChange = function(e){
 		if(!this._paused){

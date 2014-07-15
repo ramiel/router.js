@@ -52,7 +52,17 @@ module.exports = function(grunt) {
 		watch: {
 			files : ['<%= pkg.basename %>.js'],
 			tasks: ['jshint','uglify'],
-		}
+		},
+
+		jsdoc : {
+	        main : {
+	            src: ['router.js'], 
+	            options: {
+	                destination: 'doc',
+	                lenient : true
+	            }
+	        }
+    	}
   	});
 
   
@@ -61,9 +71,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-newer');
+	grunt.loadNpmTasks('grunt-jsdoc');
 
   	// Default task(s).
 	grunt.registerTask('default', ['newer:uglify:build','jshint','karma:unit']);
 	grunt.registerTask('precommit', ['newer:uglify:build']);
 	grunt.registerTask('test', ['jshint','karma:dev']);
+	grunt.registerTask('doc', ['jsdoc']);
 };
