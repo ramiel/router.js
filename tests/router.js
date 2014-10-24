@@ -378,6 +378,15 @@ describe("Router suite.", function() {
 					};
 					router.redirect('#/path/second');					
 				});
+
+				it('change href and fire route even if change only query params',function(done){
+					router.play();
+					second.on=function(){
+						/#\/path\/second\?q=hi$/.test(window.document.location.href).should.be.ok;
+						done();	
+					};
+					router.redirect('#/path/second?q=hi');					
+				});
 			});
 
 		});
