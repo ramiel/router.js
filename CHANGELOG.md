@@ -4,8 +4,6 @@ Changelog
 ### v1.0.0
 - Added documentation
 - New tests added
-
-### v0.8.5
 - Added `req.hasNext` properties to match presence of more mathing routes
 
 

@@ -8,11 +8,30 @@ Discover on [Ramiel's creations](http://ramielcreations.com/projects/router-js/ 
 Router.js is a simple yet powerful javascript plugin to handle hash fragment in order to route request.
 Router.js helps you to intercept request done trough fragment and match them using string or regular expressions.
 
-##Basics
+## Migrating from *0.x* to *1.0*
+
+If you have code for version prior of 1.0.0 you should remember that to check if exists another route which match th request, you have to check `req.hasNext` and not checking `next` is a function anymore.
+Here an exemple of migration
+
+```javascript
+router.get('/home',function(erq, next){
+	//Avoid
+	if(next instanceof Function){ // WRONG !
+		next();
+	}
+
+	//Use instead
+	if(req.hasNext){
+		next();
+	}
+});
+```
+
+## Basics
 
 Include Router.js in your application
 
-####Standard
+#### Standard
 
 ```html
 <script type="text/javascript" src="js/router.js">
@@ -59,7 +78,7 @@ req is an object containing
 2. `params`, all the params recognized in the url. We will talk about this in a while
 3. `query`, all the params passed as regular html query string
 
-What if more than a route match your url? Well, the next parameter will be populated with a function you can call to execute the next route which match. Elsewhere next is null
+What if more than a route match your url? Well, the next parameter is a function you can call to execute the next route which match. Elsewhere next is still a function but you will see it in error handling
 
 **Note**:
 ```
