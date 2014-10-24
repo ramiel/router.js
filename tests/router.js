@@ -231,15 +231,16 @@ describe("Router suite.", function() {
 				})
 				.add('#/user/:username',function(req,next){
 					if(req.get('username') == 'admin')
-						next(500);
+						next('Invalid username',500);
 					first.solve(null,req,next);
 					next();
 				})
 				.add('#/user/*',function(req,next){
 					second.solve(null,req,next);
+					next();
 				})
 				.errors(500,function(err,href){
-					errp.solve(err,href);
+					errp.solve(err,href,500);
 				});
 				done();
 			});
@@ -261,17 +262,25 @@ describe("Router suite.", function() {
 					};
 					window.document.location.href = '#/user/jhon';
 				});
-				it('the next callback in first route is called and no other nexts are present (and so not req.hasNext)',function(done){
+				it('the next callback in first route is called and so req.hasNext is false',function(done){
 					second.on=function(err,req,next){
-						expect(next).to.be.null;
+						expect(next).to.be.a('function');
 						req.hasNext.should.be.false;
 						done();
 					};
 					window.document.location.href = '#/user/jhon';
 				});
+				it('the next callback in second route,called without an error, produce an error',function(done){
+					errp.on=function(err,href,code){
+						code.should.be.equal(500);
+						href.should.be.equal('#/user/jhon');
+						done();
+					};
+					window.document.location.href = '#/user/jhon';
+				});
 				it('the next callback in first route is called with a 500 error',function(done){
-					errp.on=function(err,href){
-						err.should.be.equal(500);
+					errp.on=function(err,href,code){
+						code.should.be.equal(500);
 						href.should.be.equal('#/user/admin');
 						done();
 					};

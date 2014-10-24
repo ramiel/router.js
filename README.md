@@ -191,7 +191,7 @@ Considering this routes:
 router
 	.addRoute('#/users/:username', function(req,next){
 			var username = req.params.username;
-			if( username != 'admin' && next instanceof Function)
+			if( username != 'admin' && req.hasNext)
 				next();
 				
 	})
@@ -201,7 +201,11 @@ router
 ```
 
 As you can see both the routes match the url `http://www.webapp.com/#/users/john`. In Router.js only the first declared match will be called unless you explicitly
-call next, then also the second match will be fired and so on. Remember, `next` will be a function only if another route matches.
+call next, then also the second match will be fired and so on. 
+**Note**:
+```
+Remember to check req.hasNext to know if another route matched!
+```
 
 Next will be useful also to fire erros, we will see this in a while, after talking about error handling
 
@@ -235,7 +239,21 @@ router
 In this example if we point browser to `http://www.webapp.com/#/route/inexistent` no route will match our url. Router.js will fire a '404' error.
 You can subscribe to 404 situations just with `.errors(404, function(err,href){...})`
 
-Router will match for you 404 and 500 situation but will fire a general error for all http code you forgot to register
+Router will match for you 404 and 500 situation but will fire a general error for all http code you forgot to register.
+
+To fire an error manually call next with an error parameter (and an optional errorCode).
+`next` signature is: next( [ err, [err_code] ] )
+
+```javascript
+router
+	.addRoute('#/users/:username', function(req,next){
+		if(something)
+			next('Not found',404);
+	})
+	.errors(404, function( err, href){
+		alert('Page not foud!' + href );
+	});
+```
 
 ##Befores
 

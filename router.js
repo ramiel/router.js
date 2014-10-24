@@ -1,6 +1,6 @@
 /***
  * @preserve Router.js
- * @version 0.8.4
+ * @version 1.0.0
  * @author: Fabrizio Ruggeri
  * @website: http://ramielcreations.com/projects/router-js/
  * @license GPL-v2
@@ -292,14 +292,19 @@
             }
         }
         /*Build next callback*/
-        var hasNext = (matchedIndexes.length !== 0)
-        var next = !hasNext ? null : (function(uO, u,mI,context){
-            return function(err, error_code){
-                if(err) 
-                    return this._throwsRouteError( error_code || 500, err, fragmentUrl );
-                this._followRoute(uO, u, mI);
-                }.bind(this);
-            }.bind(this)(fragmentUrl, url, matchedIndexes));
+        var hasNext = (matchedIndexes.length !== 0);
+        var next = (
+            function(uO, u,mI, hasNext){
+                return function(hasNext, err, error_code){
+                    if(!hasNext && !err){
+                        return this._throwsRouteError( 500, 'Cannot call "next" without an error if request.hasNext is false', fragmentUrl );
+                    }
+                    if(err) 
+                        return this._throwsRouteError( error_code || 500, err, fragmentUrl );
+                    this._followRoute(uO, u, mI);
+                    }.bind(this, hasNext);
+                }.bind(this)(fragmentUrl, url, matchedIndexes, hasNext)
+        );
         request = this._buildRequestObject( fragmentUrl, params, splat, hasNext );
         route.routeAction(request, next);
     };
@@ -470,8 +475,6 @@
     };
 
 
-    
-    
     /**
      * Adds a before callback. Will be fired before every route
      * @param {Router~routeCallback} callback
@@ -481,6 +484,7 @@
         this._befores.push(callback);
         return this;
     };
+
 
     /**
      * This callback is called when this route is matched
