@@ -4,6 +4,10 @@ module.exports = function(grunt) {
   	grunt.initConfig({
 	    pkg: grunt.file.readJSON('package.json'),
 
+	    clean: {
+		  doc: ['doc']
+		},
+
 	    uglify: {
 	     	//all:{
 	     		options: {
@@ -56,10 +60,12 @@ module.exports = function(grunt) {
 
 		jsdoc : {
 	        main : {
-	            src: ['router.js'], 
+	            src: ['README.md', 'router.js'], 
 	            options: {
+	            	configure: '.jsdoc.config',
 	                destination: 'doc',
-	                lenient : true
+	                lenient : true,
+	                private : false
 	            }
 	        }
     	}
@@ -68,6 +74,7 @@ module.exports = function(grunt) {
   
   	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-newer');
@@ -77,5 +84,5 @@ module.exports = function(grunt) {
 	grunt.registerTask('default', ['newer:uglify:build','jshint','karma:unit']);
 	grunt.registerTask('precommit', ['newer:uglify:build']);
 	grunt.registerTask('test', ['jshint','karma:dev']);
-	grunt.registerTask('doc', ['jsdoc']);
+	grunt.registerTask('doc', ['clean:doc', 'jsdoc']);
 };

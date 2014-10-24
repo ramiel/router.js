@@ -5,3 +5,4 @@ compiler.jar
 node_modules/
 .sublime-grunt.cache
 doc/
+npm-debug.log

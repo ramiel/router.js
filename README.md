@@ -340,7 +340,12 @@ router = null;
 //all clean
 ```
 
-#Why
+# Api
+
+You can generate documentation API of this repository using `grunt doc`.
+A folder named `doc` will be generated and it will contain all the documentation
+
+# Why
 
 * I've used different router like library but some do too few, other too much. I need a little, clear script which do the essential.
 
