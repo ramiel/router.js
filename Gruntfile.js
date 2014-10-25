@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 	    pkg: grunt.file.readJSON('package.json'),
 
 	    clean: {
-		  doc: ['doc/**','!doc/sftp-config*']
+		  doc: ['doc/*','!doc/sftp-config.*']
 		},
 
 	    uglify: {
@@ -60,7 +60,7 @@ module.exports = function(grunt) {
 
 		jsdoc : {
 	        main : {
-	            src: ['README.md', 'router.js'], 
+	            src: ['API.md', 'router.js'], 
 	            options: {
 	            	configure: '.jsdoc.config',
 	                destination: 'doc',

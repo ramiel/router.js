@@ -3,12 +3,12 @@ Router.js
 
 [![Build Status](https://travis-ci.org/ramiel/router.js.svg?branch=master)](https://travis-ci.org/ramiel/router.js)
 
-Discover on [Ramiel's creations](http://ramielcreations.com/projects/router-js/ "Ramiel's creations page")
+Discover on [Ramiel's creations](http://ramielcreations.com/projects/router-js/ "Ramiel's creations page") or fork me on [github](https://ramiel.github.com/router.js/)
 
 Router.js is a simple yet powerful javascript plugin to handle hash fragment in order to route request.
 Router.js helps you to intercept request done trough fragment and match them using string or regular expressions.
 
-## Migrating from *0.x* to *1.0*
+## Migrating from *0.x* to *1.x*
 
 If you have code for version prior of 1.0.0 you should remember that something has changed.
 To be sure that another matching route exists, you have to check `req.hasNext` and not controlling that `next` is a function, as previous indicated.
@@ -370,11 +370,11 @@ router = null;
 //all clean
 ```
 
-# Api
+## Api
 
 You can generate documentation API of this repository using `grunt doc`.
 A folder named `doc` will be generated and it will contain all the documentation.
-Anyway the api are available online at [routerjs.ramielcreations.com](http://routerjs.ramielcreations.com)
+Anyway the api are available online at [routerjs.ramielcreations.com](http://routerjs.ramielcreations.com/index.html)
 
 # Why
 
