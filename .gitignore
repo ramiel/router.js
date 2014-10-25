@@ -4,3 +4,6 @@ compiler.jar
 .directory
 node_modules/
 .sublime-grunt.cache
+doc/
+npm-debug.log
+sftp-config*.json

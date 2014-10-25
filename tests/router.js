@@ -231,44 +231,56 @@ describe("Router suite.", function() {
 				})
 				.add('#/user/:username',function(req,next){
 					if(req.get('username') == 'admin')
-						next(500);
+						next('Invalid username',500);
 					first.solve(null,req,next);
 					next();
 				})
 				.add('#/user/*',function(req,next){
 					second.solve(null,req,next);
+					next();
 				})
 				.errors(500,function(err,href){
-					errp.solve(err,href);
+					errp.solve(err,href,500);
 				});
 				done();
 			});
 
 			describe('Defining a before, two matching routes and an error route',function(){
-				it('in the before next is function',function(done){
+				it('in the before next is function (and so req.hasNext)',function(done){
 					bef.on=function(err,req,next){
 						next.should.be.a('function');
+						req.hasNext.should.be.true;
 						done();
 					}
 					window.document.location.href = '#/user/jhon';
 				});
-				it('the next callback in before is called',function(done){
+				it('the next callback in before is called (and so req.hasNext)',function(done){
 					first.on=function(err,req,next){
 						next.should.be.a('function');
+						req.hasNext.should.be.true;
 						done();
 					};
 					window.document.location.href = '#/user/jhon';
 				});
-				it('the next callback in first route is called and no other nexts are present',function(done){
+				it('the next callback in first route is called and so req.hasNext is false',function(done){
 					second.on=function(err,req,next){
-						expect(next).to.be.null;
+						expect(next).to.be.a('function');
+						req.hasNext.should.be.false;
+						done();
+					};
+					window.document.location.href = '#/user/jhon';
+				});
+				it('the next callback in second route,called without an error, produce an error',function(done){
+					errp.on=function(err,href,code){
+						code.should.be.equal(500);
+						href.should.be.equal('#/user/jhon');
 						done();
 					};
 					window.document.location.href = '#/user/jhon';
 				});
 				it('the next callback in first route is called with a 500 error',function(done){
-					errp.on=function(err,href){
-						err.should.be.equal(500);
+					errp.on=function(err,href,code){
+						code.should.be.equal(500);
 						href.should.be.equal('#/user/admin');
 						done();
 					};
@@ -374,6 +386,15 @@ describe("Router suite.", function() {
 						done();	
 					};
 					router.redirect('#/path/second');					
+				});
+
+				it('change href and fire route even if change only query params',function(done){
+					router.play();
+					second.on=function(){
+						/#\/path\/second\?q=hi$/.test(window.document.location.href).should.be.ok;
+						done();	
+					};
+					router.redirect('#/path/second?q=hi');					
 				});
 			});
 
