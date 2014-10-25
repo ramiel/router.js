@@ -10,13 +10,14 @@ Router.js helps you to intercept request done trough fragment and match them usi
 
 ## Migrating from *0.x* to *1.0*
 
-If you have code for version prior of 1.0.0 you should remember that to check if exists another route which match th request, you have to check `req.hasNext` and not checking `next` is a function anymore.
+If you have code for version prior of 1.0.0 you should remember that something has changed.
+To be sure that another matching route exists, you have to check `req.hasNext` and not controlling that `next` is a function, as previous indicated.
 Here an exemple of migration
 
 ```javascript
-router.get('/home',function(erq, next){
+router.get('#/home',function(erq, next){
 	//Avoid
-	if(next instanceof Function){ // WRONG !
+	if(next instanceof Function){ // WRONG! It's always a function now
 		next();
 	}
 
@@ -63,8 +64,8 @@ var router = new Router()
 	});
 ```
 
-There are three noticeble aspects. Your router object and all its functions are chainable. So after an `addRoute` Route you can chain onther one and so on.
-The matching string is '#/users', so if your fragment match this pattern your callback will be fired.
+There are three noticeble aspects. Your router object and all its functions are chainable. So after an `addRoute` you can chain onther one and so on.
+The matching string is `#/users`, so if your fragment match this pattern your callback will be fired.
 
 Callback is populated with two arguments:
 
@@ -77,8 +78,10 @@ req is an object containing
 1. `href`, which is the url that matched
 2. `params`, all the params recognized in the url. We will talk about this in a while
 3. `query`, all the params passed as regular html query string
+4. `splats`, all matching groups if you used a regular expression as route description (will see after)
+5. `hasNext`, a boolean indicating that another route match the current url
 
-What if more than a route match your url? Well, the next parameter is a function you can call to execute the next route which match. Elsewhere next is still a function but you will see it in error handling
+What if more than a route match your url? You can call `next` to execute the next route.
 
 **Note**:
 ```
@@ -167,7 +170,7 @@ Now all of this url will match the rule:
 * http://www.webapp.com/#/users/asdasd
 * http://www.webapp.com/#/users/lua
 
-The url http://www.webapp.com/#/users/john/foo will not match! Remember that I've said 'before next backslash'!
+The url http://www.webapp.com/#/users/john/foo will not match! Remember that I've said _before next backslash_!
 To match even it you must use the `**` matcher. It means **everything**
 
 ```javascript
@@ -201,22 +204,12 @@ router
 ```
 
 As you can see both the routes match the url `http://www.webapp.com/#/users/john`. In Router.js only the first declared match will be called unless you explicitly
-call next, then also the second match will be fired and so on. 
-**Note**:
-```
-Remember to check req.hasNext to know if another route matched!
-```
+call next, then also the second match will be fired and so on.
+
+**Note**: Remember to check **req.hasNext** to know if another route matched!
 
 Next will be useful also to fire erros, we will see this in a while, after talking about error handling
 
-**Note:**
-`req` has a property: `hasNext`. You can use it to know if can call next instead of check `next` i.e.
-
-```javascript
-...
-if( req.hasNext )
-	next();
-```
 
 **Note:**
 Have you noticed that `addRoute` methods are chainable? So this is for every router methods!
@@ -232,7 +225,7 @@ router
 		/*do something*/
 	})
 	.errors(404, function( err, href){
-		alert('Page not foud!' + href );
+		alert('Page not found!' + href );
 	});
 ```
 
@@ -358,8 +351,8 @@ You can use regular expression to obtain more grain fined routes but it's up to 
 
 ##Run and Destroy
 
-Router has a special method. You can call run after you have setted all your route to immediately launch routes parsing.
-Run has a parameter, 'startUrl'. If is setted it will redirect immediately to that url, alse it will read current browser url.
+Router has a special method. You can call `run` after you have setted all your route to immediately launch routes parsing.
+`Run` has a parameter, 'startUrl'. If is setted it will redirect immediately to that url, else it will read current browser url.
 If you do not call run Router will do nothing until next fragment change.
 
 ```javascript
@@ -380,7 +373,8 @@ router = null;
 # Api
 
 You can generate documentation API of this repository using `grunt doc`.
-A folder named `doc` will be generated and it will contain all the documentation
+A folder named `doc` will be generated and it will contain all the documentation.
+Anyway the api are available online at [routerjs.ramielcreations.com](http://routerjs.ramielcreations.com)
 
 # Why
 

@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 	    pkg: grunt.file.readJSON('package.json'),
 
 	    clean: {
-		  doc: ['doc']
+		  doc: ['doc/**','!doc/sftp-config*']
 		},
 
 	    uglify: {

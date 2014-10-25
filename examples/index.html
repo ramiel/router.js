@@ -38,7 +38,7 @@
 				 console.group();
 				 console.log('Matched first word after /custom/' );
 				 console.log(arguments);
-				 if(next instanceof Function){
+				 if(req.hasNext){
 					 next(new Error(),500);
 				 }
 				 console.groupEnd();
@@ -48,7 +48,7 @@
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
-				 if(next instanceof Function){
+				 if(req.hasNext){
 					 next(new Error(),500);
 				 }
 				 console.groupEnd();
@@ -147,7 +147,7 @@ var router = new Router()
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
-				 if(next instanceof Function){
+				 if(req.hasNext){
 					 next(new Error(),500);
 				 }
 				 console.groupEnd();
@@ -157,7 +157,7 @@ var router = new Router()
 				 console.group();
 				 console.log('Matched everything after /custom/' );
 				 console.log(arguments);
-				 if(next instanceof Function){
+				 if(req.hasNext){
 					 next(new Error(),500);
 				 }
 				 console.groupEnd();
