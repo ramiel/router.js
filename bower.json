@@ -1,6 +1,6 @@
 {
   "name": "router.js",
-  "version": "0.8.4",
+  "version": "1.0.0",
   "homepage": "https://github.com/ramiel/Router.js",
   "authors": [
     "Fabrizio Ruggeri <fabrizio.ruggeri@gmail.com>"
@@ -28,6 +28,7 @@
     "bower_components",
     "test",
     "tests",
-    "examples"
+    "examples",
+    "doc"
   ]
 }
