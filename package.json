@@ -33,7 +33,7 @@
     "requirejs": "^2.1.11"
   },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start --single-run --browsers PhantomJS"
+    "test": "./node_modules/karma/bin/karma start"
   },
   "license": "GPL2",
   "engine": "node >= 0.8.0"

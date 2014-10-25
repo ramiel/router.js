@@ -1,8 +1,13 @@
 module.exports = function(grunt) {
 
+	var package_config = grunt.file.readJSON('package.json');
+	package_config.basename = 'router';
+	package_config.src_dir = 'src';
+	package_config.dist_dir = 'dist';
+
   	// Project configuration.
   	grunt.initConfig({
-	    pkg: grunt.file.readJSON('package.json'),
+	    pkg: package_config,
 
 	    clean: {
 		  doc: ['doc/*','!doc/sftp-config.*']
@@ -20,11 +25,11 @@ module.exports = function(grunt) {
 			        //'Build on <%= grunt.template.today("yyyy-mm-dd") %>\n'+
 			        '*/',
 			        sourceMap: true,
-			        sourceMapName: '<%= pkg.basename %>.min.js.map'
+			        sourceMapName: '<%= pkg.dist_dir %>/<%= pkg.basename %>.min.js.map'
 		    	},
 		      	build: {
-		    		src: '<%= pkg.basename %>.js',
-			        dest: '<%= pkg.basename %>.min.js'
+		    		src: '<%=pkg.src_dir %>/<%= pkg.basename %>.js',
+			        dest: '<%= pkg.dist_dir %>/<%= pkg.basename %>.min.js'
 		      	}
 	      	//}
 		},
@@ -32,18 +37,14 @@ module.exports = function(grunt) {
 	    jshint: {
 	    	build:{
 		    	files: {
-			        src: ['<%= pkg.basename %>.js']
+			        src: ['<%=pkg.src_dir %>/<%= pkg.basename %>.js']
 			    }
 			}
 	    },
 
 	    karma: {
 	    	options: {
-				configFile: 'karma.conf.js',
-			    singleRun: true,
-			    browsers: ['PhantomJS'],
-			    autoWatch: true,
-			    logLevel: 'OFF'				    
+				configFile: 'karma.conf.js'    
 			},
 	    	unit:{
 			 	reporters: 'dots'
@@ -54,13 +55,13 @@ module.exports = function(grunt) {
 		},
 
 		watch: {
-			files : ['<%= pkg.basename %>.js'],
+			files : ['<%= pkg.src_dir %>/<%= pkg.basename %>.js'],
 			tasks: ['jshint','uglify'],
 		},
 
 		jsdoc : {
 	        main : {
-	            src: ['API.md', 'router.js'], 
+	            src: ['API.md', '<%= pkg.src_dir %>/<%= pkg.basename %>.js'], 
 	            options: {
 	            	configure: '.jsdoc.config',
 	                destination: 'doc',
