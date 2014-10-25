@@ -1,7 +1,7 @@
 {
   "name": "router.js",
-  "version": "1.0.0",
-  "homepage": "https://github.com/ramiel/Router.js",
+  "version": "1.0.1",
+  "homepage": "https://github.com/ramiel/router.js",
   "authors": [
     "Fabrizio Ruggeri <fabrizio.ruggeri@gmail.com>"
   ],
@@ -23,12 +23,21 @@
   ],
   "license": "GPL-2",
   "ignore": [
-    "**/.*",
+    "doc",
+    "examples",
     "node_modules",
     "bower_components",
-    "test",
     "tests",
-    "examples",
-    "doc"
+    ".gitignore",
+    ".jsdoc.config",
+    ".travis.yml",
+    "API.md",
+    "Changelog.md",
+    "Gruntfile.js",
+    "LICENSE",
+    "README.md",
+    "bower.json",
+    "karma.conf.json",
+    "package.json"
   ]
 }

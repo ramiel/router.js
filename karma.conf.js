@@ -23,7 +23,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       { pattern : 'node_modules/mocha/mocha.js', included: false },
-      { pattern :'router.js',served:true,included:true,watched:true },
+      { pattern :'src/router.js',served:true,included:true,watched:true },
       //'tests/*.js',
       'tests/**/*.js'
     ],
@@ -73,6 +73,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
   });
 };
