@@ -12,7 +12,7 @@ Router.js helps you to intercept request done trough fragment and match them usi
 
 If you have code for version prior of 1.0.0 you should remember that something has changed.
 To be sure that another matching route exists, you have to check `req.hasNext` and not controlling that `next` is a function, as previous indicated.
-Here an exemple of migration
+Here an example of migration
 
 ```javascript
 router.get('#/home',function(erq, next){
@@ -64,7 +64,7 @@ var router = new Router()
 	});
 ```
 
-There are three noticeble aspects. Your router object and all its functions are chainable. So after an `addRoute` you can chain onther one and so on.
+There are three noticeable aspects. Your router object and all its functions are chainable. So after an `addRoute` you can chain onther one and so on.
 The matching string is `#/users`, so if your fragment match this pattern your callback will be fired.
 
 Callback is populated with two arguments:
