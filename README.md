@@ -32,13 +32,38 @@ router.get('#/home',function(erq, next){
 
 Include Router.js in your application
 
+### Installation
+
+#### Download
+
+Simply download a release from github <https://github.com/ramiel/router.js/releases>.
+
+#### Bower
+
+`bower install router.js`
+
+#### npm
+
+This library is available on npm to be used with tool like `browserify`
+
+`npm install router.js`
+
+#### Git
+
+Clone this repository
+
+`https://github.com/ramiel/router.js.git`
+
+
+### Include the library
+
 #### Standard
 
 ```html
 <script type="text/javascript" src="js/router.js">
 ```
 
-####RequireJS
+#### RequireJS
 ```javascript
 //Example
 require(["router", ...], function(Router, ...) {
@@ -46,9 +71,15 @@ require(["router", ...], function(Router, ...) {
 	//...
 });
 ```
-
-
 according to your directory template.
+
+#### CommonJS
+
+```javascript
+var Router = require('router.js');
+```
+
+### Usage
 
 Now just define a simple route. A route is made of two components
 
