@@ -33,6 +33,7 @@
     "requirejs": "^2.1.11"
   },
   "scripts": {
+    "main": "dist/router.min.js",
     "test": "./node_modules/karma/bin/karma start"
   },
   "license": "GPL2",
