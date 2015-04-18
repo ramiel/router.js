@@ -2,6 +2,7 @@ Router.js
 =========
 
 [![Build Status](https://travis-ci.org/ramiel/router.js.svg?branch=master)](https://travis-ci.org/ramiel/router.js)
+[![devDependency Status](https://david-dm.org/ramiel/router.js/dev-status.svg)](https://david-dm.org/ramiel/router.js#info=devDependencies)
 
 Discover on [Ramiel's creations](http://ramielcreations.com/projects/router-js/ "Ramiel's creations page") or fork me on [github](https://ramiel.github.com/router.js/)
 
@@ -12,7 +13,7 @@ Router.js helps you to intercept request done trough fragment and match them usi
 
 If you have code for version prior of 1.0.0 you should remember that something has changed.
 To be sure that another matching route exists, you have to check `req.hasNext` and not controlling that `next` is a function, as previous indicated.
-Here an exemple of migration
+Here an example of migration
 
 ```javascript
 router.get('#/home',function(erq, next){
@@ -32,13 +33,38 @@ router.get('#/home',function(erq, next){
 
 Include Router.js in your application
 
+### Installation
+
+#### Download
+
+Simply download a release from github <https://github.com/ramiel/router.js/releases>.
+
+#### Bower
+
+`bower install router.js`
+
+#### npm
+
+This library is available on npm to be used with tool like `browserify`
+
+`npm install router.js`
+
+#### Git
+
+Clone this repository
+
+`https://github.com/ramiel/router.js.git`
+
+
+### Include the library
+
 #### Standard
 
 ```html
 <script type="text/javascript" src="js/router.js">
 ```
 
-####RequireJS
+#### RequireJS
 ```javascript
 //Example
 require(["router", ...], function(Router, ...) {
@@ -46,9 +72,15 @@ require(["router", ...], function(Router, ...) {
 	//...
 });
 ```
-
-
 according to your directory template.
+
+#### CommonJS
+
+```javascript
+var Router = require('router.js');
+```
+
+### Usage
 
 Now just define a simple route. A route is made of two components
 
@@ -64,7 +96,7 @@ var router = new Router()
 	});
 ```
 
-There are three noticeble aspects. Your router object and all its functions are chainable. So after an `addRoute` you can chain onther one and so on.
+There are three noticeable aspects. Your router object and all its functions are chainable. So after an `addRoute` you can chain onther one and so on.
 The matching string is `#/users`, so if your fragment match this pattern your callback will be fired.
 
 Callback is populated with two arguments:
