@@ -47,7 +47,7 @@ Simply download a release from github <https://github.com/ramiel/router.js/relea
 
 This library is available on npm to be used with tool like `browserify`
 
-`npm install router.js`
+`npm install routerjs`
 
 #### Git
 
@@ -77,7 +77,7 @@ according to your directory template.
 #### CommonJS
 
 ```javascript
-var Router = require('router.js');
+var Router = require('routerjs');
 ```
 
 ### Usage
