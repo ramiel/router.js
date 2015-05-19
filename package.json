@@ -1,5 +1,5 @@
 {
-  "name": "router.js",
+  "name": "routerjs",
   "basename": "router",
   "version": "1.0.2",
   "description": "Lightweight and powerful router for javascript applications",
@@ -34,7 +34,6 @@
   },
   "main": "dist/router.min.js",
   "scripts": {
-    "main": "dist/router.min.js",
     "test": "./node_modules/karma/bin/karma start"
   },
   "license": "GPL2",
