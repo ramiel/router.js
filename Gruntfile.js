@@ -82,8 +82,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-jsdoc');
 
   	// Default task(s).
-	grunt.registerTask('default', ['newer:uglify:build','jshint','karma:unit']);
-	grunt.registerTask('precommit', ['newer:uglify:build']);
-	grunt.registerTask('test', ['jshint','karma:dev']);
-	grunt.registerTask('doc', ['clean:doc', 'jsdoc']);
+	grunt.registerTask('default', 'Builds and launches tests', ['newer:uglify:build','jshint','karma:unit']);
+	grunt.registerTask('precommit', 'Used internally to validate code before commit', ['newer:uglify:build']);
+	grunt.registerTask('test', 'Launches all the tests', ['jshint','karma:dev']);
+	grunt.registerTask('doc', 'Builds the documentation', ['clean:doc', 'jsdoc']);
 };

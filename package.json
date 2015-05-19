@@ -1,7 +1,7 @@
 {
-  "name": "router.js",
+  "name": "routerjs",
   "basename": "router",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Lightweight and powerful router for javascript applications",
   "author": "Fabrizio Ruggeri <fabrizio.ruggeri@gmail.com>",
   "website": "http://ramielcreations.com/projects/router-js/",
@@ -32,8 +32,8 @@
     "mocha": "^2.2.4",
     "requirejs": "^2.1.17"
   },
+  "main": "dist/router.min.js",
   "scripts": {
-    "main": "dist/router.min.js",
     "test": "./node_modules/karma/bin/karma start"
   },
   "license": "GPL2",
