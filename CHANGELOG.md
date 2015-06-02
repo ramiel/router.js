@@ -1,5 +1,8 @@
 Changelog
 =========
+### v1.0.4
+
+- Improved documentation
 
 ### v1.0.1
 - minor bugfixes
