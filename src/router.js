@@ -147,15 +147,9 @@
     };
 
     /**
-     * Router construction options
-     * @typedef {object} Router~Options
-     * @property {boolean} [ignorecase=true] If false casing matters in routing match
-     */
-
-
-    /**
      * Construct a router
-     * @param {Router~Options} [options] Options for the instance of the router
+     * @param {object} [options] Options for the instance of the router
+     * @param {boolean} [options.ignorecase=true] If false casing matters in routing match
      * @class Router
      * @name Router
      * @classDesc Router main class
@@ -448,6 +442,7 @@
      * Add a routes to possible route match. Alias : route, add, get
      * @param {(string|RegExp)} path A string or a regular expression to match
      * @param {Router~routeCallback} callback - Is fired on path match
+     * @return {Router} return this router for chaining
      * @memberOf Router
      */
     Router.prototype.get = function(path, callback) {
@@ -478,6 +473,7 @@
     /**
      * Adds a before callback. Will be fired before every route
      * @param {Router~routeCallback} callback
+     * @return {Router} return this router for chaining
      * @memberOf Router
      */
     Router.prototype.before = function(callback) {
@@ -498,6 +494,7 @@
      * Adds error callback handling for Http code
      * @param {Number} httpCode Http code to handle just like 404,500 or what else
      * @param {Router~errorCallback} callback Handler for error
+     * @return {Router} return this router for chaining
      * @memberOf Router
      */
     Router.prototype.errors = function(httpCode, callback) {
@@ -515,6 +512,7 @@
     /**
      * Run application. Note that calling this is not mandatory. Calling it just force application to evaluate current or passed url
      * @param {String} startUrl Url to redirect application on startup. Default is current location
+     * @return {Router} return this router for chaining
      * @memberOf Router
      */
     Router.prototype.run = function( startUrl ){
