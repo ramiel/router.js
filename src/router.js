@@ -41,7 +41,7 @@
                 if (oldHref !== newHref) {
                     var _oldHref = oldHref;
                     oldHref = newHref;
-                    hashChange({
+                    listener({
                         'type': 'hashchange',
                         'newURL': newHref,
                         'oldURL': _oldHref
@@ -61,6 +61,7 @@
             el.removeEventListener('hashchange', listener, false); 
         } else if (el.detachEvent)  {
             clearInterval( context._listener );
+            context._listener = null;
         }
     }
 
