@@ -31,11 +31,23 @@
      * @param {DOMElement} el       Element of DOM
      * @param {function} listener Callback
      */
-    function addHashchangeListener( el, listener ){
+    function addHashchangeListener( el, listener, context ){
         if (el.addEventListener) {
-          el.addEventListener('hashchange', listener, false); 
+            el.addEventListener('hashchange', listener, false); 
         } else if (el.attachEvent)  {
-          el.attachEvent('hashchange', listener);
+            var oldHref = location.href;
+            context._listener = setInterval(function() {
+                var newHref = location.href;
+                if (oldHref !== newHref) {
+                    var _oldHref = oldHref;
+                    oldHref = newHref;
+                    hashChange({
+                        'type': 'hashchange',
+                        'newURL': newHref,
+                        'oldURL': _oldHref
+                    });
+                }
+            }, 100);
         }
     }
 
@@ -44,11 +56,11 @@
      * @param  {DOMElement} el       Element of DOM
      * @param  {function} listener Callback
      */
-    function removeHashchangeListener( el, listener ){
+    function removeHashchangeListener( el, listener, context ){
         if (el.removeEventListener) {
-          el.removeEventListener('hashchange', listener, false); 
+            el.removeEventListener('hashchange', listener, false); 
         } else if (el.detachEvent)  {
-          el.detachEvent('hashchange', listener);
+            clearInterval( context._listener );
         }
     }
 
@@ -180,7 +192,7 @@
         };
         this._paused = false;
         this._hasChangeHandler = this._onHashChange.bind(this);
-        addHashchangeListener(window,this._hasChangeHandler);
+        addHashchangeListener(window,this._hasChangeHandler, this);
     };
 
     /**
@@ -416,7 +428,10 @@
      * 
      */
     Router.prototype.setLocation = function(url){
-        window.history.pushState(null,'',url);
+        if(window.history && window.history.pushState)
+            window.history.pushState(null,'',url);
+        else
+            window.location.hash = url;
         return this;
     };
     
@@ -532,7 +547,7 @@
      * @memberOf Router
      */
     Router.prototype.destroy = function(){
-        removeHashchangeListener(window, this._hasChangeHandler);
+        removeHashchangeListener(window, this._hasChangeHandler, this);
         return this;
     };
 

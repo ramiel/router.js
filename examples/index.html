@@ -1,86 +1,130 @@
 <html>
 <head>
 	<title>Router.js Test</title>
-	<script type="text/javascript" src="../router.js"></script>
+	<script type="text/javascript" src="./router.js"></script>
 	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 	<script type="text/javascript">
-	var router = new Router()
-				
-			 .addRoute('#/search/:testparam', function(req,next){
-			 	console.group();
-			 	console.log('Matched /query/. Checking for query parameter' );
-			 	console.log(req.query);
-			 	console.log('Using req.get("q")',req.get('q'));
-			 	console.log('Using req.get("missing_param","default value")',req.get("missing_param","default value"));
-			 	console.log(req);
-			 	console.groupEnd();
-			 })
-			 
-			 .addRoute('#/:username', function(req, next){
-				 console.group();
-				 console.log('Routed to user',req.params.username);
-				 console.log('Can also use req.get(\'username\')',req.get('username'));
-				 console.log(arguments);
-				 console.groupEnd();
-			 })
-			 
-			 .route(/#\/foo\/bar\/?(.*)/i,function(req, next){
-				 console.group();
-				 console.log('Matched regexp path');
-				 if(req.splats && req.splats[0]){
-					 console.log(req.splats[0]);
-				 }
-				 console.log(arguments);
-				 console.groupEnd();
-			 })
-			 
-			 .route('#/custom/*', function(req, next){
-				 console.group();
-				 console.log('Matched first word after /custom/' );
-				 console.log(arguments);
-				 if(req.hasNext){
-					 next(new Error(),500);
-				 }
-				 console.groupEnd();
-			 })
-			 
-			 .route('#/custom/**', function(req, next){
-				 console.group();
-				 console.log('Matched everything after /custom/' );
-				 console.log(arguments);
-				 if(req.hasNext){
-					 next(new Error(),500);
-				 }
-				 console.groupEnd();
-			 })
-			 
-			 
-			 .errors(404,function(){
-				 console.group();
-				 console.warn('404',arguments);
-				 console.groupEnd();
-			 })
-			 
-			 .errors(500,function(){
-				 console.group();
-				 console.error('500',arguments);
-				 console.groupEnd();
-			 })
-			 
-			 .before(function(req,next){
-				 console.group();
-				 console.log('Before',arguments);
-				 if(req.href == '#/custom/error')
-					 next(new Error('Before Errored'),403);
-				 else
-					 next();
-				 console.groupEnd();
-			 });
-			 
-			 window.clickForm = function clickForm(){
-			 	router.redirect('#/search/testvalue?' + $('form').serialize());
-			 	return false;
-			 };
+	hashChange = function(){
+  		window.console.log('changed');
+  	};
+  	
+	$(document).ready(function(){
+		var box = $('#box');
+		window.console = window.console || {};
+		window.console.log = function(text){
+			box.html(box.html() + text +'<br />');
+		};
+		window.console.log('iniziato');
+		// window.attachEvent('onhashchange', function(){
+  //           window.console.log('prova');
+  //     	});
+
+
+
+      // 	if (!('onhashchange' in window)) {
+      // 		console.log('here3');
+	    var oldHref = location.href;
+	    setInterval(function() {
+	        var newHref = location.href;
+	        if (oldHref !== newHref) {
+	            var _oldHref = oldHref;
+	            oldHref = newHref;
+	            hashChange.call(window, {
+	                'type': 'hashchange',
+	                'newURL': newHref,
+	                'oldURL': _oldHref
+	            });
+	        }
+	    }, 100);
+		
+
+		    // window.addEventListener("hashchange", hashChange, false);
+		// window.onload = function(){
+		// 	window.attachEvent ("onhashchange", hashChange);
+		// };
+	    // window.attachEvent("onhashchange", hashChange);    
+
+      	// window.location.hash = '#/vaiqua';
+      	return;
+		var router = new Router()
+					
+				 .addRoute('#/search/:testparam', function(req,next){
+				 	console.group();
+				 	console.log('Matched /query/. Checking for query parameter' );
+				 	console.log(req.query);
+				 	console.log('Using req.get("q")',req.get('q'));
+				 	console.log('Using req.get("missing_param","default value")',req.get("missing_param","default value"));
+				 	console.log(req);
+				 	console.groupEnd();
+				 })
+				 
+				 .addRoute('#/:username', function(req, next){
+					 console.group();
+					 console.log('Routed to user',req.params.username);
+					 console.log('Can also use req.get(\'username\')',req.get('username'));
+					 console.log(arguments);
+					 console.groupEnd();
+				 })
+				 
+				 .route(/#\/foo\/bar\/?(.*)/i,function(req, next){
+					 console.group();
+					 console.log('Matched regexp path');
+					 if(req.splats && req.splats[0]){
+						 console.log(req.splats[0]);
+					 }
+					 console.log(arguments);
+					 console.groupEnd();
+				 })
+				 
+				 .route('#/custom/*', function(req, next){
+					 console.group();
+					 console.log('Matched first word after /custom/' );
+					 console.log(arguments);
+					 if(req.hasNext){
+						 next(new Error(),500);
+					 }
+					 console.groupEnd();
+				 })
+				 
+				 .route('#/custom/**', function(req, next){
+					 console.group();
+					 console.log('Matched everything after /custom/' );
+					 console.log(arguments);
+					 if(req.hasNext){
+						 next(new Error(),500);
+					 }
+					 console.groupEnd();
+				 })
+				 
+				 
+				 .errors(404,function(){
+					 console.group();
+					 console.warn('404',arguments);
+					 console.groupEnd();
+				 })
+				 
+				 .errors(500,function(){
+					 console.group();
+					 console.error('500',arguments);
+					 console.groupEnd();
+				 })
+				 
+				 .before(function(req,next){
+					 console.group();
+					 console.log('Before',arguments);
+					 if(req.href == '#/custom/error')
+						 next(new Error('Before Errored'),403);
+					 else
+						 next();
+					 console.groupEnd();
+				 });
+				 
+				 window.clickForm = function clickForm(){
+				 	router.redirect('#/search/testvalue?' + $('form').serialize());
+				 	return false;
+				 };
+		window.console.log('caricato');
+		});
 </script>
 
 <style>
@@ -112,7 +156,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', end
 }
 </style>
 </head>
-<body>
+<body onhashchange="hashChange (event);">
 <pre>
 var router = new Router()
 
@@ -198,7 +242,7 @@ var router = new Router()
 <form>
 	<input type="hidden" name="q" value="search for nothing" />
 </form>
-
+<div id="box"></div>
 
 
 

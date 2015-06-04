@@ -19,7 +19,7 @@ console.warn=null;
 
 describe("Router suite.", function() {
 	it("Check that Router exists and is a Function", function() {
-  		Router.should.be.ok;
+  		expect(Router).to.be.ok();
 	});
 
 	var router;
@@ -41,11 +41,11 @@ describe("Router suite.", function() {
 
 		describe("Once router is instantiated,",function(){
 			it('it is defined',function(){
-		  		router.should.be.an.instanceOf(Router)
+		  		expect(router).to.be.an(Router);
 			});
 			it("it has ['redirect','setLocation','add','get','addRoute','play','pause'] methods",function(done){
 				['redirect','add','get','addRoute','play','pause','setLocation'].forEach(function(prop){
-					router.should.have.property(prop);
+					expect(router).to.have.property(prop);
 				});
 				done();
 			});		
@@ -56,7 +56,7 @@ describe("Router suite.", function() {
 				var bp = new promise();
 				router
 					.before(function(req,next){
-						req.should.have.property('href');
+						expect(req).to.have.property('href');
 						bp.solve();
 						next();
 					}).add('/user/:username',function(){});
@@ -72,8 +72,8 @@ describe("Router suite.", function() {
 					p.solve(null,req);
 				})
 				p.on=function(err,req){
-					req.should.have.property('href','#/user/jhon');
-					req.params.should.have.property('username','jhon');
+					expect(req).to.have.property('href','#/user/jhon');
+					expect(req.params).to.have.keys('username','jhon');
 					done()
 				};
 				window.document.location.href = href;			
@@ -102,8 +102,8 @@ describe("Router suite.", function() {
 						p.solve(null,req);
 					});
 					p.on=function(err,req){
-						req.should.have.property('query');
-						req.query.should.have.property('a','b');
+						expect(req).to.have.property('query');
+						expect(req.query).to.have.keys('a','b');
 						done();
 					};
 					window.document.location.href = '#/user?a=b&other=value';
@@ -123,7 +123,7 @@ describe("Router suite.", function() {
 							p.reject(err);
 					    });
 					p.on=function(err){
-						err.should.be.ok;
+						expect(err).to.be.ok();
 						done();
 					};
 					window.document.location.href = '#/User';
@@ -143,8 +143,8 @@ describe("Router suite.", function() {
 			describe('defining #/user/:name and calling #/user/jhon?surname=snow',function(){
 				it('req has "get" property and is a Function',function(done){
 					p.on=function(err,req){
-						req.should.have.property('get');
-						req.get.should.be.a('function');
+						expect(req).to.have.property('get');
+						expect(req.get).to.be.a('function');
 						done();
 					};
 					window.document.location.href = '#/user/jhon?surname=snow';
