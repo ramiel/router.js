@@ -3,6 +3,7 @@ Changelog
 ### v1.0.4
 
 - Improved documentation
+- Removed unused dev dependencies
 
 ### v1.0.1
 - minor bugfixes
