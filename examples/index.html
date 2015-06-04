@@ -1,51 +1,12 @@
 <html>
 <head>
 	<title>Router.js Test</title>
-	<script type="text/javascript" src="./router.js"></script>
+	<script type="text/javascript" src="../src/router.js"></script>
 	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 	<script type="text/javascript">
-	hashChange = function(){
-  		window.console.log('changed');
-  	};
-  	
-	$(document).ready(function(){
-		var box = $('#box');
-		window.console = window.console || {};
-		window.console.log = function(text){
-			box.html(box.html() + text +'<br />');
-		};
-		window.console.log('iniziato');
-		// window.attachEvent('onhashchange', function(){
-  //           window.console.log('prova');
-  //     	});
-
-
-
-      // 	if (!('onhashchange' in window)) {
-      // 		console.log('here3');
-	    var oldHref = location.href;
-	    setInterval(function() {
-	        var newHref = location.href;
-	        if (oldHref !== newHref) {
-	            var _oldHref = oldHref;
-	            oldHref = newHref;
-	            hashChange.call(window, {
-	                'type': 'hashchange',
-	                'newURL': newHref,
-	                'oldURL': _oldHref
-	            });
-	        }
-	    }, 100);
-		
-
-		    // window.addEventListener("hashchange", hashChange, false);
-		// window.onload = function(){
-		// 	window.attachEvent ("onhashchange", hashChange);
-		// };
-	    // window.attachEvent("onhashchange", hashChange);    
-
-      	// window.location.hash = '#/vaiqua';
-      	return;
+		var noop = function(){};
+		console.group = console.group || noop;
+		console.groupEnd = console.groupEnd || noop;
 		var router = new Router()
 					
 				 .addRoute('#/search/:testparam', function(req,next){
@@ -119,12 +80,10 @@
 					 console.groupEnd();
 				 });
 				 
-				 window.clickForm = function clickForm(){
-				 	router.redirect('#/search/testvalue?' + $('form').serialize());
-				 	return false;
-				 };
-		window.console.log('caricato');
-		});
+		window.clickForm = function clickForm(){
+			router.redirect('#/search/testvalue?' + $('form').serialize());
+			return false;
+		};
 </script>
 
 <style>
@@ -156,7 +115,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', end
 }
 </style>
 </head>
-<body onhashchange="hashChange (event);">
+<body>
 <pre>
 var router = new Router()
 
