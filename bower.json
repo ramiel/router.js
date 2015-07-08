@@ -21,7 +21,7 @@
     "hashtag",
     "location"
   ],
-  "license": "GPL-2",
+  "license": "GPL-2.0",
   "ignore": [
     "doc",
     "examples",
