@@ -100,7 +100,7 @@
          * @name params
          * @public
          */
-        this.params;
+        this.params = {};
         /**
          * GET Query object
          * @type {object}
@@ -109,7 +109,7 @@
          * @name query
          * @public
          */
-        this.query;
+        this.query = {};
         /**
          * Contains any generic regex matched parameters
          * @type {object}
@@ -118,7 +118,7 @@
          * @name splat
          * @public
          */
-        this.splat;
+        this.splat = {};
         /**
          * If true another route matched the request and you are able to call next
          * @type {Boolean}
