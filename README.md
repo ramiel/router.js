@@ -16,7 +16,7 @@ To be sure that another matching route exists, you have to check `req.hasNext` a
 Here an example of migration
 
 ```javascript
-router.get('#/home',function(erq, next){
+router.get('#/home',function(req, next){
 	//Avoid
 	if(next instanceof Function){ // WRONG! It's always a function now
 		next();
