@@ -1,6 +1,6 @@
 {
   "name": "router.js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "homepage": "https://github.com/ramiel/router.js",
   "authors": [
     "Fabrizio Ruggeri <fabrizio.ruggeri@gmail.com>"
@@ -21,7 +21,7 @@
     "hashtag",
     "location"
   ],
-  "license": "GPL-2",
+  "license": "GPL-2.0",
   "ignore": [
     "doc",
     "examples",

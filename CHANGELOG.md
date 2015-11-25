@@ -1,5 +1,12 @@
 Changelog
 =========
+### v1.0.4
+
+- Improved documentation
+- Removed unused dev dependencies
+- Updated old dependencies
+- Fixed an error on strict javascript
+- Fixed some typos on documentation
 
 ### v1.0.1
 - minor bugfixes
