@@ -3,6 +3,7 @@ Changelog
 ### Next
 
 - Updated dev-dependency
+- Fixed bug building documentation
 
 ### v1.0.4
 
