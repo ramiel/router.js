@@ -4,6 +4,8 @@ Changelog
 
 - Updated dev-dependency
 - Fixed bug building documentation
+- Tests are done on latest version of node to behave like    
+  in development environment 
 
 ### v1.0.4
 
