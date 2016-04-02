@@ -410,7 +410,7 @@ Anyway the api are available online at [routerjs.ramielcreations.com](http://rou
 
 # Why
 
-* I've used different router like library but some do too few, other too much. I need a little, clear script which do the essential.
+* I've used different router like libraries but some do too few, other too much. I need a little, clear code which do the essential.
 
 * Code written using Router.js is higly readable
 
@@ -421,7 +421,9 @@ Desktop:
 - Firefox 3.6+
 - Safari 5.0+
 - Opera 10.6+
-- IE 8+
+- IE 9+ / edge *   
+
+\* IE8 is supported using the code you can find in [ie8 branch](https://github.com/ramiel/router.js/tree/feature/ie8). This code is not mantained and will not receive any update. Is provided as is and I'll not accept any issue regarding ie8. I told you!
 
 Mobile:
 - iOS Safari 4.0+

@@ -1,5 +1,14 @@
 Changelog
 =========
+### 1.0.5
+
+- Updated dev-dependency
+- Fixed bug building documentation
+- Tests are done on latest version of node to behave like    
+  in development environment
+- Update readme with information on Internet Explorer 8 compatibility
+- Updated documentation
+
 ### v1.0.4
 
 - Improved documentation
