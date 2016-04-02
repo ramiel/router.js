@@ -1,6 +1,6 @@
 Changelog
 =========
-### Next
+### 1.0.5
 
 - Updated dev-dependency
 - Fixed bug building documentation
