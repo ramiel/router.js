@@ -3,6 +3,7 @@ Changelog
 ### Next
 
 - Improve documentation
+- Update dependencies
 
 ### 1.0.5
 
