@@ -1,6 +1,6 @@
 Changelog
 =========
-### Next
+### 1.0.6
 
 - Improve documentation
 - Update dependencies
