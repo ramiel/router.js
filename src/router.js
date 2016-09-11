@@ -13,7 +13,7 @@
     else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
     else this[name] = definition();
 }('Router', function() {
-    
+
     /**
      * Provide Function Bind specification if browser desn't support it
      */
@@ -35,7 +35,7 @@
      */
     function addHashchangeListener( el, listener ){
         if (el.addEventListener) {
-          el.addEventListener('hashchange', listener, false); 
+          el.addEventListener('hashchange', listener, false);
         } else if (el.attachEvent)  {
           el.attachEvent('hashchange', listener);
         }
@@ -50,7 +50,7 @@
      */
     function removeHashchangeListener( el, listener ){
         if (el.removeEventListener) {
-          el.removeEventListener('hashchange', listener, false); 
+          el.removeEventListener('hashchange', listener, false);
         } else if (el.detachEvent)  {
           el.detachEvent('hashchange', listener);
         }
@@ -69,7 +69,7 @@
                     arguments[0][key] = arguments[i][key];
         return arguments[0];
     }
-    
+
     /**
      * Thanks to Sammy.js
      */
@@ -80,12 +80,12 @@
         PATH_EVERY_GLOBAL_MATCHER = /\*{2}/,
         PATH_EVERY_GLOBAL_REPLACER = "(.*?)\\??",
         LEADING_BACKSLASHES_MATCH = /\/*$/;
-    
+
     /**
      * Http Request constructor
      * @param      {string}  href    Url for request object
      * @class      Request
-     * @name       Request 
+     * @name       Request
      * @classDesc Class representing a single http request
      */
     var Request = function(href){
@@ -143,6 +143,7 @@
      * @memberOf   Request
      *
      * @method     get
+     * @instance
      * @param      {string}            key            Key of the value to
      *                                                retrieve
      * @param      {*}                 default_value  Default value if nothing
@@ -150,7 +151,7 @@
      * @return     {String|undefined}  param value
      */
     Request.prototype.get = function(key, default_value){
-        return (this.params && this.params[key] !== undefined) ? 
+        return (this.params && this.params[key] !== undefined) ?
                 this.params[key]
                 : (this.query && this.query[key] !== undefined) ?
                     this.query[key]
@@ -208,7 +209,7 @@
         }
         return true;
     };
-    
+
     /**
      * Extract fragments from url (everything after '#')
      *
@@ -246,8 +247,8 @@
         }
         return false;
     };
-    
-    
+
+
     /**
      * Build a request object based on passed information
      *
@@ -304,10 +305,10 @@
      * @return     {Function}  A callable which run the next matching route
      */
     Router.prototype._followRoute = function( fragmentUrl, url, matchedIndexes ) {
-        var index = matchedIndexes.splice(0, 1), 
-            route = this._routes[index], 
-            match = url.match(route.path), 
-            request, 
+        var index = matchedIndexes.splice(0, 1),
+            route = this._routes[index],
+            match = url.match(route.path),
+            request,
             params = {},
             splat = [];
         if(!route){
@@ -332,7 +333,7 @@
                     if(!hasNext && !err){
                         return this._throwsRouteError( 500, 'Cannot call "next" without an error if request.hasNext is false', fragmentUrl );
                     }
-                    if(err) 
+                    if(err)
                         return this._throwsRouteError( error_code || 500, err, fragmentUrl );
                     this._followRoute(uO, u, mI);
                     }.bind(this, hasNext);
@@ -341,7 +342,7 @@
         request = this._buildRequestObject( fragmentUrl, params, splat, hasNext );
         route.routeAction(request, next);
     };
-    
+
     /**
      * Internally call every registered before
      *
@@ -375,7 +376,7 @@
         }
         before( this._buildRequestObject( fragmentUrl, null, null, true ), next );
     };
-    
+
     /**
      * On hashChange route request through registered handler
      *
@@ -387,8 +388,8 @@
      * @return     {boolean}
      */
     Router.prototype._route = function( fragmentUrl ) {
-        var route = '', 
-            befores = this._befores.slice(),/*Take a copy of befores cause is nedeed to splice them*/ 
+        var route = '',
+            befores = this._befores.slice(),/*Take a copy of befores cause is nedeed to splice them*/
             matchedIndexes = [],
             urlToTest;
         var url = fragmentUrl;
@@ -406,7 +407,7 @@
                 }
             }
         }
-        
+
         if(matchedIndexes.length > 0) {
             /*If befores were added call them in order*/
             if(befores.length > 0) {
@@ -423,26 +424,28 @@
             return this._throwsRouteError(404, null, fragmentUrl);
         }
     };
-    
+
     /**
      * Pause router to be bound on hashchange
      *
      * @memberOf Router
      *
      * @method     pause
+     * @instance
      * @return     {Router}  return this router for chaining
      */
     Router.prototype.pause = function(){
         this._paused = true;
         return this;
     };
-    
+
     /**
      * Unpause router to be bound on hashchange
      *
      * @memberOf Router
      *
      * @method     play
+     * @instance
      * @param      {Boolean}  triggerNow  - If true evaluate location
      *                                    immediately
      * @return     {Router}   return this router for chaining
@@ -455,13 +458,14 @@
         }
         return this;
     };
-    
+
     /**
      * Set location but doesn't fire route handler
      *
      * @memberOf Router
      *
      * @method     setLocation
+     * @instance
      * @param      {String}  url     - Url to set location to
      * @return     {Router}  return this router for chaining
      */
@@ -469,13 +473,14 @@
         window.history.pushState(null,'',url);
         return this;
     };
-    
+
     /**
      * Set location and fires route handler
      *
      * @memberOf Router
      *
      * @method     redirect
+     * @instance
      * @param      {String}  url     Url to redirect to
      * @return     {Router}  return this router for chaining
      */
@@ -493,24 +498,25 @@
      * @param {function} next - Call it next matching route should be fired
      */
 
-    
-    Router.prototype.addRoute = 
-    Router.prototype.add = 
-    Router.prototype.route = 
+
+    Router.prototype.addRoute =
+    Router.prototype.add =
+    Router.prototype.route =
     /**
      * Add a routes to possible route match. Alias : route, add, get
      *
      * @memberOf Router
      *
      * @method     get
+     * @instance
      * @param      {string|RegExp}         path      A string or a regular
      *                                               expression to match
      * @param      {Router~routeCallback}  callback  - Is fired on path match
      * @return     {Router}                return this router for chaining
      */
     Router.prototype.get = function(path, callback) {
-        var match, 
-            modifiers = (this._options.ignorecase ? 'i' : ''), 
+        var match,
+            modifiers = (this._options.ignorecase ? 'i' : ''),
             paramNames = [];
         if('string' == typeof path) {
             /*Remove leading backslash from the end of the string*/
@@ -539,6 +545,7 @@
      * @memberOf Router
      *
      * @method     before
+     * @instance
      * @param      {Router~routeCallback}  callback  Fired on before match
      * @return     {Router}                return this router for chaining
      */
@@ -554,8 +561,8 @@
      * @param {object} err - the error
      * @param {string} href - Href which fired this error
      */
-    
-    
+
+
     /**
      * Adds error callback handling for Http code
      *
@@ -563,6 +570,7 @@
      * @memberOf Router
      *
      * @method     errors
+     * @instance
      * @param      {Number}                httpCode  Http code to handle just
      *                                               like 404,500 or what else
      * @param      {Router~errorCallback}  callback  Handler for error
@@ -579,7 +587,7 @@
         this._errors[httpCode] = callback;
         return this;
     };
-    
+
     /**
      * Run application. Note that calling this is not mandatory. Calling it just
      * force application to evaluate current or passed url
@@ -587,6 +595,7 @@
      * @memberOf Router
      *
      * @method     run
+     * @instance
      * @param      {String}  startUrl  Url to redirect application on startup.
      *                                 Default is current location
      * @return     {Router}  return this router for chaining
@@ -606,6 +615,7 @@
      * @memberOf Router
      *
      * @method     destroy
+     * @instance
      * @return     {Router}  This router
      */
     Router.prototype.destroy = function(){

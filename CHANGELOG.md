@@ -1,5 +1,10 @@
 Changelog
 =========
+### 1.0.6
+
+- Improve documentation
+- Update dependencies
+
 ### 1.0.5
 
 - Updated dev-dependency
