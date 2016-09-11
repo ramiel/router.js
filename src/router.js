@@ -143,6 +143,7 @@
      * @memberOf   Request
      *
      * @method     get
+     * @instance
      * @param      {string}            key            Key of the value to
      *                                                retrieve
      * @param      {*}                 default_value  Default value if nothing
@@ -430,6 +431,7 @@
      * @memberOf Router
      *
      * @method     pause
+     * @instance
      * @return     {Router}  return this router for chaining
      */
     Router.prototype.pause = function(){
@@ -443,6 +445,7 @@
      * @memberOf Router
      *
      * @method     play
+     * @instance
      * @param      {Boolean}  triggerNow  - If true evaluate location
      *                                    immediately
      * @return     {Router}   return this router for chaining
@@ -462,6 +465,7 @@
      * @memberOf Router
      *
      * @method     setLocation
+     * @instance
      * @param      {String}  url     - Url to set location to
      * @return     {Router}  return this router for chaining
      */
@@ -476,6 +480,7 @@
      * @memberOf Router
      *
      * @method     redirect
+     * @instance
      * @param      {String}  url     Url to redirect to
      * @return     {Router}  return this router for chaining
      */
@@ -503,6 +508,7 @@
      * @memberOf Router
      *
      * @method     get
+     * @instance
      * @param      {string|RegExp}         path      A string or a regular
      *                                               expression to match
      * @param      {Router~routeCallback}  callback  - Is fired on path match
@@ -539,6 +545,7 @@
      * @memberOf Router
      *
      * @method     before
+     * @instance
      * @param      {Router~routeCallback}  callback  Fired on before match
      * @return     {Router}                return this router for chaining
      */
@@ -563,6 +570,7 @@
      * @memberOf Router
      *
      * @method     errors
+     * @instance
      * @param      {Number}                httpCode  Http code to handle just
      *                                               like 404,500 or what else
      * @param      {Router~errorCallback}  callback  Handler for error
@@ -587,6 +595,7 @@
      * @memberOf Router
      *
      * @method     run
+     * @instance
      * @param      {String}  startUrl  Url to redirect application on startup.
      *                                 Default is current location
      * @return     {Router}  return this router for chaining
@@ -606,6 +615,7 @@
      * @memberOf Router
      *
      * @method     destroy
+     * @instance
      * @return     {Router}  This router
      */
     Router.prototype.destroy = function(){
