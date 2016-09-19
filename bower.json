@@ -6,7 +6,7 @@
     "Fabrizio Ruggeri <fabrizio.ruggeri@gmail.com>"
   ],
   "description": "Lightweight and powerful router for javascript applications",
-  "main": "router.js",
+  "main": "dist/router.min.js",
   "moduleType": [
     "amd",
     "globals"
