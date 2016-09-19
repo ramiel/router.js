@@ -36,7 +36,8 @@
   "main": "dist/router.min.js",
   "scripts": {
     "test": "./node_modules/karma/bin/karma start",
-    "doc": "grunt doc"
+    "doc": "grunt doc",
+    "precommit": "grunt precommit"
   },
   "license": "GPL-2.0",
   "engine": "node >= 0.8.0"
