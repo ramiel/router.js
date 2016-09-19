@@ -8,6 +8,7 @@
   "description": "Lightweight and powerful router for javascript applications",
   "main": "src/router.js",
   "moduleType": [
+    "node",
     "amd",
     "globals"
   ],
