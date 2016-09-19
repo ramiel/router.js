@@ -1,5 +1,14 @@
 Changelog
 =========
+
+### 1.0.8
+
+- Use not minified version in bower
+
+### 1.0.7
+
+- Fix bower dependecy
+
 ### 1.0.6
 
 - Improve documentation
