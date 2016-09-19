@@ -1,12 +1,12 @@
 {
   "name": "router.js",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "homepage": "https://github.com/ramiel/router.js",
   "authors": [
     "Fabrizio Ruggeri <fabrizio.ruggeri@gmail.com>"
   ],
   "description": "Lightweight and powerful router for javascript applications",
-  "main": "dist/router.min.js",
+  "main": "src/router.js",
   "moduleType": [
     "amd",
     "globals"
