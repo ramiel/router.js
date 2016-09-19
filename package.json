@@ -1,7 +1,7 @@
 {
   "name": "routerjs",
   "basename": "router",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Lightweight and powerful router for javascript applications",
   "author": "Fabrizio Ruggeri <fabrizio.ruggeri@gmail.com>",
   "website": "http://ramielcreations.com/projects/router-js/",
@@ -36,7 +36,8 @@
   "main": "dist/router.min.js",
   "scripts": {
     "test": "./node_modules/karma/bin/karma start",
-    "doc": "grunt doc"
+    "doc": "grunt doc",
+    "precommit": "grunt precommit"
   },
   "license": "GPL-2.0",
   "engine": "node >= 0.8.0"
