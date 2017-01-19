@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### Next
+
+- Fixed url to website
+
 ### 1.0.8
 
 - Use not minified version in bower
