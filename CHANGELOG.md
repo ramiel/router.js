@@ -4,6 +4,7 @@ Changelog
 ### Next
 
 - Fixed url to website
+- Add donation button
 
 ### 1.0.8
 

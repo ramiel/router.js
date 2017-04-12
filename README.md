@@ -3,6 +3,8 @@ Router.js
 
 [![Build Status](https://travis-ci.org/ramiel/router.js.svg?branch=master)](https://travis-ci.org/ramiel/router.js)
 [![devDependency Status](https://david-dm.org/ramiel/router.js/dev-status.svg)](https://david-dm.org/ramiel/router.js#info=devDependencies)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/FabrizioRuggeri)
+
 
 Discover on [Ramiel's creations](http://www.ramielcreations.com/router-js/ "Ramiel's creations page") or fork me on [github](https://ramiel.github.com/router.js/)
 
