@@ -1,7 +1,7 @@
 Changelog
 =========
 
-### Next
+### 1.0.9
 
 - Fixed url to website
 - Add donation button
