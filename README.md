@@ -3,8 +3,10 @@ Router.js
 
 [![Build Status](https://travis-ci.org/ramiel/router.js.svg?branch=master)](https://travis-ci.org/ramiel/router.js)
 [![devDependency Status](https://david-dm.org/ramiel/router.js/dev-status.svg)](https://david-dm.org/ramiel/router.js#info=devDependencies)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/FabrizioRuggeri)
 
-Discover on [Ramiel's creations](http://ramielcreations.com/projects/router-js/ "Ramiel's creations page") or fork me on [github](https://ramiel.github.com/router.js/)
+
+Discover on [Ramiel's creations](http://www.ramielcreations.com/router-js/ "Ramiel's creations page") or fork me on [github](https://ramiel.github.com/router.js/)
 
 Router.js is a simple yet powerful javascript plugin to handle hash fragment in order to route request.
 Router.js helps you to intercept request done trough fragment and match them using string or regular expressions.

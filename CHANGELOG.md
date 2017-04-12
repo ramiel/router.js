@@ -1,6 +1,11 @@
 Changelog
 =========
 
+### 1.0.9
+
+- Fixed url to website
+- Add donation button
+
 ### 1.0.8
 
 - Use not minified version in bower
