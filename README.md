@@ -1,6 +1,8 @@
 Router.js
 =========
 
+[![Join the chat at https://gitter.im/ramiel/router.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ramiel/router.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/ramiel/router.js.svg?branch=master)](https://travis-ci.org/ramiel/router.js)
 [![devDependency Status](https://david-dm.org/ramiel/router.js/dev-status.svg)](https://david-dm.org/ramiel/router.js#info=devDependencies)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/FabrizioRuggeri)
