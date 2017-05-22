@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### 1.0.10
+
+- Fixed markdown in README
+
 ### 1.0.9
 
 - Fixed url to website

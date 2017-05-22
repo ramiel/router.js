@@ -122,7 +122,7 @@ What if more than a route match your url? You can call `next` to execute the nex
 Method `addRoute` has many aliases. You can use also: `add`, `route`, `get`!
 ```
 
-###Options
+### Options
 
 Router constructor accept an object for options
 
@@ -136,7 +136,7 @@ Valid options:
 1. `ignorecase` : The router do not consider casing. Default: `true`
 
 
-###Parametric route
+### Parametric route
 
 Let's see this:
 
@@ -152,7 +152,7 @@ well, if the called url is 'http://www.webapp.com/#/users/john', then `username`
 You can use as many params you want, they will appear in the `params` property of `req` object.
 
 
-###Query string
+### Query string
 
 Using previous example if we call 'http://www.webapp.com/#/users/jhon?key=value&foo=bar' then in req `query` will be populated and will be the following object
 
@@ -171,7 +171,7 @@ router
 	});
 ```
 
-###Req.get - One method to get them all
+### Req.get - One method to get them all
 Instead of looking in req.params and in req.query, you can use `req.get( key, default_value )` method.
 It will look in params, the in query. If nothing has found you can provide a fallback value or `undefined` will be returned.
 
@@ -186,7 +186,7 @@ router
 	});
 ```
 
-###Special symbols
+### Special symbols
 
 The other symbol you can use in your route is `*`. It matches every word before next backslash.
 Consider:
@@ -220,7 +220,7 @@ All of this urls match the rule:
 * http://www.webapp.com/#/users/john/snow
 * http://www.webapp.com/#/users/john/snow/wolf
 
-##Next argument
+## Next argument
 
 Considering this routes:
 
@@ -248,7 +248,7 @@ Next will be useful also to fire erros, we will see this in a while, after talki
 **Note:**
 Have you noticed that `addRoute` methods are chainable? So this is for every router methods!
 
-##Error handling
+## Error handling
 
 We can handle errors just like http protocol handle it, by http codes.
 An example is better than million words
@@ -282,7 +282,7 @@ router
 	});
 ```
 
-##Befores
+## Befores
 
 Sometimes you just want to execute some actions before the route matches and then continue on regular matches. Then `before` is what you need.
 
@@ -316,7 +316,7 @@ router.before(function(){...})
 
 Remember that in before req has just `href` property cause is the only you know at before time. 
 		  
-##This meaning
+## This meaning
 
 Context inside callback, befores or errors have no special meaning to avoid complexity. If you need to force your context inside a callback you can use `bind`.
 Bind is the browser implementation or our if missing. Let's see at an example
@@ -339,7 +339,7 @@ function(){
 If you need your router inside a callback just refer to it as router.
 Have you noticed redirect method? Well it's time to talk about utility methods
 
-##Utility methods
+## Utility methods
 
 In Router.js are present some utility methods.
 
@@ -366,7 +366,7 @@ router.play();
 
 `Pause` stop router to react to hash changes. `Play` ripristinate router functionalities.
 
-##RegExp
+## RegExp
 
 We already said that you can use regular expression to better match your route
 
@@ -383,7 +383,7 @@ Splats is an array containing all regexp matches (everyting between two '( )' ).
 You can use regular expression to obtain more grain fined routes but it's up to you to handle them correctly
 
 
-##Run and Destroy
+## Run and Destroy
 
 Router has a special method. You can call `run` after you have setted all your route to immediately launch routes parsing.
 `Run` has a parameter, 'startUrl'. If is setted it will redirect immediately to that url, else it will read current browser url.
@@ -416,7 +416,7 @@ Anyway the api are available online at [routerjs.ramielcreations.com](http://rou
 
 * Code written using Router.js is higly readable
 
-##Compatibility
+## Compatibility
 Desktop:
 
 - Chrome 5.0+
