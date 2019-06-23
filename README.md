@@ -2,14 +2,15 @@ Router.js
 =========
 
 [![Build Status](https://travis-ci.org/ramiel/router.js.svg?branch=master)](https://travis-ci.org/ramiel/router.js)
-[![devDependency Status](https://david-dm.org/ramiel/router.js/dev-status.svg)](https://david-dm.org/ramiel/router.js#info=devDependencies)
+[![npm version](https://badge.fury.io/js/routerjs.svg)](https://badge.fury.io/js/routerjs)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/FabrizioRuggeri)
 
 
-Discover on [Ramiel's creations](http://www.ramielcreations.com/router-js/ "Ramiel's creations page") or fork me on [github](https://ramiel.github.com/router.js/)
 
 Router.js is a simple yet powerful javascript plugin to handle hash fragment in order to route request.
 Router.js helps you to intercept request done trough fragment and match them using string or regular expressions.
+
+Discover on [Ramiel's creations](http://www.ramielcreations.com/router-js/ "Ramiel's creations page").
 
 ## Migrating from *0.x* to *1.x*
 
@@ -37,6 +38,12 @@ Include Router.js in your application
 
 ### Installation
 
+#### npm
+
+This library is available on npm.
+
+`npm install routerjs`
+
 #### Download
 
 Simply download a release from github <https://github.com/ramiel/router.js/releases>.
@@ -45,11 +52,6 @@ Simply download a release from github <https://github.com/ramiel/router.js/relea
 
 `bower install router.js`
 
-#### npm
-
-This library is available on npm to be used with tool like `browserify`
-
-`npm install routerjs`
 
 #### Git
 
@@ -66,6 +68,12 @@ Clone this repository
 <script type="text/javascript" src="js/router.js">
 ```
 
+#### CommonJS
+
+```javascript
+var Router = require('routerjs');
+```
+
 #### RequireJS
 ```javascript
 //Example
@@ -76,11 +84,6 @@ require(["router", ...], function(Router, ...) {
 ```
 according to your directory template.
 
-#### CommonJS
-
-```javascript
-var Router = require('routerjs');
-```
 
 ### Usage
 
