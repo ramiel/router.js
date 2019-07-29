@@ -1,445 +1,415 @@
-Router.js
-=========
 
-[![Build Status](https://travis-ci.org/ramiel/router.js.svg?branch=master)](https://travis-ci.org/ramiel/router.js)
+# RouterJS
+
 [![npm version](https://badge.fury.io/js/routerjs.svg)](https://badge.fury.io/js/routerjs)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/FabrizioRuggeri)
+[![Build Status](https://travis-ci.org/ramiel/router.js.svg?branch=master)](https://travis-ci.org/ramiel/router.js)
+
+RouterJS is a simple and powerful javascript router. It's simple to use, versatile and ready to be coupled with your framework of choice. It can work in the browser or on native applications.
+
+<!-- vscode-markdown-toc -->
+* 1. [Older versions and migration](#Olderversionsandmigration)
+* 2. [Installation](#Installation)
+* 3. [Use with other libraries/frameworks (React and others)](#UsewithotherlibrariesframeworksReactandothers)
+* 4. [Usage](#Usage)
+	* 4.1. [Matching params](#Matchingparams)
+	* 4.2. [Query params](#Queryparams)
+	* 4.3. ["req.get" - One method to get them all](#req.get-Onemethodtogetthemall)
+	* 4.4. [Special symbols](#Specialsymbols)
+	* 4.5. [Regexp and splats](#Regexpandsplats)
+	* 4.6. [Multiple matching routes](#Multiplematchingroutes)
+	* 4.7. [Middlewares](#Middlewares)
+	* 4.8. [Always callbacks](#Alwayscallbacks)
+	* 4.9. [Context](#Context)
+	* 4.10. [Errors](#Errors)
+	* 4.11. [Engines](#Engines)
+		* 4.11.1. [BrowserHistoryEngine](#BrowserHistoryEngine)
+	* 4.12. [Request object](#Requestobject)
+	* 4.13. [Options](#Options)
+	* 4.14. [Router methods](#Routermethods)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
+##  1. <a name='Olderversionsandmigration'></a>Older versions and migration
+
+Version 2 of this router represents a complete rewrite and redefines some concept of the older versions. Refer to the [migration guide](https://github.com/ramiel/router.js/blob/master/MIGRATION.md) if you were using one of those versions.
+
+Are you looking for documentation of version 1? Check it out [here](https://github.com/ramiel/router.js/tree/1.0.10).
 
 
+##  2. <a name='Installation'></a>Installation
 
-Router.js is a simple yet powerful javascript plugin to handle hash fragment in order to route request.
-Router.js helps you to intercept request done trough fragment and match them using string or regular expressions.
-
-Discover on [Ramiel's creations](http://www.ramielcreations.com/router-js/ "Ramiel's creations page").
-
-## Migrating from *0.x* to *1.x*
-
-If you have code for version prior of 1.0.0 you should remember that something has changed.
-To be sure that another matching route exists, you have to check `req.hasNext` and not controlling that `next` is a function, as previous indicated.
-Here an example of migration
-
-```javascript
-router.get('#/home',function(req, next){
-	//Avoid
-	if(next instanceof Function){ // WRONG! It's always a function now
-		next();
-	}
-
-	//Use instead
-	if(req.hasNext){
-		next();
-	}
-});
-```
-
-## Basics
-
-Include Router.js in your application
-
-### Installation
-
-#### npm
-
-This library is available on npm.
+This library is available on npm
 
 `npm install routerjs`
 
-#### Download
+##  3. <a name='UsewithotherlibrariesframeworksReactandothers'></a>Use with other libraries/frameworks (React and others)
 
-Simply download a release from github <https://github.com/ramiel/router.js/releases>.
+If you're looking for a way to integrate this library in your React application, have a look at __[react-routerjs](https://github.com/ramiel/react-routerjs)__
 
-#### Bower
+##  4. <a name='Usage'></a>Usage
 
-`bower install router.js`
+To define your routes simply match a route url with a callback
 
+```js
+import { createRouter } from 'routerjs';
 
-#### Git
+// Create the instance of your router
+const router = createRouter()
+  // Define the route matching a path with a callback
+  .get('/user', (req, context) => {
+    // Handle the route here...
+  })
 
-Clone this repository
-
-`https://github.com/ramiel/router.js.git`
-
-
-### Include the library
-
-#### Standard
-
-```html
-<script type="text/javascript" src="js/router.js">
+  // Calling "run" will execute handlers immediately for the current url.
+  // You can avoid calling it and wait for the next route change instead.
+  .run();
 ```
 
-#### CommonJS
+__path__: The path can be a string, like the one above, or a regular expression    
+__callback__: The callback can be synchronous or asynchronous and it receives two parameters:
+  - __req__, the current request, we'll see it in [details later](#Requestobject).
+  - __context__, contains some fixed informations, as explained [here](#Context).
 
-```javascript
-var Router = require('routerjs');
+When you create a router with the default engine, any click on anchors will be intercepted and converted to a router event. You can discover more on the default engine and how to opt-out of this click behavior [here](#Engines).
+
+###  4.1. <a name='Matchingparams'></a>Matching params
+
+A route can define several named params in the form `:name` that will be available inside the request through `req.params`
+
+```js
+const router = createRouter()
+  .get('/user/:id', async (req, context) => {
+    const user = await getUser(req.params.id);
+  });
 ```
 
-#### RequireJS
-```javascript
-//Example
-require(["router", ...], function(Router, ...) {
-	var router = new Router();
-	//...
-});
-```
-according to your directory template.
+This route will match, for example, the route `/user/123` and the `id` will be `123`.    
+All the params are strings.
 
+Multiple params can be used together
 
-### Usage
-
-Now just define a simple route. A route is made of two components
-
-* Matching string/regexp
-* Callback
-
-Let's see
-
-```javascript
-var router = new Router()
-   	.addRoute('#/users', function(req, next){
-		/* Do something */
-	});
+```js
+const router = createRouter()
+  .get('/post/:date/:title', async (req, context) => {
+    // ...
+  });
 ```
 
-There are three noticeable aspects. Your router object and all its functions are chainable. So after an `addRoute` you can chain onther one and so on.
-The matching string is `#/users`, so if your fragment match this pattern your callback will be fired.
+###  4.2. <a name='Queryparams'></a>Query params
 
-Callback is populated with two arguments:
+Any regular query parameter can be retrieved through `req.query`
 
-* `req`
-* `next`
-
-
-req is an object containing
-
-1. `href`, which is the url that matched
-2. `params`, all the params recognized in the url. We will talk about this in a while
-3. `query`, all the params passed as regular html query string
-4. `splats`, all matching groups if you used a regular expression as route description (will see after)
-5. `hasNext`, a boolean indicating that another route match the current url
-
-What if more than a route match your url? You can call `next` to execute the next route.
-
-**Note**:
-```
-Method `addRoute` has many aliases. You can use also: `add`, `route`, `get`!
+```js
+const router = createRouter()
+  .get('/users', async (req, context) => {
+    const filter = req.query.filter || 'all';
+  });
 ```
 
-### Options
-
-Router constructor accept an object for options
-
-```javascript
-var options = {ignorecase: true}
-var router = new Router(options);
-```
-
-Valid options:
-
-1. `ignorecase` : The router do not consider casing. Default: `true`
+So the path `/users?filter=active` will result in filter to be `active`
 
 
-### Parametric route
+###  4.3. <a name='req.get-Onemethodtogetthemall'></a>"req.get" - One method to get them all
 
-Let's see this:
+The `req.get` method looks for parameters in the params, then in the query and otherwise it fallbacks to a default value if one is provided.
 
-```javascript
-router
-	.addRoute('#/users/:username', function(req,next){
-		var username = req.params.username;
-	});
-```
-
-well, if the called url is 'http://www.webapp.com/#/users/john', then `username` in the callback will be 'john'!
-
-You can use as many params you want, they will appear in the `params` property of `req` object.
-
-
-### Query string
-
-Using previous example if we call 'http://www.webapp.com/#/users/jhon?key=value&foo=bar' then in req `query` will be populated and will be the following object
-
-```javascript
-...
-query: {
-	key: 'value',
-	foo: 'bar'	
-}
-```
-so you can write
-```javascript
-router
-	.addRoute('#/users/:username', function(req,next){
-		var foo = (req.query && req.query.foo) ? req.query.foo : 'not foo';
-	});
-```
-
-### Req.get - One method to get them all
-Instead of looking in req.params and in req.query, you can use `req.get( key, default_value )` method.
-It will look in params, the in query. If nothing has found you can provide a fallback value or `undefined` will be returned.
-
-```javascript
+```js
 //Calling #/users/john?age=25
 router
-	.addRoute('#/users/:username', function(req,next){
-		var username = req.get('username'); //will be 'john' because is found in params
-		var age = req.get('age',18); //will be 25 because is found in query
-		var surname = req.get('surname','Snow'); //will be 'Snow' because of provided default value
-		var address = req.get('address'); //will be undefined
-	});
+  .get('/users/:username', (req, context) => {
+    const username = req.get('username');      // will be 'john' because is found in params
+    const age = req.get('age', 18);            // will be 25 because is found in query
+    const surname = req.get('surname', 'Snow');// will be 'Snow' because of provided default value
+    const address = req.get('address');        // will be undefined
+  });
 ```
 
-### Special symbols
+###  4.4. <a name='Specialsymbols'></a>Special symbols
 
-The other symbol you can use in your route is `*`. It matches every word before next backslash.
-Consider:
+The symbols `*` and  `**` can be used to match anything.
 
-```javascript
+`*` will match anything up to the next `/`
+
+```js
 router
-	.addRoute('#/users/*', function(req,next){
-		/* First word after /users/ will match this route */
-	});
+  .get('/users/*', (req, context) => {
+    //...
+  });
 ```
 
-Now all of this url will match the rule:
+These routes will match:
+  - /users/john
+  - /users/tyrion
 
-* http://www.webapp.com/#/users/john
-* http://www.webapp.com/#/users/asdasd
-* http://www.webapp.com/#/users/lua
+But this won't:
+  - /users/john/snow
 
-The url http://www.webapp.com/#/users/john/foo will not match! Remember that I've said _before next backslash_!
-To match even it you must use the `**` matcher. It means **everything**
+`**` will match anything
 
-```javascript
+```js
 router
-	.addRoute('#/users/**', function(req,next){
-		/* Everithing after /users/ will match this route */
-	});
+  .get('/users/**', (req, context) => {
+    //...
+  });
 ```
 
-All of this urls match the rule:
+will match these routes
+  - /users/john
+  - /users/tyrion
+  - /users/john/snow
 
-* http://www.webapp.com/#/users/john
-* http://www.webapp.com/#/users/john/snow
-* http://www.webapp.com/#/users/john/snow/wolf
+###  4.5. <a name='Regexpandsplats'></a>Regexp and splats
 
-## Next argument
+A route can be defined through a regular expression instead of a string. Any capturing group value can be retrieved from the `req.splats` array
 
-Considering this routes:
-
-```javascript
+```js
 router
-	.addRoute('#/users/:username', function(req,next){
-			var username = req.params.username;
-			if( username != 'admin' && req.hasNext)
-				next();
-				
-	})
-	.addRoute('#/users/*', function(req,next){					
-		alert('You are not admin!');
-	});
+  .get(/\/foo\/bar\/?(.*)/i, (req, context) => {
+    console.log(req.splats)
+  });
 ```
 
-As you can see both the routes match the url `http://www.webapp.com/#/users/john`. In Router.js only the first declared match will be called unless you explicitly
-call next, then also the second match will be fired and so on.
+The path `/foo/bar/something` will match and the output will be
 
-**Note**: Remember to check **req.hasNext** to know if another route matched!
+`['something']`
 
-Next will be useful also to fire erros, we will see this in a while, after talking about error handling
+because the splats will contain the value from the caturing group in the regular expression.
 
+_NOTE_ in the future, named capturing group will be used to get regular params through regular expressions.
 
-**Note:**
-Have you noticed that `addRoute` methods are chainable? So this is for every router methods!
+###  4.6. <a name='Multiplematchingroutes'></a>Multiple matching routes
 
-## Error handling
+All the matching routes are executed
 
-We can handle errors just like http protocol handle it, by http codes.
-An example is better than million words
+```js
+// For path "/users/admin"
 
-```javascript
 router
-	.addRoute('#/users/:username', function(req,next){
-		/*do something*/
-	})
-	.errors(404, function( err, href){
-		alert('Page not found!' + href );
-	});
+  .get('/users/:name', () => {
+    console.log('I am called');
+  })
+  .get('/users/admin', () => {
+    console.log('I am called too');
+  });
 ```
 
-In this example if we point browser to `http://www.webapp.com/#/route/inexistent` no route will match our url. Router.js will fire a '404' error.
-You can subscribe to 404 situations just with `.errors(404, function(err,href){...})`
+For the patch `/users/admin`, both routes will be exectued because they both match. If you want to prevent this, you need to call `req.stop()`
 
-Router will match for you 404 and 500 situation but will fire a general error for all http code you forgot to register.
-
-To fire an error manually call next with an error parameter (and an optional errorCode).
-`next` signature is: next( [ err, [err_code] ] )
-
-```javascript
+```js
 router
-	.addRoute('#/users/:username', function(req,next){
-		if(something)
-			next('Not found',404);
-	})
-	.errors(404, function( err, href){
-		alert('Page not foud!' + href );
-	});
+  .get('/users/:name', (req, context) => {
+    //...
+    req.stop();
+  })
+  .get('/users/admin', (req, context) => {
+    // this won't be called because req is stopped
+  });
 ```
 
-## Befores
+###  4.7. <a name='Middlewares'></a>Middlewares
 
-Sometimes you just want to execute some actions before the route matches and then continue on regular matches. Then `before` is what you need.
+You can write middlewares which are functionalities to run before your route handler.    
+Implementation of middlewares are inspired by the ones in [zeit micro](https://github.com/zeit/micro), so they're simply composition of functions!
 
-```javascript
+```js
+const logMiddleware = fn => (req, context) => {
+  console.log(`${Date.now()} - GET ${context.path}`);
+};
+
 router
-	.before(function(req,next){
-		if( userIsLogged() === true)
-			next();
-		else
-			next( new Error('User not logged'), 403);
-	})
-
-	.addRoute('#/users/:username', function(req,next){
-						/*do something*/
-	})
-	
-	.error(403, function(err, href){
-		console.error('While attempting to access to '+ href +' the following error happened: '+err.message);
-	});
+  .get('/users', logMiddleware((req, context) => {
+    // ...
+  }))
 ```
 
-`Befores` will be executed before normal route. If `next` is called in before then the route is followed, else if `next` is called with an error then the error is fired and the route is not followed.
-You can specify even error type (403 in this case), elsewhere it will be a 500
+Now every route match will be logged. 
 
-You can add as many `befores` you want, they will be fired sequentially when you call `next`
+To compose together more middlewares, simply use the `compose` function.
 
-```javascript
-router.before(function(){...})
-	  .before(function(){...});
+```js
+import { createRouter, compose } from 'routerjs';
+
+const userRoute = (req, context) => {
+  //...
+};
+
+const router = createRouter()
+  .get(
+    '/users', 
+    compose(
+      logMiddleware,
+      authMiddleware,
+      // any other middleware
+    )(userRoute)
+  );
 ```
 
-Remember that in before req has just `href` property cause is the only you know at before time. 
-		  
-## This meaning
+###  4.8. <a name='Alwayscallbacks'></a>Always callbacks
 
-Context inside callback, befores or errors have no special meaning to avoid complexity. If you need to force your context inside a callback you can use `bind`.
-Bind is the browser implementation or our if missing. Let's see at an example
+You can define a callback that is executed always, on every route and despite the fact that the request has been stopped or not.
 
-```javascript
-function(){
+```js
+router
+  .get('/users')
+  .get('/posts')
+  .get('/post/:id')
+  .always((context) => {
+    // this will be executed for every route.
+    // Context contains at least the `path`
+    console.log('Path is: ', context.path)
+  });
+```
 
-	this.property = 'foo';
-	
-	var router = new Router()
-					.route('#/mine/route', function(req,next){
-							var p = this.property;
-							console.log(p); /* will print 'foo' */
-							router.redirect('#/'+p);
-					}.bind(this));
+If we navigate to `/post/14`, this will be logged to the console
 
+```
+Path is: /post/14
+```
+
+###  4.9. <a name='Context'></a>Context
+
+The context is an object which is retained through the execution of each callback.    
+It contains the current `path` but you can attach whatever you want. In this example we'll use a middleware to populate the context with some user information
+
+
+```js
+const userInfo = fn => async (req, context) => {
+  // This fake method get the user from a hypotetical JWT token
+  // contained in the cookies, then attaches it to the context
+  context.user = await userFromJWT(document.cookies);
 }
-```
 
-If you need your router inside a callback just refer to it as router.
-Have you noticed redirect method? Well it's time to talk about utility methods
-
-## Utility methods
-
-In Router.js are present some utility methods.
-
-- `redirect`
-```javascript
-router.redirect(url)
-```
-
-this will redirect your application to desired url firing routes normally
-
-- `setLocation`
-```javascript
-router.setLocation(url)
-```
-
-this will redirect your application to desired url **WITHOUT** firing any routes!
-
-- `play` `pause`
-```javascript
-router.pause();
-document.location.href='/#/ignore/me'; //This will be ignored until you call play
-router.play();
-```
-
-`Pause` stop router to react to hash changes. `Play` ripristinate router functionalities.
-
-## RegExp
-
-We already said that you can use regular expression to better match your route
-
-```javascript
-router.addRoute(/#\/foo\/bar\/?(.*)/i, function(req, next){
-	
-	/* req gained splats property which contains an array with all your custom matches*/
-});
-```
-
-So calling 'http://www.webapp.com/#/foo/bar/custom' will follow the route and in req you will find a property called splats.
-Splats is an array containing all regexp matches (everyting between two '( )' ). In this cas `req.splats[0]` is `custom`
-
-You can use regular expression to obtain more grain fined routes but it's up to you to handle them correctly
-
-
-## Run and Destroy
-
-Router has a special method. You can call `run` after you have setted all your route to immediately launch routes parsing.
-`Run` has a parameter, 'startUrl'. If is setted it will redirect immediately to that url, else it will read current browser url.
-If you do not call run Router will do nothing until next fragment change.
-
-```javascript
 router
-	.addRoute('#/users/:username', function(req, next){
-	  /* code */
-	})
-	.run('#/');
+  .get('/post/:id', compose(
+    userInfo
+  )((req, context) => {
+    // The context will contain those user info fetched before
+    const userId = context.user.id;
+  }))
+  .get('/post/*', (req, context) => {
+    // The context will have the user info here as well, since the context
+    // object is kept through each callback!
+  })
+  .always((context) => {
+    // also here, `context.user` is available
+  })
 ```
-If you need to dispose a router, you have to call `destroy` to remove any event handler and then simply set router to `null`
 
-```javascript
-router.destroy();
-router = null;
-//all clean
+###  4.10. <a name='Errors'></a>Errors
+
+Your routes can throw errors for any reason and you can listen to those errors. Errors in RouterJS behave like http errors and so they have a code associated. You can add a listener for the code you prefer and, if an error has no associated code, it behaves like a `500`.
+
+```js
+router
+  .get('/user/:id', () => {
+    // ...
+    throw new Error('User not present');
+  })
+  .error(500, (err, context) => {
+    // here you handle any 500 error
+    console.error(err);
+  });
 ```
 
-## Api
+If a route is not found, a 404 error is thrown and you can listen to those as well.
 
-You can generate documentation API of this repository using `grunt doc`.
-A folder named `doc` will be generated and it will contain all the documentation.
-Anyway the api are available online at [routerjs.ramielcreations.com](http://routerjs.ramielcreations.com/index.html)
+```js
+router
+  .get( /* ... */ )
+  .error(404, (err, context) => {
+    console.log(`Route ${context.path} not found`);
+  });
+```
 
-# Why
+You can attach any `statusCode` you want to your errors.
 
-* I've used different router like libraries but some do too few, other too much. I need a little, clear code which do the essential.
+```js
+router
+  .get('/authorize', () => {
+    // ...
+    const e = new Error('Not authorized');
+    e.statusCode = 403;
+    throw e;
+  })
+  .error(403, (err, context) => {
+    // Your 403 errors are caught here.
+  });
+```
 
-* Code written using Router.js is higly readable
+If you don't define your error handlers, RouterJS will log for 404 and 500 errors.
 
-## Compatibility
-Desktop:
+###  4.11. <a name='Engines'></a>Engines
 
-- Chrome 5.0+
-- Firefox 3.6+
-- Safari 5.0+
-- Opera 10.6+
-- IE 9+ / edge *   
+RouterJS can work with several engines. For the moment only one engine exists and it's a browser engine that uses `pushState` API under the hood. In the future there will be an engine that uses `hashbang` instead and you can imagine engines for other environments that use javascipt but which are not a browser (node.js, native frameworks, etc...).
 
-\* IE8 is supported using the code you can find in [ie8 branch](https://github.com/ramiel/router.js/tree/feature/ie8). This code is not mantained and will not receive any update. Is provided as is and I'll not accept any issue regarding ie8. I told you!
+The current engine is setup automatically for you by RouterJS but you can pass your own instance creator.
 
-Mobile:
-- iOS Safari 4.0+
-- Android 
-	- Browser 2.2+
-    - Chrome all
-    - Firefox all
-- IE all
-- Opera Mobile 11.0+
- 
-	
-## Author
+```js
+import { createRouter, BrowserHistoryEngine} from 'routerjs';
 
-[Fabrizio 'ramiel' Ruggeri](http://ramielcreations.com/ "Ramiel's creations page")
+const router = createRouter({engine: BrowserHistoryEngine({bindClick: false})});
+```
+
+In this example the `BrowserHistoryEngine` won't automatically listen to click to anchors and it will be up to you to call the `navigate` method when appropriate.
+
+####  4.11.1. <a name='BrowserHistoryEngine'></a>BrowserHistoryEngine
+
+As said this engine works with the `pushState` API. It takes some parameters:
+
+- __bindClick__: If true any click on an anchor will be automatically translated to a router event. Default to true.
+
+The clicks on anchors are listened unless:
+  - The anchor has a `data-routerjs-ignore` attribute
+  - The anchor has a `download` attribute
+  - The anchor has a `target` attribute
+  - The anchor has a `rel="external"` attribute
+  - The anchor href points to a different domain
+
+###  4.12. <a name='Requestobject'></a>Request object
+
+Here the complete list of properties available in the request object, `req`, the first parameter of the callbacks:
+
+- __path__: The current path (cleaned)
+- __params__: An object containing every matched param, if any.
+- __query__: An object with the query params, if any.
+- __get__: A function in the form `(k: string, defValue: any) => any` that looks for params
+- __splats__: An array containing any matching group for routes defined through regular expressions.
+- __stop__: A function to avoid any following matched route to be executed
+- __isStopped__: A function `() => boolean` that tells if stop has been called.
+
+###  4.13. <a name='Options'></a>Options
+
+The router can be instantiated with several options:
+
+- __engine__: A function that returns an instance of a custom engine, usually an external package.
+- __ignoreCase__: If `true` that route will check the case of the path when matching. Default to false.
+- __basePath__: A base path to ignore. If, for example, the basePath is `/blog`, any path will exclude that string. In this case `/blog/post/:id` can be simply written as `/post/:id`
+
+```js
+
+router = createRouter({basePath: '/blog'})
+  .get('/post/:id', () => {
+    // This will match `/blog/post/:id`
+  });
+```
+
+This can be handy when the router is for an application served from a subdir.
+
+
+###  4.14. <a name='Routermethods'></a>Router methods
+
+A list of methods available in the router:
+
+- __get__: Function to define a route
+- __always__: Function to define an handler for any route, even if the `req.stop` has been called
+- __error__: Function to define an error handler
+- __navigate__: Function to navigate. i.e. `router.navigate('/post/3')`
+- __run__: Function that execute immediately the router, even if no route has changed yet.    
+    This function is useful to run during the application to startup to immediately elaborate the handler for the current url. You can also pass a `path` to the function and the url will be adjusted accordingly
+- __teardown__: Function to remove any event handler instantiated by the router. Useful to cleanup memory on application disposal.
+- __buildUrl__: Function to get an url considering also the baseUrl.    
+  i.e, if the base url is `/blog`, the call `router.buildUrl('/post)` will return `/blog/post`

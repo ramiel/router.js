@@ -1,0 +1,29 @@
+export type RouteHandler = (path: string) => void;
+
+export interface Engine {
+  /**
+   * Execute any operation to startup the engine
+   */
+  setup: () => void;
+  /**
+   * Dispose anything instantiated by the engine
+   */
+  teardown: () => void;
+  /**
+   * Add an handler that must be called when a route match
+   */
+  addRouteChangeHandler: (handler: RouteHandler) => void;
+  /**
+   * Go to the desired path
+   */
+  navigate: (path: string) => void;
+
+  /**
+   * Same as navigate, brings to the desired url but doesn't fire routes handlers
+   */
+  setLocation: (path: string) => void;
+  /**
+   * Execute the handlers for the given path or the current one.
+   */
+  run: (path?: string) => void;
+}
