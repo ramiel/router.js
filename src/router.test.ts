@@ -5,6 +5,7 @@ import TestEngine, { TTestEngine } from './mocks/testEngine';
 jest.mock('./engines/BrowserHistoryEngine', () => () => () => ({
   setup: () => {},
   addRouteChangeHandler: () => {},
+  addRouteExitHandler: () => {},
 }));
 
 describe('Router', () => {
@@ -278,6 +279,36 @@ describe('Router', () => {
       router.get('/**', spy);
       testEngine.simulateNavigation('/any/thing/i/want');
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe.only('exits', () => {
+    let router: Router;
+    let testEngine: TTestEngine;
+
+    beforeEach(() => {
+      testEngine = TestEngine();
+      router = RouterFactory({
+        engine: testEngine.engine,
+      });
+    });
+
+    test('an exit handler is called', () => {
+      const spy = jest.fn();
+      router.exit('/', spy);
+      testEngine.simulateExit('/');
+      expect(spy).toHaveBeenCalled();
+    });
+
+    test.skip('an exit handler is called, navigating', () => {
+      return new Promise((resolve) => {
+        const spy = jest.fn(resolve);
+        router.exit('/', spy);
+        router.exit('/home', () => {});
+        testEngine.simulateNavigation('/');
+        testEngine.simulateNavigation('/home');
+        expect(spy).toHaveBeenCalled();
+      });
     });
   });
 
