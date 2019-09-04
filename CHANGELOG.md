@@ -1,9 +1,14 @@
 Changelog
 =========
 
-### [next]
+### [2.0.0-beta.0]
 
--
+- Complete rewrite! 
+  - More powerful
+  - Written in typescript
+  - Tested
+  - New paradigms
+  - Discover everything in the README
 
 
 ### 1.0.10
