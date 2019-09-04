@@ -82,6 +82,28 @@ describe('Router', () => {
       expect(spy).toHaveBeenCalledWith(expect.any(Object), expect.any(Object));
     });
 
+    test('promises callback are executed in order', () => {
+      const spy = jest.fn();
+      return new Promise((resolve) => {
+        let value = 0;
+        router.get('/', async () => {
+          await new Promise((r) => {
+            setTimeout(() => {
+              expect(value).toBe(0);
+              spy();
+              r();
+            }, 0);
+          });
+        });
+        router.get('/', () => {
+          value = 1;
+          expect(spy).toHaveBeenCalled();
+          resolve();
+        });
+        testEngine.simulateNavigation('/');
+      });
+    });
+
     test('a route can be expressed as a regexp', () => {
       const spy = jest.fn(async () => {});
       router.get(/\/home/, spy);
