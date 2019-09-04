@@ -24,9 +24,17 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
     ...opt,
   };
   const handlers: RouteHandler[] = [];
+  const exitHandlers: RouteHandler[] = [];
+  let previousPath: string | null = null;
 
   const executeHandlers = (path: string) => {
     handlers.forEach((handler) => {
+      handler(path);
+    });
+  };
+
+  const executeExitHandlers = (path: string) => {
+    exitHandlers.forEach((handler) => {
       handler(path);
     });
   };
@@ -57,6 +65,10 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
   };
 
   const popStateHandler = (_ev: PopStateEvent) => {
+    if (previousPath !== null) {
+      executeExitHandlers(previousPath);
+    }
+    previousPath = window.location.pathname;
     executeHandlers(window.location.pathname);
   };
 
@@ -76,6 +88,10 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
 
     addRouteChangeHandler: (handler) => {
       handlers.push(handler);
+    },
+
+    addRouteExitHandler: (handler) => {
+      exitHandlers.push(handler);
     },
 
     navigate: (path) => {
