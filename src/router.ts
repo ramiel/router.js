@@ -188,8 +188,14 @@ const defaultOptions: DefaultOptions = {
 };
 
 const createRouter: RouterFactoryType = (opt) => {
-  const routes: Route[] = [];
-  const exits: Route[] = [];
+  interface Handlers {
+    routes: Route[];
+    exits: Route[];
+  }
+  const handlers: Handlers = {
+    routes: [],
+    exits: [],
+  };
   const always: AlwaysCallback[] = [];
   const errors = new Map<number | '*', ErrorCallback[]>();
   const options = { ...defaultOptions, ...opt };
@@ -241,9 +247,10 @@ const createRouter: RouterFactoryType = (opt) => {
     }
   };
 
-  const onNavigation = (collection: Route[]) => async (
+  const onNavigation = (collectionName: 'routes' | 'exits') => async (
     path: string,
   ): Promise<void> => {
+    const routes = handlers[collectionName];
     const matchedIndexes = [];
     let cleanPath = path
       .replace(LEADING_BACKSLASHES_MATCH, '')
@@ -253,8 +260,8 @@ const createRouter: RouterFactoryType = (opt) => {
       .split('?')[0]
       .replace(LEADING_BACKSLASHES_MATCH, '');
 
-    for (let i = 0, len = collection.length; i < len; i++) {
-      const route = collection[i];
+    for (let i = 0, len = routes.length; i < len; i++) {
+      const route = routes[i];
       if (route.path.test(urlToTest)) {
         matchedIndexes.push(i);
       }
@@ -281,16 +288,17 @@ const createRouter: RouterFactoryType = (opt) => {
   };
 
   engine.setup();
-  engine.addRouteChangeHandler(onNavigation(routes));
-  engine.addRouteExitHandler(onNavigation(exits));
+  engine.addRouteChangeHandler(onNavigation('routes'));
+  engine.addRouteExitHandler(onNavigation('exits'));
 
-  const addRouteToCollection = (collection: Route[]) => (
+  const addRouteToCollection = (collectionName: 'routes' | 'exits') => (
     path: string | RegExp,
     callback: RouteCallback,
   ): void => {
     if (!callback) {
       throw new Error(`Missing callback for path "${path}"`);
     }
+    const routes = handlers[collectionName];
     let finalPath;
     const paramNames = [];
 
@@ -319,7 +327,7 @@ const createRouter: RouterFactoryType = (opt) => {
     } else {
       throw new Error(`"${path}" must be a string or a RegExp`);
     }
-    collection.push({
+    routes.push({
       url: path,
       path: finalPath,
       paramNames,
@@ -329,12 +337,12 @@ const createRouter: RouterFactoryType = (opt) => {
 
   const router: Router = {
     get: (path, callback) => {
-      addRouteToCollection(routes)(path, callback);
+      addRouteToCollection('routes')(path, callback);
       return router;
     },
 
     exit: (path, callback) => {
-      addRouteToCollection(exits)(path, callback);
+      addRouteToCollection('exits')(path, callback);
       return router;
     },
 
@@ -376,7 +384,7 @@ const createRouter: RouterFactoryType = (opt) => {
     // @ts-ignore
     _showRoutes: () => {
       // eslint-disable-next-line no-console
-      console.log(routes);
+      console.log(handlers);
     },
   };
 

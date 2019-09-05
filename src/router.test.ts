@@ -282,7 +282,7 @@ describe('Router', () => {
     });
   });
 
-  describe.only('exits', () => {
+  describe('exits', () => {
     let router: Router;
     let testEngine: TTestEngine;
 
@@ -300,11 +300,12 @@ describe('Router', () => {
       expect(spy).toHaveBeenCalled();
     });
 
-    test.skip('an exit handler is called, navigating', () => {
+    test('an exit handler is called, navigating', () => {
       return new Promise((resolve) => {
         const spy = jest.fn(resolve);
+        router.get('/', () => {});
         router.exit('/', spy);
-        router.exit('/home', () => {});
+        router.get('/home', () => {});
         testEngine.simulateNavigation('/');
         testEngine.simulateNavigation('/home');
         expect(spy).toHaveBeenCalled();
