@@ -282,7 +282,7 @@ describe('Router', () => {
     });
   });
 
-  describe('exits', () => {
+  describe.only('exits', () => {
     let router: Router;
     let testEngine: TTestEngine;
 
@@ -301,99 +301,73 @@ describe('Router', () => {
     });
 
     test('an exit handler is called, navigating', () => {
+      return new Promise((resolve, reject) => {
+        const spy = jest.fn();
+        router.get('/', () => {});
+        router.exit('/', spy);
+        router.get('/home', () => {
+          try {
+            expect(spy).toHaveBeenCalled();
+          } catch (e) {
+            reject(e);
+          }
+          resolve();
+        });
+        testEngine.simulateNavigation('/');
+        testEngine.simulateNavigation('/home');
+      });
+    });
+
+    test('an exit handler is not called when no match happen', () => {
+      return new Promise((resolve, reject) => {
+        const spy = jest.fn();
+        router.get('/', () => {});
+        router.get('/home', () => {});
+        router.get('/final', () => {
+          try {
+            expect(spy).not.toHaveBeenCalled();
+          } catch (e) {
+            reject(e);
+          }
+          resolve();
+        });
+        router.exit('/final', spy);
+        testEngine.simulateNavigation('/');
+        testEngine.simulateNavigation('/home');
+        testEngine.simulateNavigation('/final');
+      });
+    });
+
+    test.only('more exits can be registered for the same route', () => {
+      return new Promise((resolve, reject) => {
+        const spy = jest.fn();
+        router.get('/', () => {});
+        router.exit('/', spy);
+        router.exit('/', spy);
+        router.get('/final', () => {
+          try {
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledTimes(2);
+          } catch (e) {
+            reject(e);
+          }
+          resolve();
+        });
+        testEngine.simulateNavigation('/');
+        testEngine.simulateNavigation('/final');
+      });
+    });
+
+    test('exit receive the same params as a normal handler', () => {
       return new Promise((resolve) => {
         const spy = jest.fn(resolve);
         router.get('/', () => {});
-        router.exit('/', spy);
+        router.exit('/', () => {
+          resolve();
+        });
         router.get('/home', () => {});
         testEngine.simulateNavigation('/');
         testEngine.simulateNavigation('/home');
-        expect(spy).toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('route context', () => {
-    let router: Router;
-    let testEngine: TTestEngine;
-
-    beforeEach(() => {
-      testEngine = TestEngine();
-      router = RouterFactory({
-        engine: testEngine.engine,
-      });
-    });
-
-    test('context is passed to route handler', async () => {
-      return new Promise((resolve, reject) => {
-        router
-          .get('/', (req, context) => {
-            expect(context).toBeDefined();
-            expect(context).toHaveProperty('path', '/');
-            resolve();
-          })
-          .error(500, reject);
-        testEngine.simulateNavigation('/');
-      });
-    });
-
-    test('context contains current path', async () => {
-      return new Promise((resolve, reject) => {
-        router
-          .get('/:name/:surname', (req, context) => {
-            expect(context).toHaveProperty('path', '/bilbo/county');
-            resolve();
-          })
-          .error(500, reject);
-        testEngine.simulateNavigation('/bilbo/county');
-      });
-    });
-
-    test('context contains cleaned path', async () => {
-      return new Promise((resolve, reject) => {
-        router
-          .get('/:name/:surname', (req, context) => {
-            expect(context).toHaveProperty('path', '/bilbo/county');
-            resolve();
-          })
-          .error(500, reject);
-        testEngine.simulateNavigation('/bilbo/county//');
-      });
-    });
-
-    test('context is kept among routes', async () => {
-      return new Promise((resolve, reject) => {
-        router
-          .get('/*', (req, context) => {
-            expect(context).not.toHaveProperty('key');
-
-            context.key = 'value'; // eslint-disable-line
-          })
-          .get('/:name', (req, context) => {
-            expect(context).toBeDefined();
-            expect(context).toHaveProperty('key', 'value');
-            resolve();
-          })
-          .error(500, reject);
-        testEngine.simulateNavigation('/bilbo');
-      });
-    });
-
-    test('context.set can be used to change context', async () => {
-      return new Promise((resolve, reject) => {
-        router
-          .get('/*', (req, context) => {
-            expect(context).not.toHaveProperty('tree');
-
-            context.set('tree', 'orange'); // eslint-disable-line
-          })
-          .get('/:name', (req, context) => {
-            expect(context).toBeDefined();
-            expect(context).toHaveProperty('tree', 'orange');
-            resolve();
-          })
-          .error(500, reject);
-        testEngine.simulateNavigation('/bilbo');
       });
     });
   });
@@ -537,6 +511,91 @@ describe('Router', () => {
           })
           .always(resolve);
         testEngine.simulateNavigation('/a');
+      });
+    });
+  });
+
+  describe('route context', () => {
+    let router: Router;
+    let testEngine: TTestEngine;
+
+    beforeEach(() => {
+      testEngine = TestEngine();
+      router = RouterFactory({
+        engine: testEngine.engine,
+      });
+    });
+
+    test('context is passed to route handler', async () => {
+      return new Promise((resolve, reject) => {
+        router
+          .get('/', (req, context) => {
+            expect(context).toBeDefined();
+            expect(context).toHaveProperty('path', '/');
+            resolve();
+          })
+          .error(500, reject);
+        testEngine.simulateNavigation('/');
+      });
+    });
+
+    test('context contains current path', async () => {
+      return new Promise((resolve, reject) => {
+        router
+          .get('/:name/:surname', (req, context) => {
+            expect(context).toHaveProperty('path', '/bilbo/county');
+            resolve();
+          })
+          .error(500, reject);
+        testEngine.simulateNavigation('/bilbo/county');
+      });
+    });
+
+    test('context contains cleaned path', async () => {
+      return new Promise((resolve, reject) => {
+        router
+          .get('/:name/:surname', (req, context) => {
+            expect(context).toHaveProperty('path', '/bilbo/county');
+            resolve();
+          })
+          .error(500, reject);
+        testEngine.simulateNavigation('/bilbo/county//');
+      });
+    });
+
+    test('context is kept among routes', async () => {
+      return new Promise((resolve, reject) => {
+        router
+          .get('/*', (req, context) => {
+            expect(context).not.toHaveProperty('key');
+
+            context.key = 'value'; // eslint-disable-line
+          })
+          .get('/:name', (req, context) => {
+            expect(context).toBeDefined();
+            expect(context).toHaveProperty('key', 'value');
+            resolve();
+          })
+          .error(500, reject);
+        testEngine.simulateNavigation('/bilbo');
+      });
+    });
+
+    test('context.set can be used to change context', async () => {
+      return new Promise((resolve, reject) => {
+        router
+          .get('/*', (req, context) => {
+            expect(context).not.toHaveProperty('tree');
+
+            context.set('tree', 'orange'); // eslint-disable-line
+          })
+          .get('/:name', (req, context) => {
+            expect(context).toBeDefined();
+            expect(context).toHaveProperty('tree', 'orange');
+            resolve();
+          })
+          .error(500, reject);
+        testEngine.simulateNavigation('/bilbo');
       });
     });
   });
