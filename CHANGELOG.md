@@ -1,7 +1,11 @@
 Changelog
 =========
 
-### [2.0.0-beta.0]
+### 2.0.0-beta.1
+
+  - Expose more types
+
+### 2.0.0-beta.0
 
 - Complete rewrite! 
   - More powerful
