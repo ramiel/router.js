@@ -28,9 +28,12 @@ export type RouteCallback = (
   ctx: RouteContext,
 ) => void | Promise<void>;
 
-type AlwaysCallback = (ctx: RouteContext) => void | Promise<void>;
+export type AlwaysCallback = (ctx: RouteContext) => void | Promise<void>;
 
-type ErrorCallback = (e: Error, context: RouteContext) => void | Promise<void>;
+export type ErrorCallback = (
+  e: Error,
+  context: RouteContext,
+) => void | Promise<void>;
 
 type ExecuteRoutes = (
   rs: Route[],
