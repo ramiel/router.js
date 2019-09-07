@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1
+  - Little fix in versioning
+
 ## 2.0.0
 
   - 🎉 New, stable version!
