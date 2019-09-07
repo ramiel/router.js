@@ -341,7 +341,19 @@ router
   });
 ```
 
-If you don't define your error handlers, RouterJS will log for 404 and 500 errors.
+You can also add an error handler that listen to any error just using the wildcard `*`
+
+```js
+router
+  .get('/', () => {
+    // ...
+  })
+  .error('*', (err, context) => {
+    // This will catch any error, regardless of the statusCode
+  });
+```
+
+By default RouterJS will log for 404 and 500 errors but this behavior can be opt-out in the future.
 
 ###  4.11. <a name='Engines'></a>Engines
 

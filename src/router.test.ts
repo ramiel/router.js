@@ -604,6 +604,22 @@ describe('Router', () => {
         }, 0);
       }));
 
+    test('more handlers can be added for the same error', () =>
+      new Promise((resolve) => {
+        const spy = jest.fn();
+        router
+          .get('/', async () => {
+            throw new Error('e');
+          })
+          .error(500, spy)
+          .error(500, spy);
+        testEngine.simulateNavigation('/');
+        setTimeout(() => {
+          expect(spy).toHaveBeenCalledTimes(2);
+          resolve();
+        }, 0);
+      }));
+
     test('if a route is not found, the 404 error handler is called', () =>
       new Promise((resolve) => {
         const spy = jest.fn();
@@ -641,6 +657,39 @@ describe('Router', () => {
             resolve();
           });
         testEngine.simulateNavigation('/');
+      }));
+
+    test('can listen to any error with "*"', () =>
+      new Promise((resolve) => {
+        const e = new Error('Unhautorized');
+        // @ts-ignore
+        e.statusCode = 403;
+        router
+          .get('/', async () => {
+            throw e;
+          })
+          .error('*', (err, context) => {
+            expect(context).toHaveProperty('path', '/');
+            expect(err).toBe(e);
+            resolve();
+          });
+        testEngine.simulateNavigation('/');
+      }));
+
+    test('more "*" error handlers can be added', () =>
+      new Promise((resolve) => {
+        const spy = jest.fn();
+        router
+          .get('/', async () => {
+            throw new Error('e');
+          })
+          .error('*', spy)
+          .error('*', spy);
+        testEngine.simulateNavigation('/');
+        setTimeout(() => {
+          expect(spy).toHaveBeenCalledTimes(2);
+          resolve();
+        }, 0);
       }));
   });
 

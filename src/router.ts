@@ -51,7 +51,7 @@ interface Route {
 export interface Router {
   get: (path: string | RegExp, callback: RouteCallback) => Router;
   always: (callback: AlwaysCallback) => Router;
-  error: (errorCode: number, callback: ErrorCallback) => Router;
+  error: (errorCode: number | '*', callback: ErrorCallback) => Router;
   navigate: (path: string) => void;
   run: (path?: string) => Router;
   teardown: () => Router;
@@ -189,36 +189,51 @@ const defaultOptions: DefaultOptions = {
 const createRouter: RouterFactoryType = (opt) => {
   const routes: Route[] = [];
   const always: AlwaysCallback[] = [];
-  const errors = new Map<number, ErrorCallback>();
+  const errors = new Map<number | '*', ErrorCallback[]>();
   const options = { ...defaultOptions, ...opt };
   const engine = options.engine();
   const cleanBasePath = options.basePath.replace(LEADING_BACKSLASHES_MATCH, '');
   const basePathRegExp = new RegExp(`^${cleanBasePath}`);
 
   /* eslint-disable no-console */
-  errors.set(500, (e, context) => {
-    /* istanbul ignore else */
-    if (console && console.error) {
-      console.error(`500 - path: "${context.path}"`);
-      console.error(e);
-    }
-  });
-  errors.set(404, (e, context) => {
-    /* istanbul ignore else */
-    if (console && console.warn) {
-      console.warn(`404 - path: "${context.path}"`);
-      console.warn(e);
-    }
-  });
+  errors.set(500, [
+    (e, context) => {
+      /* istanbul ignore else */
+      if (console && console.error) {
+        console.error(`500 - path: "${context.path}"`);
+        console.error(e);
+      }
+    },
+  ]);
+  errors.set(404, [
+    (e, context) => {
+      /* istanbul ignore else */
+      if (console && console.warn) {
+        console.warn(`404 - path: "${context.path}"`);
+        console.warn(e);
+      }
+    },
+  ]);
   /* eslint-enable no-console */
 
   const errorThrowerFactory = (context: RouteContext) => (
     error: RouteError,
   ) => {
     const { statusCode = 500 } = error;
-    const callback = errors.get(statusCode);
-    if (callback) {
-      callback(error, context);
+    const callbacks = errors.get(statusCode);
+    const alwaysCallbacks = errors.get('*');
+
+    if (callbacks || alwaysCallbacks) {
+      if (callbacks && callbacks.length > 0) {
+        callbacks.forEach((callback) => {
+          callback(error, context);
+        });
+      }
+      if (alwaysCallbacks && alwaysCallbacks.length > 0) {
+        alwaysCallbacks.forEach((callback) => {
+          callback(error, context);
+        });
+      }
     } else {
       throw error;
     }
@@ -317,7 +332,7 @@ const createRouter: RouterFactoryType = (opt) => {
     },
 
     error: (errorCode, callback) => {
-      errors.set(errorCode, callback);
+      errors.set(errorCode, [...(errors.get(errorCode) || []), callback]);
       return router;
     },
 
