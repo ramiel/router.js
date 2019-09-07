@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+
+  - 🎉 New, stable version!
+
 ## 2.0.0-beta.2
 
   - More error handlers can listen to the same error
