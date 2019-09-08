@@ -217,7 +217,7 @@ const createRouter: RouterFactoryType = (opt) => {
     (e, context) => {
       /* istanbul ignore else */
       if (console && console.warn) {
-        console.warn(`404 - path: "${context.path}"`);
+        console.warn(`!404 - path: "${context.path}"`);
         console.warn(e);
       }
     },
@@ -268,8 +268,7 @@ const createRouter: RouterFactoryType = (opt) => {
     }
 
     const context: RouteContext = createContext(cleanPath);
-
-    if (matchedIndexes.length === 0) {
+    if (collectionName === 'routes' && matchedIndexes.length === 0) {
       const e: RouteError = new Error(`Path "${path}" not matched`);
       e.statusCode = 404;
       errorThrowerFactory(context)(e);

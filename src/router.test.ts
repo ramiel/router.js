@@ -337,7 +337,6 @@ describe('Router', () => {
 
     test('exit receive the same params as a normal handler', () => {
       return new Promise((resolve) => {
-        const spy = jest.fn(resolve);
         router.get('/', () => {});
         router.exit('/', () => {
           resolve();
@@ -346,6 +345,18 @@ describe('Router', () => {
         testEngine.simulateNavigation('/');
         testEngine.simulateNavigation('/home');
       });
+    });
+
+    test('do not call 404 for missing exit', async () => {
+      const spy = jest.fn();
+      router
+        .get('/', () => {})
+        .get('/home', () => {})
+        .error(404, spy);
+      await testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/home');
+      await testEngine.simulateNavigation('/');
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 
