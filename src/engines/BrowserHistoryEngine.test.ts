@@ -3,10 +3,20 @@ import BrowserHistoryEngine from './BrowserHistoryEngine';
 // @ts-ignore
 // const addEventListenerSpy = jest.spyOn(global.window, 'addEventListener');
 
-describe.skip('Browser History Engine', () => {
-  // beforeEach(() => {
-  //   addEventListenerSpy.mockClear();
-  // });
+global.window = {
+  addEventListener: jest.fn(),
+
+  // mock only methods
+  mockClear: () => {
+    // @ts-ignore
+    global.window.addEventListener.mockClear();
+  },
+};
+describe('Browser History Engine', () => {
+  beforeEach(() => {
+    // @ts-ignore
+    global.window.mockClear();
+  });
 
   describe('general', () => {
     test('is a function that returns a factory', () => {
@@ -40,7 +50,5 @@ describe.skip('Browser History Engine', () => {
       const engine = engineFactory();
       expect(engine.setup).not.toThrow();
     });
-
-    test('on setup, an handler for popstate event is created', () => {});
   });
 });
