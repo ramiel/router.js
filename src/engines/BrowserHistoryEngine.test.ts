@@ -1,12 +1,12 @@
 import BrowserHistoryEngine from './BrowserHistoryEngine';
 
 // @ts-ignore
-const addEventListenerSpy = jest.spyOn(global.window, 'addEventListener');
+// const addEventListenerSpy = jest.spyOn(global.window, 'addEventListener');
 
-describe('Browser History Engine', () => {
-  beforeEach(() => {
-    addEventListenerSpy.mockClear();
-  });
+describe.skip('Browser History Engine', () => {
+  // beforeEach(() => {
+  //   addEventListenerSpy.mockClear();
+  // });
 
   describe('general', () => {
     test('is a function that returns a factory', () => {

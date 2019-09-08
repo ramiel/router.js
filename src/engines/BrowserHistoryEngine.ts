@@ -27,16 +27,16 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
   const exitHandlers: RouteHandler[] = [];
   let previousPath: string | null = null;
 
-  const executeHandlers = (path: string) => {
-    handlers.forEach((handler) => {
-      handler(path);
-    });
+  const executeHandlers = async (path: string) => {
+    await handlers.reduce((acc, h) => {
+      return acc.then(() => h(path));
+    }, Promise.resolve());
   };
 
-  const executeExitHandlers = (path: string) => {
-    exitHandlers.forEach((handler) => {
-      handler(path);
-    });
+  const executeExitHandlers = async (path: string) => {
+    await exitHandlers.reduce((acc, h) => {
+      return acc.then(() => h(path));
+    }, Promise.resolve());
   };
 
   const clickHandler = (e: MouseEvent) => {
@@ -65,11 +65,7 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
   };
 
   const popStateHandler = (_ev: PopStateEvent) => {
-    if (previousPath !== null) {
-      executeExitHandlers(previousPath);
-    }
-    previousPath = window.location.pathname;
-    executeHandlers(window.location.pathname);
+    engine.navigate(window.location.pathname);
   };
 
   engine = {
@@ -94,10 +90,14 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
       exitHandlers.push(handler);
     },
 
-    navigate: (path) => {
+    navigate: async (path) => {
       if (window.location.pathname !== path) {
+        if (previousPath !== null) {
+          await executeExitHandlers(previousPath);
+        }
+        previousPath = path;
         window.history.pushState({}, '', path);
-        executeHandlers(path);
+        await executeHandlers(path);
       }
     },
 

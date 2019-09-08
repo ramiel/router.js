@@ -1,5 +1,4 @@
-import EventEmitter from 'events';
-import { Engine } from '../engines/Engine';
+import { Engine, RouteHandler } from '../engines/Engine';
 
 export interface TTestEngine {
   simulateNavigation: (path: string) => void;
@@ -9,20 +8,32 @@ export interface TTestEngine {
 export type TestEngineFactory = () => TTestEngine;
 
 const TestEngine: TestEngineFactory = () => {
-  const ee = new EventEmitter();
-
+  const handlers: RouteHandler[] = [];
+  const exitHandlers: RouteHandler[] = [];
   let currentUrl: string | null = null;
+
+  const executeHandlers = async (path: string) => {
+    await handlers.reduce((acc, h) => {
+      return acc.then(() => h(path));
+    }, Promise.resolve());
+  };
+
+  const executeExitHandlers = async (path: string) => {
+    await exitHandlers.reduce((acc, h) => {
+      return acc.then(() => h(path));
+    }, Promise.resolve());
+  };
 
   const eng: Engine = {
     setup: () => {},
     teardown: () => {},
-    navigate: (path) => {
+    navigate: async (path) => {
       if (path !== currentUrl) {
         if (currentUrl) {
-          ee.emit('exit', currentUrl);
+          await executeExitHandlers(currentUrl);
         }
         currentUrl = path;
-        ee.emit('navigate', path);
+        await executeHandlers(path);
       }
     },
     setLocation: (path) => {
@@ -31,25 +42,27 @@ const TestEngine: TestEngineFactory = () => {
       }
     },
     addRouteChangeHandler: (handler) => {
-      ee.on('navigate', handler);
+      handlers.push(handler);
     },
     addRouteExitHandler: (handler) => {
-      ee.on('exit', handler);
+      exitHandlers.push(handler);
     },
     run: (path) => {
       const url = path || currentUrl;
       currentUrl = url;
-      ee.emit('navigate', url);
+      if (url) {
+        executeHandlers(url);
+      }
     },
   };
 
   return {
-    simulateNavigation(path) {
-      eng.navigate(path);
+    async simulateNavigation(path) {
+      return eng.navigate(path);
     },
 
-    simulateExit(path) {
-      ee.emit('exit', path);
+    async simulateExit(path) {
+      return executeExitHandlers(path);
     },
 
     engine: () => eng,
