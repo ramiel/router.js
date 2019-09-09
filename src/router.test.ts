@@ -294,6 +294,19 @@ describe('Router', () => {
       expect(spy).toHaveBeenCalledTimes(2);
     });
 
+    test('the exit flow can be stopped', async () => {
+      const spy = jest.fn();
+      router.get('/', () => {});
+      router.exit('/', (req) => {
+        req.stop();
+      });
+      router.exit('/', spy);
+      router.get('/final', () => {});
+      await testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/final');
+      expect(spy).not.toHaveBeenCalled();
+    });
+
     test('exit receive the same params as a normal handler', async () => {
       let req;
       let context;

@@ -20,13 +20,14 @@ RouterJS is a simple and powerful javascript router. It's simple to use, versati
 	* 4.6. [Multiple matching routes](#Multiplematchingroutes)
 	* 4.7. [Middlewares](#Middlewares)
 	* 4.8. [Always callbacks](#Alwayscallbacks)
-	* 4.9. [Context](#Context)
-	* 4.10. [Errors](#Errors)
-	* 4.11. [Engines](#Engines)
-		* 4.11.1. [BrowserHistoryEngine](#BrowserHistoryEngine)
-	* 4.12. [Request object](#Requestobject)
-	* 4.13. [Options](#Options)
-	* 4.14. [Router methods](#Routermethods)
+	* 4.9. [Exit handlers](#Exithandlers)
+	* 4.10. [Context](#Context)
+	* 4.11. [Errors](#Errors)
+	* 4.12. [Engines](#Engines)
+		* 4.12.1. [BrowserHistoryEngine](#BrowserHistoryEngine)
+	* 4.13. [Request object](#Requestobject)
+	* 4.14. [Options](#Options)
+	* 4.15. [Router methods](#Routermethods)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -271,7 +272,21 @@ If we navigate to `/post/14`, this will be logged to the console
 Path is: /post/14
 ```
 
-###  4.9. <a name='Context'></a>Context
+###  4.9. <a name='Exithandlers'></a>Exit handlers
+
+You can attach handlers that are executed when the user leave a route. The syntax is the same as `get` and the callback receives the same arguments
+
+```js
+router
+  .get('/', () => {})
+  .exit('/', (req, context) => {
+    // ... do something when the route "/" is left
+  });
+```
+
+The behavior is the same as for get and so you can stop the execution and populate the context. Let's say that you have a series of `get`s, that run when the user enters a route, and a series of `exit`s that run when the user leave the route.
+
+###  4.10. <a name='Context'></a>Context
 
 The context is an object which is retained through the execution of each callback.    
 It contains the current `path` but you can attach whatever you want. In this example we'll use a middleware to populate the context with some user information
@@ -300,7 +315,7 @@ router
   })
 ```
 
-###  4.10. <a name='Errors'></a>Errors
+###  4.11. <a name='Errors'></a>Errors
 
 Your routes can throw errors for any reason and you can listen to those errors. Errors in RouterJS behave like http errors and so they have a code associated. You can add a listener for the code you prefer and, if an error has no associated code, it behaves like a `500`.
 
@@ -355,7 +370,7 @@ router
 
 By default RouterJS will log for 404 and 500 errors but this behavior can be opt-out in the future.
 
-###  4.11. <a name='Engines'></a>Engines
+###  4.12. <a name='Engines'></a>Engines
 
 RouterJS can work with several engines. For the moment only one engine exists and it's a browser engine that uses `pushState` API under the hood. In the future there will be an engine that uses `hashbang` instead and you can imagine engines for other environments that use javascipt but which are not a browser (node.js, native frameworks, etc...).
 
@@ -369,7 +384,7 @@ const router = createRouter({engine: BrowserHistoryEngine({bindClick: false})});
 
 In this example the `BrowserHistoryEngine` won't automatically listen to click to anchors and it will be up to you to call the `navigate` method when appropriate.
 
-####  4.11.1. <a name='BrowserHistoryEngine'></a>BrowserHistoryEngine
+####  4.12.1. <a name='BrowserHistoryEngine'></a>BrowserHistoryEngine
 
 As said this engine works with the `pushState` API. It takes some parameters:
 
@@ -382,7 +397,7 @@ The clicks on anchors are listened unless:
   - The anchor has a `rel="external"` attribute
   - The anchor href points to a different domain
 
-###  4.12. <a name='Requestobject'></a>Request object
+###  4.13. <a name='Requestobject'></a>Request object
 
 Here the complete list of properties available in the request object, `req`, the first parameter of the callbacks:
 
@@ -394,7 +409,7 @@ Here the complete list of properties available in the request object, `req`, the
 - __stop__: A function to avoid any following matched route to be executed
 - __isStopped__: A function `() => boolean` that tells if stop has been called.
 
-###  4.13. <a name='Options'></a>Options
+###  4.14. <a name='Options'></a>Options
 
 The router can be instantiated with several options:
 
@@ -413,7 +428,7 @@ router = createRouter({basePath: '/blog'})
 This can be handy when the router is for an application served from a subdir.
 
 
-###  4.14. <a name='Routermethods'></a>Router methods
+###  4.15. <a name='Routermethods'></a>Router methods
 
 A list of methods available in the router:
 
