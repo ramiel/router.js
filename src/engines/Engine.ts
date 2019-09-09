@@ -14,6 +14,10 @@ export interface Engine {
    */
   addRouteChangeHandler: (handler: RouteHandler) => void;
   /**
+   * Add an handler that must be called when leaving a route
+   */
+  addRouteExitHandler: (handler: RouteHandler) => void;
+  /**
    * Go to the desired path
    */
   navigate: (path: string) => void;

@@ -50,6 +50,7 @@ interface Route {
 
 export interface Router {
   get: (path: string | RegExp, callback: RouteCallback) => Router;
+  exit: (path: string | RegExp, callback: RouteCallback) => Router;
   always: (callback: AlwaysCallback) => Router;
   error: (errorCode: number | '*', callback: ErrorCallback) => Router;
   navigate: (path: string) => void;
@@ -187,7 +188,14 @@ const defaultOptions: DefaultOptions = {
 };
 
 const createRouter: RouterFactoryType = (opt) => {
-  const routes: Route[] = [];
+  interface Handlers {
+    routes: Route[];
+    exits: Route[];
+  }
+  const handlers: Handlers = {
+    routes: [],
+    exits: [],
+  };
   const always: AlwaysCallback[] = [];
   const errors = new Map<number | '*', ErrorCallback[]>();
   const options = { ...defaultOptions, ...opt };
@@ -239,7 +247,10 @@ const createRouter: RouterFactoryType = (opt) => {
     }
   };
 
-  const onNavigation = async (path: string): Promise<void> => {
+  const onNavigation = (collectionName: 'routes' | 'exits') => async (
+    path: string,
+  ): Promise<void> => {
+    const routes = handlers[collectionName];
     const matchedIndexes = [];
     let cleanPath = path
       .replace(LEADING_BACKSLASHES_MATCH, '')
@@ -257,8 +268,7 @@ const createRouter: RouterFactoryType = (opt) => {
     }
 
     const context: RouteContext = createContext(cleanPath);
-
-    if (matchedIndexes.length === 0) {
+    if (collectionName === 'routes' && matchedIndexes.length === 0) {
       const e: RouteError = new Error(`Path "${path}" not matched`);
       e.statusCode = 404;
       errorThrowerFactory(context)(e);
@@ -277,47 +287,61 @@ const createRouter: RouterFactoryType = (opt) => {
   };
 
   engine.setup();
-  engine.addRouteChangeHandler(onNavigation);
+  engine.addRouteChangeHandler(onNavigation('routes'));
+  engine.addRouteExitHandler(onNavigation('exits'));
+
+  const addRouteToCollection = (collectionName: 'routes' | 'exits') => (
+    path: string | RegExp,
+    callback: RouteCallback,
+  ): void => {
+    if (!callback) {
+      throw new Error(`Missing callback for path "${path}"`);
+    }
+    const routes = handlers[collectionName];
+    let finalPath;
+    const paramNames = [];
+
+    if (typeof path === 'string') {
+      const modifiers = options.ignoreCase ? 'i' : '';
+      // Remove leading backslash from the end of the string
+      finalPath = path.replace(LEADING_BACKSLASHES_MATCH, '');
+      let match = PATH_NAME_MATCHER.exec(finalPath);
+      /* Param Names are all the one defined as :param in the path */
+      while (match !== null) {
+        paramNames.push(match[1]);
+        match = PATH_NAME_MATCHER.exec(finalPath);
+      }
+      finalPath = new RegExp(
+        `^${finalPath
+          .replace(PATH_NAME_MATCHER, PATH_REPLACER)
+          .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER)
+          .replace(
+            PATH_EVERY_GLOBAL_MATCHER,
+            PATH_EVERY_GLOBAL_REPLACER,
+          )}(?:\\?.+)?$`,
+        modifiers,
+      );
+    } else if (path instanceof RegExp) {
+      finalPath = path;
+    } else {
+      throw new Error(`"${path}" must be a string or a RegExp`);
+    }
+    routes.push({
+      url: path,
+      path: finalPath,
+      paramNames,
+      callback,
+    });
+  };
 
   const router: Router = {
     get: (path, callback) => {
-      if (!callback) {
-        throw new Error(`Missing callback for path "${path}"`);
-      }
-      let finalPath;
-      const paramNames = [];
+      addRouteToCollection('routes')(path, callback);
+      return router;
+    },
 
-      if (typeof path === 'string') {
-        const modifiers = options.ignoreCase ? 'i' : '';
-        // Remove leading backslash from the end of the string
-        finalPath = path.replace(LEADING_BACKSLASHES_MATCH, '');
-        let match = PATH_NAME_MATCHER.exec(finalPath);
-        /* Param Names are all the one defined as :param in the path */
-        while (match !== null) {
-          paramNames.push(match[1]);
-          match = PATH_NAME_MATCHER.exec(finalPath);
-        }
-        finalPath = new RegExp(
-          `^${finalPath
-            .replace(PATH_NAME_MATCHER, PATH_REPLACER)
-            .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER)
-            .replace(
-              PATH_EVERY_GLOBAL_MATCHER,
-              PATH_EVERY_GLOBAL_REPLACER,
-            )}(?:\\?.+)?$`,
-          modifiers,
-        );
-      } else if (path instanceof RegExp) {
-        finalPath = path;
-      } else {
-        throw new Error(`"${path}" must be a string or a RegExp`);
-      }
-      routes.push({
-        url: path,
-        path: finalPath,
-        paramNames,
-        callback,
-      });
+    exit: (path, callback) => {
+      addRouteToCollection('exits')(path, callback);
       return router;
     },
 
@@ -359,7 +383,7 @@ const createRouter: RouterFactoryType = (opt) => {
     // @ts-ignore
     _showRoutes: () => {
       // eslint-disable-next-line no-console
-      console.log(routes);
+      console.log(handlers);
     },
   };
 

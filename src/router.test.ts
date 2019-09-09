@@ -5,6 +5,7 @@ import TestEngine, { TTestEngine } from './mocks/testEngine';
 jest.mock('./engines/BrowserHistoryEngine', () => () => () => ({
   setup: () => {},
   addRouteChangeHandler: () => {},
+  addRouteExitHandler: () => {},
 }));
 
 describe('Router', () => {
@@ -52,15 +53,15 @@ describe('Router', () => {
       expect(() => router.get('/')).toThrow();
     });
 
-    test('sync callback is executed', () => {
+    test('sync callback is executed', async () => {
       const spy = jest.fn(() => {});
       router.get('/', spy);
-      testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/');
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(expect.any(Object), expect.any(Object));
     });
 
-    test('router can be configured to be case sensitive', () => {
+    test('router can be configured to be case sensitive', async () => {
       const csrouter = RouterFactory({
         ignoreCase: false,
         engine: testEngine.engine,
@@ -69,15 +70,15 @@ describe('Router', () => {
       const spy2 = jest.fn(() => {});
       csrouter.get('/something', spy);
       csrouter.get('/someThing', spy2);
-      testEngine.simulateNavigation('/someThing');
+      await testEngine.simulateNavigation('/someThing');
       expect(spy).not.toHaveBeenCalled();
       expect(spy2).toHaveBeenCalledTimes(1);
     });
 
-    test('promise callback is executed', () => {
+    test('promise callback is executed', async () => {
       const spy = jest.fn(async () => {});
       router.get('/', spy);
-      testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/');
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(expect.any(Object), expect.any(Object));
     });
@@ -104,180 +105,354 @@ describe('Router', () => {
       });
     });
 
-    test('a route can be expressed as a regexp', () => {
+    test('a route can be expressed as a regexp', async () => {
       const spy = jest.fn(async () => {});
       router.get(/\/home/, spy);
-      testEngine.simulateNavigation('/home');
+      await testEngine.simulateNavigation('/home');
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(expect.any(Object), expect.any(Object));
     });
 
-    test('a route expressed as a regexp works as intended', () => {
+    test('a route expressed as a regexp works as intended', async () => {
       const spy = jest.fn(async () => {});
       const spy2 = jest.fn(async () => {});
       router.get(/\/home/, spy);
       router.get(/\/account/, spy2);
-      testEngine.simulateNavigation('/account');
+      await testEngine.simulateNavigation('/account');
       expect(spy).toHaveBeenCalledTimes(0);
       expect(spy2).toHaveBeenCalledTimes(1);
       expect(spy2).toHaveBeenCalledWith(expect.any(Object), expect.any(Object));
     });
 
-    test('second match is followed', (done) => {
+    test('second match is followed', async () => {
       const spy = jest.fn(() => {});
       const spy2 = jest.fn(() => {});
       router.get('/a', spy);
       router.get('/:x', spy2);
-      testEngine.simulateNavigation('/a');
-      setTimeout(() => {
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy2).toHaveBeenCalledTimes(1);
-        done();
-      }, 0);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy2).toHaveBeenCalledTimes(1);
     });
 
-    test('second match is not followed if first stop', (done) => {
+    test('second match is not followed if first stop', async () => {
       const spy = jest.fn((req: Request) => {
         req.stop();
       });
       const spy2 = jest.fn(() => {});
       router.get('/a', spy);
       router.get('/:x', spy2);
-      testEngine.simulateNavigation('/a');
-      setTimeout(() => {
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy2).toHaveBeenCalledTimes(0);
-        done();
-      }, 0);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy2).toHaveBeenCalledTimes(0);
     });
 
-    test('second async match is followed', (done) => {
+    test('second async match is followed', async () => {
       const spy = jest.fn(async () => {});
       const spy2 = jest.fn(async () => {});
       router.get('/a', spy);
       router.get('/:x', spy2);
-      testEngine.simulateNavigation('/a');
-      setTimeout(() => {
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy2).toHaveBeenCalledTimes(1);
-        done();
-      }, 0);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy2).toHaveBeenCalledTimes(1);
     });
 
-    test('second async match is not followed if first stop', (done) => {
+    test('second async match is not followed if first stop', async () => {
       const spy = jest.fn(async (req: Request) => {
         req.stop();
       });
       const spy2 = jest.fn(async () => {});
       router.get('/a', spy);
       router.get('/:x', spy2);
-      testEngine.simulateNavigation('/a');
-      setTimeout(() => {
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy2).toHaveBeenCalledTimes(0);
-        done();
-      }, 0);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy2).toHaveBeenCalledTimes(0);
     });
 
-    test('follow a route with leading slash', () => {
+    test('follow a route with leading slash', async () => {
       const spy = jest.fn(() => {});
       router.get('/a', spy);
-      testEngine.simulateNavigation('/a/');
+      await testEngine.simulateNavigation('/a/');
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(expect.any(Object), expect.any(Object));
     });
 
-    test('follow a route with query params', () => {
+    test('follow a route with query params', async () => {
       const spy = jest.fn(() => {});
       router.get('/a', spy);
-      testEngine.simulateNavigation('/a?key=value');
+      await testEngine.simulateNavigation('/a?key=value');
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(expect.any(Object), expect.any(Object));
     });
 
-    test('non matching route is not called', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router.get('/a', spy);
-        testEngine.simulateNavigation('/b');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(0);
-          resolve();
-        }, 0);
-      }));
+    test('non matching route is not called', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a', spy);
+      await testEngine.simulateNavigation('/b');
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
 
-    test('non matching route is not called, after a match', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router.get('/a', () => {});
-        router.get('/b', spy);
-        testEngine.simulateNavigation('/a');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(0);
-          resolve();
-        }, 0);
-      }));
+    test('non matching route is not called, after a match', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a', () => {});
+      router.get('/b', spy);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
 
-    test('* matches the next trait', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router.get('/a/*', spy);
-        testEngine.simulateNavigation('/a/something');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          resolve();
-        }, 0);
-      }));
+    test('* matches the next trait', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/*', spy);
+      await testEngine.simulateNavigation('/a/something');
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
 
-    test('* is something, not nothing', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router.get('/a/*', spy);
-        testEngine.simulateNavigation('/a');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(0);
-          resolve();
-        }, 0);
-      }));
+    test('* is something, not nothing', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/*', spy);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
 
-    test('* doesnt match multiple paths', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router.get('/a/*', spy);
-        testEngine.simulateNavigation('/a/something/more');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(0);
-          resolve();
-        }, 0);
-      }));
+    test('* doesnt match multiple paths', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/*', spy);
+      testEngine.simulateNavigation('/a/something/more');
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
 
-    test('* can match one-trait path', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router.get('/*', spy);
-        testEngine.simulateNavigation('/a');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          resolve();
-        }, 0);
-      }));
+    test('* can match one-trait path', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/*', spy);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
 
-    test('** matches multiple paths', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router.get('/a/**', spy);
-        testEngine.simulateNavigation('/a/something/more');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          resolve();
-        }, 0);
-      }));
+    test('** matches multiple paths', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/**', spy);
+      await testEngine.simulateNavigation('/a/something/more');
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
 
-    test('** can be used to match anything', () => {
+    test('** can be used to match anything', async () => {
       const spy = jest.fn(() => {});
       router.get('/**', spy);
-      testEngine.simulateNavigation('/any/thing/i/want');
+      await testEngine.simulateNavigation('/any/thing/i/want');
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('exits', () => {
+    let router: Router;
+    let testEngine: TTestEngine;
+
+    beforeEach(() => {
+      testEngine = TestEngine();
+      router = RouterFactory({
+        engine: testEngine.engine,
+      });
+    });
+
+    test('an exit handler is called', async () => {
+      const spy = jest.fn();
+      router.exit('/', spy);
+      await testEngine.simulateExit('/');
+      expect(spy).toHaveBeenCalled();
+    });
+
+    test('an exit handler is called, navigating', async () => {
+      const spy = jest.fn();
+      router.get('/', () => {});
+      router.exit('/', spy);
+      router.get('/home', () => {});
+      await testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/home');
+      expect(spy).toHaveBeenCalled();
+    });
+
+    test('an exit handler is not called when no match happen', async () => {
+      const spy = jest.fn();
+      router.get('/', () => {});
+      router.get('/home', () => {});
+      router.get('/final', () => {});
+      router.exit('/final', spy);
+      await testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/home');
+      await testEngine.simulateNavigation('/final');
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test('more exits can be registered for the same route', async () => {
+      const spy = jest.fn();
+      router.get('/', () => {});
+      router.exit('/', spy);
+      router.exit('/', spy);
+      router.get('/final', () => {});
+      await testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/final');
+      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    test('the exit flow can be stopped', async () => {
+      const spy = jest.fn();
+      router.get('/', () => {});
+      router.exit('/', (req) => {
+        req.stop();
+      });
+      router.exit('/', spy);
+      router.get('/final', () => {});
+      await testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/final');
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test('exit receive the same params as a normal handler', async () => {
+      let req;
+      let context;
+      router.get('/', () => {});
+      router.exit('/', (r, c) => {
+        req = r;
+        context = c;
+      });
+      router.get('/home', () => {});
+      await testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/home');
+      expect(req).toBeDefined();
+      expect(req).toHaveProperty('params', {});
+      expect(context).toBeDefined();
+      expect(context).toHaveProperty('path', '/');
+    });
+
+    test('do not call 404 for missing exit', async () => {
+      const spy = jest.fn();
+      router
+        .get('/', () => {})
+        .get('/home', () => {})
+        .error(404, spy);
+      await testEngine.simulateNavigation('/');
+      await testEngine.simulateNavigation('/home');
+      await testEngine.simulateNavigation('/');
+      expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('always functions', () => {
+    let router: Router;
+    let testEngine: TTestEngine;
+
+    beforeEach(() => {
+      testEngine = TestEngine();
+      router = RouterFactory({
+        engine: testEngine.engine,
+      });
+    });
+
+    test('cannot be defined without a callback', () => {
+      // @ts-ignore
+      expect(() => router.always()).toThrow();
+    });
+
+    test('is called, if the flow is not stopped', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a', () => {}).always(spy);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/a',
+        }),
+      );
+    });
+
+    test('is called, if the flow is not stopped, multiple paths', async () => {
+      const spy = jest.fn(() => {});
+      router
+        .get('/a', () => {})
+        .get('/:letter', () => {})
+        .always(spy);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/a',
+        }),
+      );
+    });
+
+    test('is called, if the flow is stopped', async () => {
+      const spy = jest.fn(() => {});
+      router
+        .get('/a', (req) => {
+          req.stop();
+        })
+        .always(spy);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/a',
+        }),
+      );
+    });
+
+    test('is called, if the flow is lately stopped', async () => {
+      const spy = jest.fn(() => {});
+      router
+        .get('/a', () => {})
+        .get('/letter', (req) => {
+          req.stop();
+        })
+        .always(spy);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/a',
+        }),
+      );
+    });
+
+    test('all the registered always are called', async () => {
+      const spy = jest.fn(() => {});
+      const spy2 = jest.fn(() => {});
+      router
+        .get('/a', (req) => {
+          req.stop();
+        })
+        .always(spy)
+        .always(spy2);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy2).toHaveBeenCalledTimes(1);
+    });
+
+    test('all the registered always are called (async)', async () => {
+      const spy = jest.fn(async () => {});
+      const spy2 = jest.fn(async () => {});
+      router
+        .get('/a', (req) => {
+          req.stop();
+        })
+        .always(spy)
+        .always(spy2);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy2).toHaveBeenCalledTimes(1);
+    });
+
+    test('always get the current context', () => {
+      return new Promise((resolve) => {
+        router
+          .get('/a', (req) => {
+            req.stop();
+          })
+          .always((context) => {
+            expect(context).toHaveProperty('path', '/a');
+          })
+          .always(resolve);
+        testEngine.simulateNavigation('/a');
+      });
     });
   });
 
@@ -362,149 +537,6 @@ describe('Router', () => {
           })
           .error(500, reject);
         testEngine.simulateNavigation('/bilbo');
-      });
-    });
-  });
-
-  describe('always functions', () => {
-    let router: Router;
-    let testEngine: TTestEngine;
-
-    beforeEach(() => {
-      testEngine = TestEngine();
-      router = RouterFactory({
-        engine: testEngine.engine,
-      });
-    });
-
-    test('cannot be defined without a callback', () => {
-      // @ts-ignore
-      expect(() => router.always()).toThrow();
-    });
-
-    test('is called, if the flow is not stopped', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router.get('/a', () => {}).always(spy);
-        testEngine.simulateNavigation('/a');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          expect(spy).toHaveBeenCalledWith(
-            expect.objectContaining({
-              path: '/a',
-            }),
-          );
-          resolve();
-        }, 0);
-      }));
-
-    test('is called, if the flow is not stopped, multiple paths', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router
-          .get('/a', () => {})
-          .get('/:letter', () => {})
-          .always(spy);
-        testEngine.simulateNavigation('/a');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          expect(spy).toHaveBeenCalledWith(
-            expect.objectContaining({
-              path: '/a',
-            }),
-          );
-          resolve();
-        }, 0);
-      }));
-
-    test('is called, if the flow is stopped', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router
-          .get('/a', (req) => {
-            req.stop();
-          })
-          .always(spy);
-        testEngine.simulateNavigation('/a');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          expect(spy).toHaveBeenCalledWith(
-            expect.objectContaining({
-              path: '/a',
-            }),
-          );
-          resolve();
-        }, 0);
-      }));
-
-    test('is called, if the flow is lately stopped', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router
-          .get('/a', () => {})
-          .get('/letter', (req) => {
-            req.stop();
-          })
-          .always(spy);
-        testEngine.simulateNavigation('/a');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          expect(spy).toHaveBeenCalledWith(
-            expect.objectContaining({
-              path: '/a',
-            }),
-          );
-          resolve();
-        }, 0);
-      }));
-
-    test('all the registered always are called', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        const spy2 = jest.fn(() => {});
-        router
-          .get('/a', (req) => {
-            req.stop();
-          })
-          .always(spy)
-          .always(spy2);
-        testEngine.simulateNavigation('/a');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          expect(spy2).toHaveBeenCalledTimes(1);
-          resolve();
-        }, 0);
-      }));
-
-    test('all the registered always are called (async)', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(async () => {});
-        const spy2 = jest.fn(async () => {});
-        router
-          .get('/a', (req) => {
-            req.stop();
-          })
-          .always(spy)
-          .always(spy2);
-        testEngine.simulateNavigation('/a');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          expect(spy2).toHaveBeenCalledTimes(1);
-          resolve();
-        }, 0);
-      }));
-
-    test('always get the current context', () => {
-      return new Promise((resolve) => {
-        router
-          .get('/a', (req) => {
-            req.stop();
-          })
-          .always((context) => {
-            expect(context).toHaveProperty('path', '/a');
-          })
-          .always(resolve);
-        testEngine.simulateNavigation('/a');
       });
     });
   });

@@ -1,47 +1,71 @@
-import EventEmitter from 'events';
-import { Engine } from '../engines/Engine';
+import { Engine, RouteHandler } from '../engines/Engine';
 
 export interface TTestEngine {
   simulateNavigation: (path: string) => void;
+  simulateExit: (path: string) => void;
   engine: () => Engine;
 }
 export type TestEngineFactory = () => TTestEngine;
 
 const TestEngine: TestEngineFactory = () => {
-  const ee = new EventEmitter();
+  const handlers: RouteHandler[] = [];
+  const exitHandlers: RouteHandler[] = [];
+  let currentUrl: string | null = null;
+
+  const executeHandlers = async (path: string) => {
+    await handlers.reduce((acc, h) => {
+      return acc.then(() => h(path));
+    }, Promise.resolve());
+  };
+
+  const executeExitHandlers = async (path: string) => {
+    await exitHandlers.reduce((acc, h) => {
+      return acc.then(() => h(path));
+    }, Promise.resolve());
+  };
+
+  const eng: Engine = {
+    setup: () => {},
+    teardown: () => {},
+    navigate: async (path) => {
+      if (path !== currentUrl) {
+        if (currentUrl) {
+          await executeExitHandlers(currentUrl);
+        }
+        currentUrl = path;
+        await executeHandlers(path);
+      }
+    },
+    setLocation: (path) => {
+      if (path !== currentUrl) {
+        currentUrl = path;
+      }
+    },
+    addRouteChangeHandler: (handler) => {
+      handlers.push(handler);
+    },
+    addRouteExitHandler: (handler) => {
+      exitHandlers.push(handler);
+    },
+    run: (path) => {
+      const url = path || currentUrl;
+      currentUrl = url;
+      if (url) {
+        executeHandlers(url);
+      }
+    },
+  };
+
   return {
-    simulateNavigation(path) {
-      ee.emit('navigate', path);
+    async simulateNavigation(path) {
+      return eng.navigate(path);
     },
 
-    engine: () => {
-      let currentUrl = '/';
-
-      const eng: Engine = {
-        setup: () => {},
-        teardown: () => {},
-        navigate: (path) => {
-          if (path !== currentUrl) {
-            currentUrl = path;
-            ee.emit('navigate', path);
-          }
-        },
-        setLocation: (path) => {
-          if (path !== currentUrl) {
-            currentUrl = path;
-          }
-        },
-        addRouteChangeHandler: (handler) => {
-          ee.on('navigate', handler);
-        },
-        run: (path) => {
-          const url = path || currentUrl;
-          currentUrl = url;
-          ee.emit('navigate', url);
-        },
-      };
-      return eng;
+    async simulateExit(path) {
+      return executeExitHandlers(path);
     },
+
+    engine: () => eng,
   };
 };
 
