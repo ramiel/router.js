@@ -1,5 +1,8 @@
 # Changelog
 
+## Next
+  - Introduces exit handlers
+
 ## 2.0.1
   - Little fix in versioning
 
