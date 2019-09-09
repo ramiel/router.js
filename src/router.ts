@@ -217,7 +217,7 @@ const createRouter: RouterFactoryType = (opt) => {
     (e, context) => {
       /* istanbul ignore else */
       if (console && console.warn) {
-        console.warn(`!404 - path: "${context.path}"`);
+        console.warn(`404 - path: "${context.path}"`);
         console.warn(e);
       }
     },
