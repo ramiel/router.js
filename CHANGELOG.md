@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## 2.1.0
   - Introduces exit handlers
 
 ## 2.0.1
