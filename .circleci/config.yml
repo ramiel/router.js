@@ -6,20 +6,35 @@ version: 2
 jobs:
   test:
     docker:
-      # specify the version you desire here
       - image: circleci/node:latest
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
     working_directory: ~/repo
     steps:
       - checkout
       - run: npm ci
       - run: npm test
+  deploy:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: npm config set "//registry.npmjs.org/:_authToken" $NPM_TOKEN
+      - run: npm install
+      - run: npm publish
+
 workflows:
   version: 2
   test:
     jobs:
-      - test
+      -test
+  test_and_deploy:
+    jobs:
+      - test:
+        filters:
+          tags:
+            only: /.*/
+      - deploy:
+        filters:
+          tags:
+            only: /.*/
+    
