@@ -254,6 +254,13 @@ describe('Router', () => {
       await testEngine.simulateNavigation('/any/thing/i/want');
       expect(spy).toHaveBeenCalledTimes(1);
     });
+
+    test('** can be used to match nothing', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/**', spy);
+      await testEngine.simulateNavigation('/');
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('exits', () => {
