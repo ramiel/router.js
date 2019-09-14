@@ -261,6 +261,48 @@ describe('Router', () => {
       await testEngine.simulateNavigation('/');
       expect(spy).toHaveBeenCalledTimes(1);
     });
+
+    test('+ can match next trait', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/+', spy);
+      await testEngine.simulateNavigation('/a/something');
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    test('+ matches one trait only', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/+', spy);
+      await testEngine.simulateNavigation('/a/something/more');
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
+
+    test('+ doesnt match empty next trait', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/+', spy);
+      await testEngine.simulateNavigation('/a');
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
+
+    test('++ can match next trait', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/++', spy);
+      await testEngine.simulateNavigation('/a/something');
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    test('+ matches more traits', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/++', spy);
+      await testEngine.simulateNavigation('/a/something/more');
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    test('++ cannot match empty trait', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/++', spy);
+      await testEngine.simulateNavigation('/a/');
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('exits', () => {
