@@ -119,7 +119,7 @@ So the path `/users?filter=active` will result in filter to be `active`
 The `req.get` method looks for parameters in the params, then in the query and otherwise it fallbacks to a default value if one is provided.
 
 ```js
-//Calling #/users/john?age=25
+// Visiting /users/john?age=25
 router
   .get('/users/:username', (req, context) => {
     const username = req.get('username');      // will be 'john' because is found in params
@@ -265,6 +265,8 @@ router
   });
 ```
 
+`always` callbacks receive only the [`context`](#Context) as parameter.
+
 If we navigate to `/post/14`, this will be logged to the console
 
 ```
@@ -283,7 +285,7 @@ router
   });
 ```
 
-The behavior is the same as for get and so you can stop the execution and populate the context. Let's say that you have a series of `get`s, that run when the user enters a route, and a series of `exit`s that run when the user leave the route.
+The behavior is the same as for `get` and so you can stop the execution and populate the `context`. Let's say that you have a series of `get`s, that run when the user enters a route, and a series of `exit`s that run when the user leaves the route.
 
 ###  4.10. <a name='Context'></a>Context
 
