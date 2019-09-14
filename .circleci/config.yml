@@ -18,9 +18,11 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: npm config set "//registry.npmjs.org/:_authToken" $NPM_TOKEN
-      - run: npm install
-      - run: npm publish
+      - run: npm ci
+      - run: npm test
+      # - run: npm config set "//registry.npmjs.org/:_authToken" $NPM_TOKEN
+      # - run: npm install
+      # - run: npm publish
 
 workflows:
   version: 2
