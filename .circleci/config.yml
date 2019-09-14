@@ -32,9 +32,9 @@ workflows:
       - test:
           filters: 
             tags:
-              only: /.*/
+              only: /.+/
       - deploy:
           filters: 
             tags:
-              only: /.*/
+              only: /.+/
     
