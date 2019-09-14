@@ -76,12 +76,12 @@ interface CreateRequestOpts {
 
 // -------------------------- Implementation
 
-const PATH_REPLACER = '([^\/\\?]+)'; // eslint-disable-line
+const PATH_REPLACER = '([^/\\?]+)';
 const PATH_NAME_MATCHER = /:([\w\d]+)/g;
 const PATH_EVERY_MATCHER = /\/\*(?!\*)/;
-const PATH_EVERY_REPLACER = '\/([^\/\\?]+)'; // eslint-disable-line
-const PATH_EVERY_GLOBAL_MATCHER = /\*{2}/;
-const PATH_EVERY_GLOBAL_REPLACER = '(.*?)\\??';
+const PATH_EVERY_REPLACER = '/?([^/\\?]*)';
+const PATH_EVERY_GLOBAL_MATCHER = /\/\*{2}/;
+const PATH_EVERY_GLOBAL_REPLACER = '/?(.*)\\??';
 const LEADING_BACKSLASHES_MATCH = /\/*$/;
 
 const createContext = (path: string): RouteContext => {
