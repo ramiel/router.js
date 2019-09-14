@@ -24,15 +24,9 @@ jobs:
 
 workflows:
   version: 2
-  test:
-    jobs:
-      - test
   test_and_deploy:
     jobs:
       - test:
-        filters:
-          tags:
-            only: /.*/
       - deploy:
         filters:
           tags:
