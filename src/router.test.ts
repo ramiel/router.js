@@ -33,7 +33,7 @@ describe('Router', () => {
     });
   });
 
-  describe('routes', () => {
+  describe.only('routes', () => {
     let router: Router;
     let testEngine: TTestEngine;
 
@@ -199,18 +199,18 @@ describe('Router', () => {
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
-    test('* matches the next trait', async () => {
+    test('(.*) matches the next trait', async () => {
       const spy = jest.fn(() => {});
-      router.get('/a/*', spy);
+      router.get('/a/(.*)', spy);
       await testEngine.simulateNavigation('/a/something');
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    test('* is something, not nothing', async () => {
+    test.only('(.*) can be nothing', async () => {
       const spy = jest.fn(() => {});
-      router.get('/a/*', spy);
+      router.get('/a/(.*)', spy);
       await testEngine.simulateNavigation('/a');
-      expect(spy).toHaveBeenCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     test('* doesnt match multiple paths', async () => {
