@@ -14,7 +14,7 @@ RouterJS is a simple and powerful javascript router. It's simple to use, versati
 	* 4.1. [Matching params](#Matchingparams)
 	* 4.2. [Query params](#Queryparams)
 	* 4.3. ["req.get" - One method to get them all](#req.get-Onemethodtogetthemall)
-	* 4.4. [Special symbols: *, **, + and ++](#Specialsymbols:and)
+	* 4.4. [Special symbols](#Specialsymbols)
 	* 4.5. [Regexp and splats](#Regexpandsplats)
 	* 4.6. [Multiple matching routes](#Multiplematchingroutes)
 	* 4.7. [Middlewares](#Middlewares)
@@ -129,7 +129,7 @@ router
   });
 ```
 
-###  4.4. <a name='Specialsymbols:and'></a>Special symbols: *, **, + and ++
+###  4.4. <a name='Specialsymbols'></a>Special symbols
 
 Four special symbols can be used to declare special matching: `*`, `**`, `+` and `++`
 
