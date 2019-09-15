@@ -213,6 +213,13 @@ describe('Router', () => {
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
+    test('* can be nothing with a trailing slash', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/a/*', spy);
+      await testEngine.simulateNavigation('/a/');
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
     test('* doesnt match multiple paths', async () => {
       const spy = jest.fn(() => {});
       router.get('/a/*', spy);

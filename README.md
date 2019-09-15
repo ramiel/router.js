@@ -14,7 +14,7 @@ RouterJS is a simple and powerful javascript router. It's simple to use, versati
 	* 4.1. [Matching params](#Matchingparams)
 	* 4.2. [Query params](#Queryparams)
 	* 4.3. ["req.get" - One method to get them all](#req.get-Onemethodtogetthemall)
-	* 4.4. [Special symbols](#Specialsymbols)
+	* 4.4. [Special symbols: *, **, + and ++](#Specialsymbols:and)
 	* 4.5. [Regexp and splats](#Regexpandsplats)
 	* 4.6. [Multiple matching routes](#Multiplematchingroutes)
 	* 4.7. [Middlewares](#Middlewares)
@@ -129,11 +129,13 @@ router
   });
 ```
 
-###  4.4. <a name='Specialsymbols'></a>Special symbols
+###  4.4. <a name='Specialsymbols:and'></a>Special symbols: *, **, + and ++
 
-The symbols `*` and  `**` can be used to match anything.
+Four special symbols can be used to declare special matching: `*`, `**`, `+` and `++`
 
-`*` will match anything up to the next `/`
+The symbols `*` and  `**` can be used to match anything or nothing.
+
+`*` will match anything (or nothing) up to the next `/`
 
 ```js
 router
@@ -143,6 +145,7 @@ router
 ```
 
 These routes will match:
+  - /users
   - /users/john
   - /users/tyrion
 
@@ -162,6 +165,27 @@ will match these routes
   - /users/john
   - /users/tyrion
   - /users/john/snow
+
+The symbol `+` matches anything up to the next `/` but doesn't match empty strings:
+
+
+```js
+router
+  .get('/users/+', (req, context) => {
+    //...
+  });
+```
+
+Matches:
+  - /users/john
+  - /users/tyrion
+but not:
+  - /users
+  - /users/john/snow
+
+The symbol `++` works the same but doesn't stop at the first `/`
+
+
 
 ###  4.5. <a name='Regexpandsplats'></a>Regexp and splats
 
