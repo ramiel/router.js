@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## 2.2.0
   - Introduces better special symbols: *, **, +, ++
     - `*` works as intended matching empty strings
     - `+` and `++` have been introduced to cover all cases
