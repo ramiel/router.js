@@ -1,5 +1,10 @@
 # Changelog
 
+## Next
+  - Introduces better special symbols: *, **, +, ++
+    - `*` works as intended matching empty strings
+    - `+` and `++` have been introduced to cover all cases
+
 ## 2.1.0
   - Introduces exit handlers
 
