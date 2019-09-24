@@ -61,7 +61,7 @@ export interface Router {
 }
 
 export interface RouterOptions {
-  engine: () => Engine;
+  engine?: () => Engine;
   ignoreCase?: boolean;
   basePath?: string;
 }
@@ -184,11 +184,7 @@ const createExecuteRoutes = (context: RouteContext) => {
   return executeRoutes;
 };
 
-interface DefaultOptions extends RouterOptions {
-  ignoreCase: boolean;
-  basePath: string;
-}
-const defaultOptions: DefaultOptions = {
+const defaultOptions = {
   ignoreCase: false,
   basePath: '/',
   engine: BrowserHistoryEngine(),
