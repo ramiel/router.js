@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.1
+  - `engine` parameter is optional when creating the router
+
 ## 2.2.0
   - Introduces better special symbols: *, **, +, ++
     - `*` works as intended matching empty strings
