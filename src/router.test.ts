@@ -770,6 +770,9 @@ describe('Router', () => {
         });
         testEngine.simulateNavigation('/carl/sceriff');
       }));
+
+    test.skip('optional parameters can be specified and used', () => {});
+    test.skip('optional parameters can be specified and not used', () => {});
   });
 
   describe('query params', () => {
