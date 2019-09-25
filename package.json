@@ -9,7 +9,9 @@
     "type": "git",
     "url": "https://github.com/ramiel/router.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "path-to-regexp": "^3.1.0"
+  },
   "devDependencies": {
     "@types/jest": "^24.0.16",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
