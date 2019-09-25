@@ -76,20 +76,6 @@ interface CreateRequestOpts {
 }
 
 // -------------------------- Implementation
-
-const PATH_REPLACER = '([^/\\?]+)';
-const PATH_NAME_MATCHER = /:([\w\d]+)/g;
-const PATH_EVERY_MATCHER = /\/\*(?!\*)/;
-const PATH_EVERY_REPLACER = '/?([^/\\?]*)';
-const PATH_EVERY_GLOBAL_MATCHER = /\/\*{2}/;
-const PATH_EVERY_GLOBAL_REPLACER = '(.*?)\\??';
-
-const PATH_SOMETHING_MATCHER = /\/\+(?!\+)/;
-const PATH_SOMETHING_REPLACER = '/?([^/\\?]+)';
-
-const PATH_SOMETHING_GLOBAL_MATCHER = /\/\+{2}/;
-const PATH_SOMETHING_GLOBAL_REPLACER = '(.+?)\\??';
-
 const LEADING_BACKSLASHES_MATCH = /\/*$/;
 
 const createContext = (path: string): RouteContext => {
@@ -309,42 +295,6 @@ const createRouter: RouterFactoryType = (opt) => {
       strict: false,
     });
 
-    // if (typeof path === 'string') {
-    //   const modifiers = options.ignoreCase ? 'i' : '';
-    //   // Remove leading backslash from the end of the string
-    //   finalPath = path.replace(LEADING_BACKSLASHES_MATCH, '');
-    //   let match = PATH_NAME_MATCHER.exec(finalPath);
-    //   /* Param Names are all the one defined as :param in the path */
-    //   while (match !== null) {
-    //     paramNames.push(match[1]);
-    //     match = PATH_NAME_MATCHER.exec(finalPath);
-    //   }
-    //   finalPath = new RegExp(
-    //     `^${finalPath
-    //       .replace(PATH_NAME_MATCHER, PATH_REPLACER)
-    //       .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER)
-    //       .replace(PATH_SOMETHING_MATCHER, PATH_SOMETHING_REPLACER)
-    //       .replace(
-    //         PATH_SOMETHING_GLOBAL_MATCHER,
-    //         PATH_SOMETHING_GLOBAL_REPLACER,
-    //       )
-    //       .replace(
-    //         PATH_EVERY_GLOBAL_MATCHER,
-    //         PATH_EVERY_GLOBAL_REPLACER,
-    //       )}(?:\\?.+)?$`,
-    //     modifiers,
-    //   );
-    // } else if (path instanceof RegExp) {
-    //   finalPath = path;
-    // } else {
-    //   throw new Error(`"${path}" must be a string or a RegExp`);
-    // }
-    // console.log({
-    //   url: path,
-    //   path: finalPath,
-    //   paramNames,
-    //   callback,
-    // });
     routes.push({
       url: path,
       path: finalPath,
