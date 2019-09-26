@@ -139,7 +139,6 @@ const createExecuteRoutes = (context: RouteContext) => {
         for (j = 0; j < route.paramNames.length; j++) {
           params[route.paramNames[j].name] = match[j + 1];
         }
-        j += 1;
         /* If any other match put them in request splat */
         if (j < match.length) {
           for (let k = j; k < match.length; k++) {

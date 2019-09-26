@@ -775,6 +775,63 @@ describe('Router', () => {
     test.skip('optional parameters can be specified and not used', () => {});
   });
 
+  describe('splats', () => {
+    let router: Router;
+    let testEngine: TTestEngine;
+
+    beforeEach(() => {
+      testEngine = TestEngine();
+      router = RouterFactory({
+        engine: testEngine.engine,
+      });
+    });
+
+    test('a splat can come from a regular expression', () =>
+      new Promise((resolve, reject) => {
+        router.get(/user\/(.+)/, (req) => {
+          try {
+            expect(req.splats).toBeInstanceOf(Array);
+            expect(req.splats).toHaveLength(1);
+            expect(req.splats[0]).toBe('12');
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/user/12');
+      }));
+
+    test('a splat can come from a string with (.+)', () =>
+      new Promise((resolve, reject) => {
+        router.get('/user/(.+)', (req) => {
+          try {
+            expect(req.splats).toBeInstanceOf(Array);
+            expect(req.splats).toHaveLength(1);
+            expect(req.splats[0]).toBe('12');
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/user/12');
+      }));
+
+    test('a splat can come from a string with (.*)', () =>
+      new Promise((resolve, reject) => {
+        router.get('/user/(.*)', (req) => {
+          try {
+            expect(req.splats).toBeInstanceOf(Array);
+            expect(req.splats).toHaveLength(1);
+            expect(req.splats[0]).toBe('12');
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/user/12');
+      }));
+  });
+
   describe('query params', () => {
     let router: Router;
     let testEngine: TTestEngine;
