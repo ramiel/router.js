@@ -771,8 +771,33 @@ describe('Router', () => {
         testEngine.simulateNavigation('/carl/sceriff');
       }));
 
-    test.skip('optional parameters can be specified and used', () => {});
-    test.skip('optional parameters can be specified and not used', () => {});
+    test('optional parameters can be specified and used', () =>
+      new Promise((resolve, reject) => {
+        router.get('/:name/:job?', (req) => {
+          try {
+            expect(req.get('name')).toBe('carl');
+            expect(req.get('job')).toBe('sceriff');
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/carl/sceriff');
+      }));
+
+    test('optional parameters can be specified and not used', () =>
+      new Promise((resolve, reject) => {
+        router.get('/:name/:job?', (req) => {
+          try {
+            expect(req.get('name')).toBe('carl');
+            expect(req.get('job')).toBeUndefined();
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/carl');
+      }));
   });
 
   describe('splats', () => {
