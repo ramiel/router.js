@@ -3,6 +3,7 @@
 
 [![npm version](https://badge.fury.io/js/routerjs.svg)](https://badge.fury.io/js/routerjs)
 [![CircleCI](https://circleci.com/gh/ramiel/router.js.svg?style=shield&circle-token=04cff3788541e5ef982f8081b326d89bb966706d)](https://circleci.com/gh/ramiel/router.js)
+![Minified + zipped size](https://badgen.net/bundlephobia/minzip/routerjs)
 
 RouterJS is a simple and powerful javascript router. It's simple to use, versatile and ready to be coupled with your framework of choice. It can work in the browser or on native applications.
 
