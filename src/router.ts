@@ -1,3 +1,4 @@
+import pathToRegexp, { Key } from 'path-to-regexp';
 import BrowserHistoryEngine from './engines/BrowserHistoryEngine';
 import { Engine } from './engines/Engine';
 
@@ -44,7 +45,7 @@ type ExecuteRoutes = (
 interface Route {
   url: string | RegExp;
   path: RegExp;
-  paramNames: string[];
+  paramNames: Key[];
   callback: RouteCallback;
 }
 
@@ -75,20 +76,6 @@ interface CreateRequestOpts {
 }
 
 // -------------------------- Implementation
-
-const PATH_REPLACER = '([^/\\?]+)';
-const PATH_NAME_MATCHER = /:([\w\d]+)/g;
-const PATH_EVERY_MATCHER = /\/\*(?!\*)/;
-const PATH_EVERY_REPLACER = '/?([^/\\?]*)';
-const PATH_EVERY_GLOBAL_MATCHER = /\/\*{2}/;
-const PATH_EVERY_GLOBAL_REPLACER = '(.*?)\\??';
-
-const PATH_SOMETHING_MATCHER = /\/\+(?!\+)/;
-const PATH_SOMETHING_REPLACER = '/?([^/\\?]+)';
-
-const PATH_SOMETHING_GLOBAL_MATCHER = /\/\+{2}/;
-const PATH_SOMETHING_GLOBAL_REPLACER = '(.+?)\\??';
-
 const LEADING_BACKSLASHES_MATCH = /\/*$/;
 
 const createContext = (path: string): RouteContext => {
@@ -150,9 +137,8 @@ const createExecuteRoutes = (context: RouteContext) => {
       if (match) {
         let j = 0;
         for (j = 0; j < route.paramNames.length; j++) {
-          params[route.paramNames[j]] = match[j + 1];
+          params[route.paramNames[j].name] = match[j + 1];
         }
-        j += 1;
         /* If any other match put them in request splat */
         if (j < match.length) {
           for (let k = j; k < match.length; k++) {
@@ -255,13 +241,13 @@ const createRouter: RouterFactoryType = (opt) => {
   ): Promise<void> => {
     const routes = handlers[collectionName];
     const matchedIndexes = [];
-    let cleanPath = path
-      .replace(LEADING_BACKSLASHES_MATCH, '')
-      .replace(basePathRegExp, '');
+    // Path without base (contains query parameters)
+    let cleanPath = path.replace(basePathRegExp, '');
     cleanPath = cleanPath === '' ? '/' : cleanPath;
-    const urlToTest = cleanPath
-      .split('?')[0]
-      .replace(LEADING_BACKSLASHES_MATCH, '');
+    // Path without base and without qurey parameters
+    let [urlToTest] = path.split('?');
+    urlToTest = urlToTest.replace(basePathRegExp, '');
+    urlToTest = urlToTest === '' ? '/' : urlToTest;
 
     for (let i = 0, len = routes.length; i < len; i++) {
       const route = routes[i];
@@ -272,7 +258,7 @@ const createRouter: RouterFactoryType = (opt) => {
 
     const context: RouteContext = createContext(cleanPath);
     if (collectionName === 'routes' && matchedIndexes.length === 0) {
-      const e: RouteError = new Error(`Path "${path}" not matched`);
+      const e: RouteError = new Error(`Path "${cleanPath}" not matched`);
       e.statusCode = 404;
       errorThrowerFactory(context)(e);
     } else {
@@ -301,39 +287,13 @@ const createRouter: RouterFactoryType = (opt) => {
       throw new Error(`Missing callback for path "${path}"`);
     }
     const routes = handlers[collectionName];
-    let finalPath;
-    const paramNames = [];
+    const paramNames: Key[] = [];
 
-    if (typeof path === 'string') {
-      const modifiers = options.ignoreCase ? 'i' : '';
-      // Remove leading backslash from the end of the string
-      finalPath = path.replace(LEADING_BACKSLASHES_MATCH, '');
-      let match = PATH_NAME_MATCHER.exec(finalPath);
-      /* Param Names are all the one defined as :param in the path */
-      while (match !== null) {
-        paramNames.push(match[1]);
-        match = PATH_NAME_MATCHER.exec(finalPath);
-      }
-      finalPath = new RegExp(
-        `^${finalPath
-          .replace(PATH_NAME_MATCHER, PATH_REPLACER)
-          .replace(PATH_EVERY_MATCHER, PATH_EVERY_REPLACER)
-          .replace(PATH_SOMETHING_MATCHER, PATH_SOMETHING_REPLACER)
-          .replace(
-            PATH_SOMETHING_GLOBAL_MATCHER,
-            PATH_SOMETHING_GLOBAL_REPLACER,
-          )
-          .replace(
-            PATH_EVERY_GLOBAL_MATCHER,
-            PATH_EVERY_GLOBAL_REPLACER,
-          )}(?:\\?.+)?$`,
-        modifiers,
-      );
-    } else if (path instanceof RegExp) {
-      finalPath = path;
-    } else {
-      throw new Error(`"${path}" must be a string or a RegExp`);
-    }
+    const finalPath = pathToRegexp(path, paramNames, {
+      sensitive: !options.ignoreCase,
+      strict: false,
+    });
+
     routes.push({
       url: path,
       path: finalPath,

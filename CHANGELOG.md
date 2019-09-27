@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0
+  - Move to `path-to-regexp`
+  - Remove special symbols support
+
 ## 2.2.1
   - `engine` parameter is optional when creating the router
 

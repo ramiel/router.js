@@ -198,118 +198,6 @@ describe('Router', () => {
       await testEngine.simulateNavigation('/a');
       expect(spy).toHaveBeenCalledTimes(0);
     });
-
-    test('* matches the next trait', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/*', spy);
-      await testEngine.simulateNavigation('/a/something');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('* can be nothing', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/*', spy);
-      await testEngine.simulateNavigation('/a');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('* can be nothing with a trailing slash', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/*', spy);
-      await testEngine.simulateNavigation('/a/');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('* doesnt match multiple paths', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/*', spy);
-      testEngine.simulateNavigation('/a/something/more');
-      expect(spy).toHaveBeenCalledTimes(0);
-    });
-
-    test('* can match one-trait path', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/*', spy);
-      await testEngine.simulateNavigation('/a');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('* can match one-trait path, with nothing', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/*', spy);
-      await testEngine.simulateNavigation('/');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('** matches multiple paths', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/**', spy);
-      await testEngine.simulateNavigation('/a/something/more');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('** matches nothing', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/**', spy);
-      await testEngine.simulateNavigation('/a');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('** can be used to match anything', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/**', spy);
-      await testEngine.simulateNavigation('/any/thing/i/want');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('** can be used to match nothing', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/**', spy);
-      await testEngine.simulateNavigation('/');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('+ can match next trait', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/+', spy);
-      await testEngine.simulateNavigation('/a/something');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('+ matches one trait only', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/+', spy);
-      await testEngine.simulateNavigation('/a/something/more');
-      expect(spy).toHaveBeenCalledTimes(0);
-    });
-
-    test('+ doesnt match empty next trait', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/+', spy);
-      await testEngine.simulateNavigation('/a');
-      expect(spy).toHaveBeenCalledTimes(0);
-    });
-
-    test('++ can match next trait', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/++', spy);
-      await testEngine.simulateNavigation('/a/something');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('+ matches more traits', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/++', spy);
-      await testEngine.simulateNavigation('/a/something/more');
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    test('++ cannot match empty trait', async () => {
-      const spy = jest.fn(() => {});
-      router.get('/a/++', spy);
-      await testEngine.simulateNavigation('/a/');
-      expect(spy).toHaveBeenCalledTimes(0);
-    });
   });
 
   describe('exits', () => {
@@ -562,22 +450,39 @@ describe('Router', () => {
       });
     });
 
-    test('context contains cleaned path', async () => {
+    test('context contains current path when a basePath is used', async () => {
       return new Promise((resolve, reject) => {
-        router
+        const tEngine = TestEngine();
+        const routerWithBasePath = RouterFactory({
+          engine: tEngine.engine,
+          basePath: '/base',
+        });
+        routerWithBasePath
           .get('/:name/:surname', (req, context) => {
             expect(context).toHaveProperty('path', '/bilbo/county');
             resolve();
           })
           .error(500, reject);
-        testEngine.simulateNavigation('/bilbo/county//');
+        tEngine.simulateNavigation('/base/bilbo/county');
       });
     });
 
-    test('context is kept among routes', async () => {
+    test('context contains complete path, no cleaning', async () => {
       return new Promise((resolve, reject) => {
         router
-          .get('/*', (req, context) => {
+          .get('/:name/:surname', (req, context) => {
+            expect(context).toHaveProperty('path', '/bilbo/county/');
+            resolve();
+          })
+          .error(500, reject);
+        testEngine.simulateNavigation('/bilbo/county/');
+      });
+    });
+
+    test('context is kept among routes', () => {
+      return new Promise((resolve, reject) => {
+        router
+          .get('/(.*)', (req, context) => {
             expect(context).not.toHaveProperty('key');
 
             context.key = 'value'; // eslint-disable-line
@@ -592,10 +497,10 @@ describe('Router', () => {
       });
     });
 
-    test('context.set can be used to change context', async () => {
+    test('context.set can be used to change context', () => {
       return new Promise((resolve, reject) => {
         router
-          .get('/*', (req, context) => {
+          .get('/(.*)', (req, context) => {
             expect(context).not.toHaveProperty('tree');
 
             context.set('tree', 'orange'); // eslint-disable-line
@@ -623,16 +528,12 @@ describe('Router', () => {
       });
     });
 
-    test('basePath is ignored', () =>
-      new Promise((resolve) => {
-        const spy = jest.fn(() => {});
-        router.get('/', spy);
-        testEngine.simulateNavigation('/base');
-        setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(1);
-          resolve();
-        }, 0);
-      }));
+    test('basePath is ignored', async () => {
+      const spy = jest.fn(() => {});
+      router.get('/', spy);
+      await testEngine.simulateNavigation('/base');
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
 
     test('basePath is ignored, second level path', () =>
       new Promise((resolve) => {
@@ -868,6 +769,91 @@ describe('Router', () => {
           resolve();
         });
         testEngine.simulateNavigation('/carl/sceriff');
+      }));
+
+    test('optional parameters can be specified and used', () =>
+      new Promise((resolve, reject) => {
+        router.get('/:name/:job?', (req) => {
+          try {
+            expect(req.get('name')).toBe('carl');
+            expect(req.get('job')).toBe('sceriff');
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/carl/sceriff');
+      }));
+
+    test('optional parameters can be specified and not used', () =>
+      new Promise((resolve, reject) => {
+        router.get('/:name/:job?', (req) => {
+          try {
+            expect(req.get('name')).toBe('carl');
+            expect(req.get('job')).toBeUndefined();
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/carl');
+      }));
+  });
+
+  describe('splats', () => {
+    let router: Router;
+    let testEngine: TTestEngine;
+
+    beforeEach(() => {
+      testEngine = TestEngine();
+      router = RouterFactory({
+        engine: testEngine.engine,
+      });
+    });
+
+    test('a splat can come from a regular expression', () =>
+      new Promise((resolve, reject) => {
+        router.get(/user\/(.+)/, (req) => {
+          try {
+            expect(req.splats).toBeInstanceOf(Array);
+            expect(req.splats).toHaveLength(1);
+            expect(req.splats[0]).toBe('12');
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/user/12');
+      }));
+
+    test('a splat can come from a string with (.+)', () =>
+      new Promise((resolve, reject) => {
+        router.get('/user/(.+)', (req) => {
+          try {
+            expect(req.splats).toBeInstanceOf(Array);
+            expect(req.splats).toHaveLength(1);
+            expect(req.splats[0]).toBe('12');
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/user/12');
+      }));
+
+    test('a splat can come from a string with (.*)', () =>
+      new Promise((resolve, reject) => {
+        router.get('/user/(.*)', (req) => {
+          try {
+            expect(req.splats).toBeInstanceOf(Array);
+            expect(req.splats).toHaveLength(1);
+            expect(req.splats[0]).toBe('12');
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        testEngine.simulateNavigation('/user/12');
       }));
   });
 
