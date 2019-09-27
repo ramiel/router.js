@@ -45,6 +45,7 @@
     "dev": "NODE_ENV=development concurrently --kill-others \"npm run build-watch\"",
     "prepare": "npm run build"
   },
+  "sideEffects": false,
   "files": [
     "dist"
   ],
