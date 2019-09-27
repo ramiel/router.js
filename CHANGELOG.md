@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.3.1
+  - Mark this package as side effect free
+
 ## 2.3.0
   - Move to `path-to-regexp`
   - Remove special symbols support
