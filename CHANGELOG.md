@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.3.2
+  - Fix: include needed dependency in the bundle
+
 ## 2.3.1
   - Mark this package as side effect free
 
