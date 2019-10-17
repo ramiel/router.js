@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.3.3
+  - Fix: Execute handlers on popstate
+
 ## 2.3.2
   - Fix: include needed dependency in the bundle
 
