@@ -64,8 +64,13 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
     }
   };
 
-  const popStateHandler = (_ev: PopStateEvent) => {
-    engine.navigate(window.location.pathname);
+  const popStateHandler = async (_ev: PopStateEvent) => {
+    const path = window.location.pathname;
+    if (previousPath !== null) {
+      await executeExitHandlers(previousPath);
+    }
+    previousPath = path;
+    await executeHandlers(path);
   };
 
   engine = {
