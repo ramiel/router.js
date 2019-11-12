@@ -225,6 +225,26 @@ const router = createRouter()
   );
 ```
 
+If you just have middlewares but not an handler, you can use pipe instead.
+
+```js
+import { createRouter, compose } from 'routerjs';
+
+const userRoute = (req, context) => {
+  //...
+};
+
+const router = createRouter()
+  .get(
+    '/users', 
+    pipe(
+      logMiddleware,
+      authMiddleware,
+      // any other middleware
+    )
+  );
+```
+
 ###  4.7. <a name='Alwayscallbacks'></a>Always callbacks
 
 You can define a callback that is executed always, on every route and despite the fact that the request has been stopped or not.

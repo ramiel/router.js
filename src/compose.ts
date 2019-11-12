@@ -23,4 +23,9 @@ function compose(...funcs: Function[]): Function {
   return funcs.reduce((a, b) => (...args: any) => a(b(...args)));
 }
 
+const noop = () => {};
+export const pipe = (...funcs: Function[]): Function => {
+  return compose(...funcs)(noop);
+};
+
 export default compose;

@@ -1,6 +1,6 @@
 import createRouter from './router';
 import BrowserHistoryEngine from './engines/BrowserHistoryEngine';
-import compose from './compose';
+import compose, { pipe } from './compose';
 
 export * from './router';
-export { createRouter, BrowserHistoryEngine, compose };
+export { createRouter, BrowserHistoryEngine, compose, pipe };
