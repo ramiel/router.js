@@ -55,6 +55,7 @@ export interface Router {
   always: (callback: AlwaysCallback) => Router;
   error: (errorCode: number | '*', callback: ErrorCallback) => Router;
   navigate: (path: string) => void;
+  setLocation: (path: string) => void;
   run: (path?: string) => Router;
   teardown: () => Router;
   buildUrl: (path: string) => string;
@@ -340,6 +341,7 @@ const createRouter: RouterFactoryType = (opt) => {
 
     navigate: engine.navigate,
 
+    setLocation: engine.setLocation,
     buildUrl: (path) => `${cleanBasePath}${path}`,
 
     _getOptions: () => ({
