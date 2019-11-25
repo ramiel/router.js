@@ -21,7 +21,19 @@ export interface Engine {
    * Go to the desired path
    */
   navigate: (path: string) => void;
-
+  /**
+   * Go to a specific page in the history
+   * @param {Number} relative Relative position from the current page which is 0
+   */
+  go: (n?: number) => void;
+  /**
+   * Go back in the history
+   */
+  back: () => void;
+  /**
+   * GO forward in the history
+   */
+  forward: () => void;
   /**
    * Same as navigate, brings to the desired url but doesn't fire routes handlers
    */

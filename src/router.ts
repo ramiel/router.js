@@ -55,6 +55,19 @@ export interface Router {
   always: (callback: AlwaysCallback) => Router;
   error: (errorCode: number | '*', callback: ErrorCallback) => Router;
   navigate: (path: string) => void;
+  /**
+   * Go to a specific page in the history
+   * @param {Number} relative Relative position from the current page which is 0
+   */
+  go: (n?: number) => void;
+  /**
+   * Go back in the history
+   */
+  back: () => void;
+  /**
+   * GO forward in the history
+   */
+  forward: () => void;
   setLocation: (path: string) => void;
   run: (path?: string) => Router;
   teardown: () => Router;
@@ -338,9 +351,10 @@ const createRouter: RouterFactoryType = (opt) => {
       engine.teardown();
       return router;
     },
-
     navigate: engine.navigate,
-
+    go: engine.go,
+    back: engine.back,
+    forward: engine.forward,
     setLocation: engine.setLocation,
     buildUrl: (path) => `${cleanBasePath}${path}`,
 
