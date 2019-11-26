@@ -434,6 +434,9 @@ A list of methods available in the router:
 - __error__: Function to define an error handler
 - __navigate__: Function to navigate. i.e. `router.navigate('/post/3')`
 - __setLocation__: Same as navigate but the handlers are not run
+- __go__: Navigate into the history of `n` positions. `router.go(-2)` or `router.go(1)`
+- __back__: Navigate back in the history
+- __forward__: Navigate forward in the history
 - __run__: Function that execute immediately the router, even if no route has changed yet.    
     This function is useful to run during the application to startup to immediately elaborate the handler for the current url. You can also pass a `path` to the function and the url will be adjusted accordingly
 - __teardown__: Function to remove any event handler instantiated by the router. Useful to cleanup memory on application disposal.

@@ -106,6 +106,18 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
       }
     },
 
+    back: () => {
+      window.history.back();
+    },
+
+    forward: () => {
+      window.history.forward();
+    },
+
+    go: (n) => {
+      window.history.go(n);
+    },
+
     setLocation: (path) => {
       if (window.location.pathname !== path) {
         window.history.pushState({}, '', path);

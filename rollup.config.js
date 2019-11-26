@@ -1,4 +1,5 @@
-import typescript from 'rollup-plugin-typescript2';
+import typescriptPlugin from 'rollup-plugin-typescript2';
+import typescript from 'typescript';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import pkg from './package.json';
@@ -12,8 +13,9 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
-      typescript({
+      typescriptPlugin({
         clean: isProd,
+        typescript,
       }),
     ],
     output: [
