@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.4.0
+  - Add back, forward and go methods
+
 ## 2.3.3
   - Fix: Execute handlers on popstate
 
