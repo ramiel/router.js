@@ -40,8 +40,11 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
   };
 
   const clickHandler = (e: MouseEvent) => {
-    if (e.target && (e.target as HTMLElement).nodeName.toUpperCase() === 'A') {
-      const target = e.target as HTMLAnchorElement;
+    let target: HTMLElement = e.target as HTMLElement;
+    while (target && target.nodeName.toUpperCase() !== 'A') {
+      target = target.parentNode as HTMLElement;
+    }
+    if (target && target.nodeName.toUpperCase() === 'A') {
       if (
         target.hasAttribute('data-routerjs-ignore') ||
         target.hasAttribute('download') ||
@@ -60,7 +63,7 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
         return;
       }
       e.preventDefault();
-      engine.navigate(target.pathname);
+      engine.navigate((target as HTMLAnchorElement).pathname);
     }
   };
 
