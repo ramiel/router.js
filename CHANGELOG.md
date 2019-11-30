@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.4.1
+  Fix: BrowserEngine supports anchors when wrapping complex elements #43
+
 ## 2.4.0
   - Add back, forward and go methods
 
