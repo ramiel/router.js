@@ -99,7 +99,8 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
     },
 
     navigate: async (path) => {
-      if (window.location.pathname !== path) {
+      const currentPath = `${window.location.pathname}${window.location.search}`;
+      if (currentPath !== path) {
         if (previousPath !== null) {
           await executeExitHandlers(previousPath);
         }
@@ -128,8 +129,9 @@ const BrowserHistoryEngine: BrowserHistoryEngineCreator = (opt = {}) => () => {
     },
 
     run: (path?: string) => {
-      const url = path || window.location.pathname;
-      if (window.location.pathname !== url) {
+      const currentPath = `${window.location.pathname}${window.location.search}`;
+      const url = path || currentPath;
+      if (currentPath !== url) {
         window.history.pushState({}, '', url);
       }
       executeHandlers(url);
