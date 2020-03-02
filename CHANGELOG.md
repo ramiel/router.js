@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.4.3
+  - Fix pipe type declaration
+
 ## 2.4.2
   - Fix: include `search` in path so that querystrings are correctly computed
 
