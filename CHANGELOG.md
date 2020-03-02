@@ -1,7 +1,10 @@
 # Changelog
 
+## 2.4.2
+  - Fix: include `search` in path so that querystrings are correctly computed
+
 ## 2.4.1
-  Fix: BrowserEngine supports anchors when wrapping complex elements #43
+  - Fix: BrowserEngine supports anchors when wrapping complex elements #43
 
 ## 2.4.0
   - Add back, forward and go methods
