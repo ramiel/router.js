@@ -110,6 +110,7 @@ const createRequest = ({
   const [_, queryString] = path.split('?');
   const query = (queryString || '').split('&').reduce((acc, q) => {
     const [k, v] = q.split('=');
+    if (!k) return acc;
     return {
       ...acc,
       [decodeURIComponent(k)]: decodeURIComponent(v),
