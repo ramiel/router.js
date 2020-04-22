@@ -738,6 +738,15 @@ describe('Router', () => {
         testEngine.simulateNavigation('/john');
       }));
 
+    test('query string is not included', () =>
+      new Promise((resolve) => {
+        router.get('/:name', (req) => {
+          expect(req.params).toHaveProperty('name', 'john');
+          resolve();
+        });
+        testEngine.simulateNavigation('/john?key=value');
+      }));
+
     test('param can be taken by "get" function', () =>
       new Promise((resolve) => {
         router.get('/:name', (req) => {

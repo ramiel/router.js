@@ -147,7 +147,8 @@ const createExecuteRoutes = (context: RouteContext) => {
       const route = matchedRoutes[0];
       const params: { [p: string]: string } = {};
       const splats = [];
-      const match = path.match(route.path);
+      const [pathWithoutQuery] = path.split('?');
+      const match = pathWithoutQuery.match(route.path);
       /* istanbul ignore else */
       if (match) {
         let j = 0;
