@@ -156,6 +156,7 @@ const createExecuteRoutes = (context: RouteContext) => {
           params[route.paramNames[j].name] = match[j + 1];
         }
         /* If any other match put them in request splat */
+        /* istanbul ignore else */
         if (j < match.length) {
           for (let k = j; k < match.length; k++) {
             splats.push(match[k]);
