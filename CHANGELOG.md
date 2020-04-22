@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.4.4
+  - Fix, avoid including query parameters in params
+
 ## 2.4.3
   - Fix pipe type declaration
 
