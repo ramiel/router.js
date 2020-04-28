@@ -7,20 +7,48 @@ interface RouteError extends Error {
 }
 
 export interface RouteContext {
+  /**
+   * The current path
+   */
   path: string;
+  /**
+   * Set a value in the context
+   */
   set: (key: string, value: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
   [prop: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface Request {
+  /**
+   * Returns anything passed as params, or query string, in this order. Fallback to null or
+   * a default value
+   */
   get: (k: string, def?: string) => string | null | undefined;
+  /**
+   * The current path of the request
+   */
   path: string;
+  /**
+   * A object contaning all the definied parameters found when matching the route
+   */
   params: { [k: string]: string };
+  /**
+   * Any parameter with no name
+   */
   splats: string[];
+  /**
+   * The query string keys/values
+   */
   query: {
     [k: string]: string;
   };
+  /**
+   * Stop execution of other matching routes
+   */
   stop: () => void;
+  /**
+   * Returns true if the route has been stopped
+   */
   isStopped: () => boolean;
 }
 
