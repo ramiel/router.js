@@ -7,6 +7,13 @@
 
 RouterJS is a simple and powerful javascript router. It's simple to use, versatile and ready to be coupled with your framework of choice. It can work in the browser or on native applications.
 
+🌟 Reasonable defaults. Just define your routes and go.    
+🖱️ Smart listener. Don't define custom links, RouterJS is able to understand what click to handle!    
+⚙️ Works everywhere: thought for the browser, it can also run on native apps or on your watch, drop in your engine.    
+🐞 Type safe. RouterJS is written in Typescript and fully tested.    
+🌍 Plain javascript. It can be used as is or with any library you prefer (React, Angular, Vue...)
+
+
 <!-- vscode-markdown-toc -->
 * 1. [Older versions and migration](#Olderversionsandmigration)
 * 2. [Installation](#Installation)
@@ -174,7 +181,7 @@ router
   });
 ```
 
-For the patch `/users/admin`, both routes will be exectued because they both match. If you want to prevent this, you need to call `req.stop()`
+For the path `/users/admin`, both routes will be exectued because they both match. If you want to prevent this, you need to call `req.stop()`
 
 ```js
 router
@@ -228,7 +235,7 @@ const router = createRouter()
 If you just have middlewares but not an handler, you can use pipe instead.
 
 ```js
-import { createRouter, compose } from 'routerjs';
+import { createRouter, pipe } from 'routerjs';
 
 const userRoute = (req, context) => {
   //...
@@ -271,7 +278,7 @@ Path is: /post/14
 
 ###  4.8. <a name='Exithandlers'></a>Exit handlers
 
-You can attach handlers that are executed when the user leave a route. The syntax is the same as `get` and the callback receives the same arguments
+You can attach handlers that are executed when the user leaves a route. The syntax is the same as `get` and the callback receives the same arguments
 
 ```js
 router
@@ -411,7 +418,7 @@ Here the complete list of properties available in the request object, `req`, the
 The router can be instantiated with several options:
 
 - __engine__: A function that returns an instance of a custom engine, usually an external package.
-- __ignoreCase__: If `true` that route will check the case of the path when matching. Default to false.
+- __ignoreCase__: If `true` that route will NOT check the case of the path when matching. Default to false.
 - __basePath__: A base path to ignore. If, for example, the basePath is `/blog`, any path will exclude that string. In this case `/blog/post/:id` can be simply written as `/post/:id`
 
 ```js
@@ -441,4 +448,4 @@ A list of methods available in the router:
     This function is useful to run during the application to startup to immediately elaborate the handler for the current url. You can also pass a `path` to the function and the url will be adjusted accordingly
 - __teardown__: Function to remove any event handler instantiated by the router. Useful to cleanup memory on application disposal.
 - __buildUrl__: Function to get an url considering also the baseUrl.    
-  i.e, if the base url is `/blog`, the call `router.buildUrl('/post)` will return `/blog/post`
+  i.e, if the base url is `/blog`, the call `router.buildUrl('/post')` will return `/blog/post`
