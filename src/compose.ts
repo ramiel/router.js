@@ -12,15 +12,14 @@
  */
 function compose(...funcs: Function[]): Function {
   if (funcs.length === 0) {
-    return (arg: any) => arg; // eslint-disable-line @typescript-eslint/no-explicit-any
+    return (arg: unknown) => arg;
   }
 
   if (funcs.length === 1) {
     return funcs[0];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return funcs.reduce((a, b) => (...args: any) => a(b(...args)));
+  return funcs.reduce((a, b) => (...args: unknown[]) => a(b(...args)));
 }
 
 const noop = () => {};
