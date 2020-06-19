@@ -25,7 +25,7 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jest": "^22.14.1",
     "eslint-plugin-prettier": "^3.1.0",
-    "jest": "^24.8.0",
+    "jest": "^26.0.1",
     "jest-mock-console": "^1.0.0",
     "prettier": "^1.18.2",
     "rollup": "^1.17.0",

@@ -2,7 +2,7 @@ import pathToRegexp, { Key } from 'path-to-regexp';
 import BrowserHistoryEngine from './engines/BrowserHistoryEngine';
 import { Engine } from './engines/Engine';
 
-interface RouteError extends Error {
+export interface RouteError extends Error {
   statusCode?: number;
 }
 
@@ -14,8 +14,8 @@ export interface RouteContext {
   /**
    * Set a value in the context
    */
-  set: (key: string, value: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
-  [prop: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  set: (key: string, value: unknown) => void;
+  [prop: string]: unknown;
 }
 
 export interface Request {
@@ -78,11 +78,36 @@ interface Route {
 }
 
 export interface Router {
+  /**
+   * Add a new route to the router.
+   * When the path visited in the browser matches the path definition, the callback is executed
+   * @see https://github.com/ramiel/router.js#Usage
+   */
   get: (path: string | RegExp, callback: RouteCallback) => Router;
+  /**
+   * Add an handler that runs when a route is left.
+   * @see https://github.com/ramiel/router.js#Exithandlers
+   */
   exit: (path: string | RegExp, callback: RouteCallback) => Router;
+  /**
+   * This callbacks are executed for any path change, even if the request has been stopped.
+   * @see https://github.com/ramiel/router.js#Alwayscallbacks
+   */
   always: (callback: AlwaysCallback) => Router;
+  /**
+   * Run the callback when a route produces an error. If the error has
+   * a `statusCode` attached, it is matched. To catch any error use "*"
+   * @see https://github.com/ramiel/router.js#Errors
+   */
   error: (errorCode: number | '*', callback: ErrorCallback) => Router;
+  /**
+   * Navigate to a different path (like redirect)
+   */
   navigate: (path: string) => void;
+  /**
+   * Navigate to any path but do not execute route handlers
+   */
+  setLocation: (path: string) => void;
   /**
    * Go to a specific page in the history
    * @param {Number} relative Relative position from the current page which is 0
@@ -96,10 +121,27 @@ export interface Router {
    * GO forward in the history
    */
   forward: () => void;
-  setLocation: (path: string) => void;
+  /**
+   * Start route imediately, without waiting for the first user interaction.
+   * If path is passed the browser is taken to that path, otherwise the route handler
+   * relative to current path is executed
+   */
   run: (path?: string) => Router;
+  /**
+   * Remove any listener setup by te router
+   */
   teardown: () => Router;
+  /**
+   *Given a path, returns the correct path considering the basePath if any
+   */
   buildUrl: (path: string) => string;
+  /**
+   * Returns the option with which the router has been created
+   */
+  getOptions: () => Omit<RouterOptions, 'engine'>;
+  /**
+   * @deprecated
+   */
   _getOptions: () => Omit<RouterOptions, 'engine'>;
 }
 
@@ -265,6 +307,7 @@ const createRouter: RouterFactoryType = (opt) => {
     const callbacks = errors.get(statusCode);
     const alwaysCallbacks = errors.get('*');
 
+    /* istanbul ignore else */
     if (callbacks || alwaysCallbacks) {
       if (callbacks && callbacks.length > 0) {
         callbacks.forEach((callback) => {
@@ -389,11 +432,19 @@ const createRouter: RouterFactoryType = (opt) => {
     setLocation: engine.setLocation,
     buildUrl: (path) => `${cleanBasePath}${path}`,
 
-    _getOptions: () => ({
+    getOptions: () => ({
       ...options,
       basePath: cleanBasePath,
       engine: undefined,
     }),
+
+    _getOptions: () => {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '@deprecated _getOptions is deprecated, use getOptions instead',
+      );
+      return router.getOptions();
+    },
 
     // @ts-ignore
     _showRoutes: () => {
