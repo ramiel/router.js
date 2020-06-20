@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.4.5
+  - Added more tests to browser history engine
+
 ## 2.4.4
   - Fix, avoid including query parameters in params
 
