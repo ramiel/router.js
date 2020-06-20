@@ -13,10 +13,11 @@
     "path-to-regexp": "^3.1.0"
   },
   "devDependencies": {
+    "@jedmao/location": "^3.0.0",
     "@types/jest": "^24.0.16",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^2.29.0",
-    "concurrently": "^4.1.1",
+    "concurrently": "^5.2.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-config-prettier": "^6.0.0",
@@ -24,15 +25,15 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jest": "^22.14.1",
     "eslint-plugin-prettier": "^3.1.0",
-    "jest": "^24.8.0",
+    "jest": "^26.0.1",
     "jest-mock-console": "^1.0.0",
     "prettier": "^1.18.2",
     "rollup": "^1.17.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-typescript2": "^0.22.1",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.8.3"
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.5"
   },
   "main": "dist/router.cjs.js",
   "module": "dist/router.esm.js",
